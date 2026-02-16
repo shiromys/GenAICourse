@@ -130,7 +130,7 @@ const CourseViewer = () => {
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Course Info & Progress */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="lg:col-span-2 space-y-8 lg:order-2">
                         <div>
                             <Link to="/dashboard" className="inline-flex items-center text-gray-500 hover:text-brand mb-6 transition-colors font-medium">
                                 <FaChevronLeft className="mr-2 text-xs" /> Back to My Learning
@@ -207,9 +207,34 @@ const CourseViewer = () => {
                                             <span className="text-accent font-bold uppercase tracking-widest text-xs mb-2 block">
                                                 Module {currentModuleIndex + 1}: {currentModule.title}
                                             </span>
-                                            <h2 className="text-2xl font-black mb-6 text-brand">
+                                            <h2 className="text-2xl font-black mb-4 text-brand">
                                                 {currentLesson.title}
                                             </h2>
+
+                                            {/* Lesson Metadata */}
+                                            <div className="flex items-center gap-6 text-sm font-bold text-gray-500 mb-6 uppercase tracking-wider border-b border-gray-100 pb-6">
+                                                <div className="flex items-center gap-2">
+                                                    <FaClock className="text-accent" />
+                                                    <span>{currentLesson.duration || 5} Mins</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Key Points */}
+                                            {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
+                                                <div className="bg-indigo-50/50 rounded-xl p-6 mb-8 border border-indigo-100">
+                                                    <h3 className="font-bold text-brand mb-4 flex items-center text-sm uppercase tracking-wide">
+                                                        <FaCheck className="mr-2 text-accent" /> Key Takeaways
+                                                    </h3>
+                                                    <ul className="space-y-3">
+                                                        {currentLesson.keyPoints.map((point, idx) => (
+                                                            <li key={idx} className="flex items-start text-gray-700">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 mr-3 flex-shrink-0" />
+                                                                <span className="leading-relaxed">{point}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
                                             <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed">
                                                 {currentLesson.content.split('\n').map((p, i) => (
                                                     <p key={i} className="mb-4">{p}</p>
@@ -242,7 +267,7 @@ const CourseViewer = () => {
                     </div>
 
                     {/* Right Column: Course Content List */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 lg:order-1">
                         <div className="bg-[#0F172A] rounded-[2rem] overflow-hidden shadow-2xl sticky top-24 border border-slate-800">
                             <div className="p-8 border-b border-slate-800">
                                 <h3 className="text-xl font-black text-white uppercase tracking-tight">Course Content</h3>

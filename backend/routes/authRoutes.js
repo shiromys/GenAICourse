@@ -55,11 +55,11 @@ router.get('/linkedin/callback',
 );
 
 // Public routes
-router.post('/register', registerValidation, validate, register);
-router.post('/login', loginValidation, validate, login);
-router.post('/forgot-password', forgotPasswordValidation, validate, forgotPassword);
-router.post('/reset-password', resetPasswordValidation, validate, resetPassword);
-router.post('/verify-email', emailVerificationValidation, validate, verifyEmail);
+router.post('/register', register);
+router.post('/login', login);
+router.post('/forgot-password', forgotPassword);
+router.put('/reset-password/:resetToken', resetPassword);
+router.post('/verify-email', verifyEmail);
 
 // Protected routes
 router.get('/me', protect, getMe);

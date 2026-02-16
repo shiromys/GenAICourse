@@ -5,6 +5,11 @@ const ScrollToTop = () => {
     const { pathname, hash } = useLocation();
 
     useEffect(() => {
+        // Prevent browser from restoring scroll position on refresh
+        if ('scrollRestoration' in window.history) {
+            window.history.scrollRestoration = 'manual';
+        }
+
         // If there's a hash, scroll to that element
         if (hash) {
             const element = document.getElementById(hash.slice(1));
