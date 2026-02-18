@@ -252,14 +252,14 @@ export const enrollCourse = async (req, res, next) => {
 
         // 🔥 SEND ENROLLMENT EMAIL
         try {
-            const sendEmail = (await import('../utils/email/sendEmail.js')).default;
+            const { sendEmail } = await import('../services/emailService.js');
             const { enrollmentTemplate } = await import('../utils/email/templates/enrollmentTemplate.js');
 
-            await sendEmail({
-                to: user.email,
-                subject: `Enrollment Confirmed: ${course.title} 🎓`,
-                html: enrollmentTemplate(user.name, course.title)
-            });
+            await sendEmail(
+                user.email,
+                `Enrollment Confirmed: ${course.title} 🎓`,
+                enrollmentTemplate(user.name, course.title)
+            );
         } catch (emailError) {
             console.error('❌ Failed to send enrollment email:', emailError.message);
         }

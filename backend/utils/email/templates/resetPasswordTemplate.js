@@ -1,115 +1,58 @@
 /**
  * Password Reset Email Template
  * 
- * Sent when: User clicks "Forgot Password"
- * Purpose: Provide a secure link to reset account password
+ * Provides a secure link to reset the user's password.
  * 
  * @param {string} name - User's full name
- * @param {string} resetUrl - Unique reset password URL
- * @returns {string} HTML email template
+ * @param {string} resetUrl - Unique reset URL
+ * @returns {string} HTML content
  */
-
-export const resetPasswordTemplate = (name, resetUrl) => {
-    return `
+export const resetPasswordTemplate = (name, resetUrl) => `
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reset Your Password - GENAICOURSE.IO</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f7fa;
-    }
-    .email-container {
-      max-width: 600px;
-      margin: 40px auto;
-      background-color: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-    .header {
-      background: #1a1a2e;
-      padding: 40px 30px;
-      text-align: center;
-      color: #ffffff;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-    .content {
-      padding: 40px 30px;
-      color: #333333;
-      line-height: 1.8;
-    }
-    .reset-box {
-      text-align: center;
-      margin: 30px 0;
-    }
-    .cta-button {
-      display: inline-block;
-      padding: 14px 32px;
-      background: #4f46e5;
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-    }
-    .token-expiry {
-      background-color: #fee2e2;
-      color: #b91c1c;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 20px;
-    }
-    .footer {
-      background-color: #f8f9fa;
-      color: #666;
-      padding: 30px;
-      text-align: center;
-      font-size: 14px;
-      border-top: 1px solid #eee;
-    }
-  </style>
-</head>
-<body>
-  <div class="email-container">
-    <div class="header">
-      <h1>GENAICOURSE.IO</h1>
+<html>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 12px; border-top: 6px solid #4f46e5; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h2 style="color: #4f46e5; font-size: 24px; margin: 0;">Password Reset Request</h2>
+      <p style="color: #64748b; font-size: 16px; margin-top: 5px;">Secure Account Access</p>
     </div>
-    <div class="content">
-      <h2>Hello ${name},</h2>
-      <p>Someone requested a password reset for your account. If this was you, click the button below to set a new password:</p>
-      
-      <div class="reset-box">
-        <a href="${resetUrl}" class="cta-button">Reset Password</a>
-      </div>
 
-      <div class="token-expiry">
-        This link will expire in 15 minutes.
-      </div>
-
-      <p style="margin-top: 30px;">If you did not request this, please ignore this email or contact support if you have concerns.</p>
-      
-      <p>Alternatively, you can copy and paste this link into your browser:</p>
-      <p style="word-break: break-all; color: #4f46e5; font-size: 13px;">${resetUrl}</p>
+    <div style="margin-bottom: 30px;">
+      <p style="color: #1e293b; font-size: 18px; font-weight: 600;">Hello ${name},</p>
+      <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+        We received a request to reset your password for your <strong style="color: #4f46e5;">GENAICOURSE.IO</strong> account.
+      </p>
     </div>
-    <div class="footer">
-      <p>&copy; ${new Date().getFullYear()} GENAICOURSE.IO Team</p>
+
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="${resetUrl}" style="background-color: #4f46e5; color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 18px; display: inline-block; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.4);">
+        Reset Password
+      </a>
+    </div>
+
+    <div style="background-color: #e0e7ff; padding: 15px; border-radius: 8px; border: 1px solid #c7d2fe; text-align: center;">
+      <p style="color: #312e81; font-size: 14px; font-weight: 600; margin: 0;">
+        ⚠️ Security Notice
+      </p>
+      <p style="color: #4338ca; font-size: 13px; margin: 5px 0 0 0;">
+        This link is valid for <strong>15 minutes</strong> only. If you did not request a password reset, you can safely ignore this email.
+      </p>
+    </div>
+
+    <div style="margin-top: 30px; font-size: 14px; color: #64748b; text-align: center;">
+      <p>Alternatively, you can copy and paste the following link into your browser:</p>
+      <p style="word-break: break-all; color: #4f46e5; background-color: #f8fafc; padding: 10px; border-radius: 4px; font-family: monospace;">${resetUrl}</p>
+    </div>
+
+    <div style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center;">
+      <p style="color: #9ca3af; font-size: 12px;">
+        © ${new Date().getFullYear()} GENAICOURSE.IO. All rights reserved.
+      </p>
     </div>
   </div>
 </body>
 </html>
-  `;
-};
+`;
 
 export default resetPasswordTemplate;

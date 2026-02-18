@@ -1,90 +1,57 @@
 /**
- * Certificate Completion Template
+ * Certificate Email Template
  * 
- * Sent when: User completes a course and earns a certificate
- * Purpose: Celebrate achievement and deliver the certificate
+ * Celebratory email for course completion.
  * 
- * @param {string} name - User's full name
- * @param {string} courseTitle - Title of the course
- * @returns {string} HTML email template
+ * @param {string} name - User's name
+ * @param {string} courseTitle - Completed course title
+ * @returns {string} HTML content
  */
-
-export const certificateTemplate = (name, courseTitle) => {
-    return `
+export const certificateTemplate = (name, courseTitle) => `
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Congratulations on your Certification! - GENAICOURSE.IO</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f7fa;
-    }
-    .email-container {
-      max-width: 600px;
-      margin: 40px auto;
-      background-color: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-    .header {
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-      padding: 40px 30px;
-      text-align: center;
-      color: #ffffff;
-    }
-    .content {
-      padding: 40px 30px;
-      color: #333333;
-      line-height: 1.8;
-      text-align: center;
-    }
-    .badge {
-      font-size: 64px;
-      margin-bottom: 20px;
-      display: block;
-    }
-    .footer {
-      background-color: #111827;
-      color: #9ca3af;
-      padding: 30px;
-      text-align: center;
-      font-size: 14px;
-    }
-  </style>
-</head>
-<body>
-  <div class="email-container">
-    <div class="header">
-      <h1 style="margin: 0;">YOU DID IT!</h1>
+<html>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #fce7f3; margin: 0; padding: 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 0; border-radius: 16px; border-top: 8px solid #be185d; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden;">
+    
+    <div style="background-color: #fb7185; padding: 40px; text-align: center;">
+      <h1 style="color: #ffffff; font-size: 36px; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Congratulations, ${name}! 🎓</h1>
+      <p style="color: #ffffff; font-size: 18px; margin-top: 10px; font-weight: 500;">You've Achieved Something Great!</p>
     </div>
-    <div class="content">
-      <span class="badge">🏆</span>
-      <h2>Congratulations, ${name}!</h2>
-      <p>You have successfully completed the course:</p>
-      <h3 style="color: #4f46e5; font-size: 24px;">${courseTitle}</h3>
-      
-      <p>We are incredibly proud of your achievement. Your hard-earned certificate is attached to this email as a PDF. Feel free to download, print, and share it on your LinkedIn profile!</p>
 
-      <div style="margin: 30px 0; padding: 20px; background: #fef3c7; border-radius: 12px;">
-        <p style="margin: 0; font-weight: bold; color: #92400e;">Next Step? Share your success!</p>
-        <p style="margin: 5px 0 0 0; font-size: 14px;">Tag <strong>#GenaicourseAI</strong> for a chance to be featured on our social media.</p>
+    <div style="padding: 40px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <p style="color: #475569; font-size: 18px; margin: 0;">You have successfully completed the course:</p>
+        <h2 style="color: #be185d; font-size: 28px; margin: 15px 0;">${courseTitle}</h2>
       </div>
 
-      <p>Keep that momentum going! Check out your next recommended course in your dashboard.</p>
+      <div style="background-color: #fdf2f8; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+        <p style="color: #9d174d; font-size: 16px; font-weight: 600; margin: 0;">
+          Your official certificate is attached to this email.
+        </p>
+        <p style="color: #be185d; font-size: 14px; margin-top: 10px;">
+          Feel free to download, print, or share your accomplishment on LinkedIn!
+        </p>
+      </div>
+
+      <p style="color: #475569; font-size: 16px; line-height: 1.6; text-align: center;">
+        We are incredibly proud of your dedication and hard work. Keep learning and growing!
+      </p>
+
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="${process.env.FRONTEND_URL}/dashboard" style="background-color: #be185d; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; display: inline-block;">
+          View Your Dashboard
+        </a>
+      </div>
     </div>
-    <div class="footer">
-      <p>GENAICOURSE.IO | The Future of AI Education</p>
+
+    <div style="background-color: #1f2937; padding: 20px; text-align: center; color: #9ca3af; font-size: 12px;">
+      <p style="margin: 0;">
+        © ${new Date().getFullYear()} GENAICOURSE.IO. All rights reserved.
+      </p>
     </div>
   </div>
 </body>
 </html>
-  `;
-};
+`;
 
 export default certificateTemplate;
