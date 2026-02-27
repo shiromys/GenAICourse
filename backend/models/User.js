@@ -252,6 +252,17 @@ userSchema.methods.getResetPasswordToken = function () {
     return resetToken;
 };
 
+// Method to get verification token
+userSchema.methods.getVerificationToken = function () {
+    // Generate token
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
+    // Set token to verificationToken field
+    this.verificationToken = verificationToken;
+
+    return verificationToken;
+};
+
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);

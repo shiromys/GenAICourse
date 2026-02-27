@@ -1,5 +1,11 @@
 import User from '../models/User.js';
 import { generateToken } from '../middleware/auth.js';
+import { sendEmail } from '../services/emailService.js';
+import { welcomeTemplate } from '../utils/email/templates/welcomeTemplate.js';
+import { loginAlertTemplate } from '../utils/email/templates/loginAlertTemplate.js';
+import { resetPasswordTemplate } from '../utils/email/templates/resetPasswordTemplate.js';
+import { resetConfirmationTemplate } from '../utils/email/templates/resetConfirmationTemplate.js';
+import { verificationTemplate } from '../utils/email/templates/verificationTemplate.js';
 
 /**
  * Authentication Controller
@@ -39,27 +45,41 @@ export const register = async (req, res, next) => {
         }
 
         // Create user
-        const user = await User.create({
+        const user = new User({
             name,
             email,
             password,
             role: userRole,
             profile: profile,
-            isVerified: userRole === 'admin'
+            isVerified: true // Temporarily set to true by default so students can sign in immediately
         });
 
-        // 🔥 SEND WELCOME EMAIL
-        try {
-            const { sendEmail } = await import('../services/emailService.js');
-            const { welcomeTemplate } = await import('../utils/email/templates/welcomeTemplate.js');
+        // Generate verification token (still good to have for later)
+        let verificationUrl = '';
+        if (user.role !== 'admin') {
+            const token = user.getVerificationToken();
+            verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+        }
 
-            await sendEmail(
-                user.email,
-                'Welcome to GENAICOURSE.IO 🚀',
-                welcomeTemplate(user.name)
-            );
+        await user.save();
+
+        // 🔥 SEND WELCOME OR VERIFICATION EMAIL
+        try {
+            if (user.role === 'admin' || user.isVerified) {
+                await sendEmail(
+                    user.email,
+                    'Welcome to GENAICOURSE.IO 🚀',
+                    welcomeTemplate(user.name)
+                );
+            } else {
+                await sendEmail(
+                    user.email,
+                    'Verify Your Email - GENAICOURSE.IO',
+                    verificationTemplate(user.name, verificationUrl)
+                );
+            }
         } catch (emailError) {
-            console.error('❌ Failed to send welcome email:', emailError.message);
+            console.error('❌ Failed to send initial email:', emailError.message);
         }
 
         const token = generateToken(user._id);
@@ -112,13 +132,11 @@ export const login = async (req, res, next) => {
         }
 
         user.lastLoginAt = new Date();
+        user.isVerified = true; // Auto-verify on successful login to prevent blocking students during development
         await user.save();
 
         // 🔥 SEND LOGIN SECURITY ALERT
         try {
-            const { sendEmail } = await import('../services/emailService.js');
-            const { loginAlertTemplate } = await import('../utils/email/templates/loginAlertTemplate.js');
-
             await sendEmail(
                 user.email,
                 'Security Alert: New Sign-in Detected - GENAICOURSE.IO',
@@ -366,16 +384,13 @@ export const forgotPassword = async (req, res, next) => {
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
         try {
-            const { sendEmail } = await import('../services/emailService.js');
-            const { resetPasswordTemplate } = await import('../utils/email/templates/resetPasswordTemplate.js');
-
             await sendEmail(
                 user.email,
                 'Password Reset Request - GENAICOURSE.IO',
                 resetPasswordTemplate(user.name, resetUrl)
             );
 
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: successMessage
             });
@@ -387,9 +402,9 @@ export const forgotPassword = async (req, res, next) => {
 
             console.error('❌ Failed to send password reset email:', emailError);
 
-            return res.status(500).json({
-                success: false,
-                message: 'Email could not be sent. Please try again later.'
+            return res.status(200).json({
+                success: true,
+                message: successMessage
             });
         }
 
@@ -435,9 +450,6 @@ export const resetPassword = async (req, res, next) => {
         await user.save();
 
         try {
-            const { sendEmail } = await import('../services/emailService.js');
-            const { resetConfirmationTemplate } = await import('../utils/email/templates/resetConfirmationTemplate.js');
-
             await sendEmail(
                 user.email,
                 'Password Reset Successful - GENAICOURSE.IO',
@@ -460,6 +472,68 @@ export const resetPassword = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Resend verification email
+ * @route   POST /api/auth/resend-verification
+ * @access  Public
+ */
+export const resendVerification = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide an email address'
+            });
+        }
+
+        const user = await User.findOne({ email: email.toLowerCase() });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'No user found with this email'
+            });
+        }
+
+        if (user.isVerified) {
+            return res.status(400).json({
+                success: false,
+                message: 'This account is already verified'
+            });
+        }
+
+        // Generate new token if needed or use existing
+        const token = user.verificationToken || user.getVerificationToken();
+        if (!user.verificationToken) await user.save();
+
+        const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+
+        try {
+            await sendEmail(
+                user.email,
+                'Verify Your Email - GENAICOURSE.IO',
+                verificationTemplate(user.name, verificationUrl)
+            );
+
+            res.status(200).json({
+                success: true,
+                message: 'Verification email resent successfully'
+            });
+        } catch (emailError) {
+            console.error('❌ Failed to resend verification email:', emailError.message);
+            res.status(500).json({
+                success: false,
+                message: 'Failed to send verification email. Please try again later.'
+            });
+        }
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     register,
     login,
@@ -468,6 +542,7 @@ export default {
     changePassword,
     forgotPassword,
     resetPassword,
+    resendVerification,
     verifyEmail,
     logout,
     getAllUsers,

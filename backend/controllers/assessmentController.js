@@ -6,6 +6,8 @@ import Certificate from '../models/Certificate.js';
 import User from '../models/User.js';
 import { generateCertificatePDF } from '../services/certificateService.js';
 import asyncHandler from 'express-async-handler';
+import { sendEmail } from '../services/emailService.js';
+import { certificateTemplate } from '../utils/email/templates/certificateTemplate.js';
 
 // @desc    Get assessment details for a course (for taking the quiz)
 // @route   GET /api/assessments/:courseId/quiz
@@ -369,9 +371,6 @@ async function generateCertificate(userId, courseId, score, grade) {
 
   // 🔥 SEND CERTIFICATE EMAIL (With PDF Attachment)
   try {
-    const { sendEmail } = await import('../services/emailService.js');
-    const { certificateTemplate } = await import('../utils/email/templates/certificateTemplate.js');
-
     // Dynmically generate a professional filename
     const filename = `Certificate_${course.title.replace(/\s+/g, '_')}_${user.name.replace(/\s+/g, '_')}.pdf`;
 

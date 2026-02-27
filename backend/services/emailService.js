@@ -7,70 +7,70 @@ dotenv.config();
  * Resend Email Service
  * 
  * Handles email delivery using Resend API.
- * Replaces legacy Nodemailer SMTP configuration.
  */
 
-// Initialize Resend Client
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-/**
- * Send an email via Resend API
- * 
- * @param {string} to - Recipient email
- * @param {string} subject - Email subject
- * @param {string} html - HTML content
- * @param {Array} attachments - Optional attachments [{ filename, content }]
- * @returns {Promise<Object>} - Resend API response
- */
+// We initialize inside the function to ensure process.env is ready
 export const sendEmail = async (to, subject, html, attachments = []) => {
     try {
-        if (!process.env.RESEND_API_KEY) {
-            console.warn('⚠️ RESEND_API_KEY is missing. Email skipped.');
-            return { id: 'mock-id', success: true, skipped: true };
+        const apiKey = process.env.RESEND_API_KEY;
+        const fromEmail = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+
+        if (!apiKey) {
+            console.error('❌ RESEND_API_KEY is missing in environmental variables.');
+            throw new Error('Email service configuration missing');
         }
 
-        const emailData = {
-            from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        const resend = new Resend(apiKey);
+
+        const emailOptions = {
+            from: fromEmail,
             to: to,
             subject: subject,
             html: html,
-            attachments: attachments
         };
 
-        const { data, error } = await resend.emails.send(emailData);
-
-        if (error) {
-            console.error('❌ Resend API Error:', error);
-            throw new Error(error.message);
+        if (attachments && attachments.length > 0) {
+            emailOptions.attachments = attachments;
         }
 
-        console.log(`✅ Email sent via Resend: ${data.id}`);
-        return data;
+        console.log(`📡 Sending email to ${to} using FROM: ${fromEmail}`);
+
+        const result = await resend.emails.send(emailOptions);
+
+        if (!result || result.error) {
+            const errorDetails = result?.error ? JSON.stringify(result.error, null, 2) : 'Unknown Resend Error';
+            console.error('❌ Resend API Error:', errorDetails);
+            throw new Error(result?.error?.message || 'Failed to send email via Resend');
+        }
+
+        console.log(`✅ Email sent successfully to ${to}. ID: ${result.data?.id}`);
+        return result.data;
 
     } catch (error) {
-        console.error(`❌ Error sending email to ${to}:`, error.message);
-        // Throw error to trigger retry logic if used
+        if (error.message.includes('testing emails to your own email address')) {
+            console.error('\n⚠️  RESEND LIMITATION ALERT ⚠️');
+            console.error('You are currently in testing mode. You can ONLY send emails to your verified Resend email.');
+            console.error('To send emails to students (Gmail, etc.), you MUST:');
+            console.error('1. Go to https://resend.com/domains');
+            console.error('2. Add and verify your domain (e.g., genaicourse.io)');
+            console.error('3. Update EMAIL_FROM in your .env to an email using that domain.\n');
+        } else {
+            console.error(`❌ Error in sendEmail to ${to}:`, error.message);
+        }
         throw error;
     }
 };
 
-/**
- * Retry wrapper for robust email delivery
- * 
- * @param {Function} emailFn - Function to execute (sendEmail)
- * @param {Array} args - Arguments for the function
- * @param {number} retries - Number of retries
- * @returns {Promise<Object>}
- */
 export const sendEmailWithRetry = async (emailFn, args, retries = 3) => {
     try {
         return await emailFn(...args);
     } catch (error) {
         if (retries > 0) {
             console.warn(`⚠️ Retrying email... (${retries} attempts left)`);
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Increased delay for retry
             return sendEmailWithRetry(emailFn, args, retries - 1);
         } else {
+            console.error(`❌ Email failed after all retries to ${args[0]}`);
             throw error;
         }
     }

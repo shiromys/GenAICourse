@@ -93,10 +93,11 @@ const ForgotPassword = () => {
                         </p>
                         <div className="space-y-4">
                             <button
-                                onClick={() => setIsSubmitted(false)}
+                                onClick={handleSubmit}
                                 className="text-indigo-600 font-semibold hover:underline"
+                                disabled={isLoading}
                             >
-                                Didn't receive the email? Try again
+                                {isLoading ? 'Sending...' : "Didn't receive the email? Resend link"}
                             </button>
                             <Link to="/login" className="block w-full btn-outline py-3 rounded-xl">
                                 Return to Login

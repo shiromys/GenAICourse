@@ -7,6 +7,7 @@ import {
     changePassword,
     forgotPassword,
     resetPassword,
+    resendVerification,
     verifyEmail,
     logout,
     getAllUsers,
@@ -60,6 +61,7 @@ router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:resetToken', resetPassword);
 router.post('/verify-email', verifyEmail);
+router.post('/resend-verification', resendVerification);
 
 // Protected routes
 router.get('/me', protect, getMe);
