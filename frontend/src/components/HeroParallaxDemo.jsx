@@ -7,7 +7,7 @@ export function HeroParallaxDemo() {
 }
 export const products = [
     {
-        title: "Neural Mastery Core",
+        title: "genaicourse Mastery Core",
         link: "/courses",
         thumbnail: "/images/premium/brain.png",
     },
@@ -17,7 +17,7 @@ export const products = [
         thumbnail: "https://images.unsplash.com/photo-1620712943543-bcc46386c635?w=600",
     },
     {
-        title: "Neural Engineering",
+        title: "genaicourse Engineering",
         link: "/courses",
         thumbnail: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600",
     },

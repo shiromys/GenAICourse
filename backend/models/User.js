@@ -65,6 +65,10 @@ const userSchema = new mongoose.Schema({
         enum: ['student', 'instructor', 'admin'],
         default: 'student'
     },
+    hasAllCoursesAccess: {
+        type: Boolean,
+        default: false
+    },
     profile: {
         avatar: {
             type: String,
@@ -275,6 +279,7 @@ userSchema.methods.getPublicProfile = function () {
         name: this.name,
         email: this.email,
         role: this.role,
+        hasAllCoursesAccess: this.hasAllCoursesAccess,
         profile: this.profile,
         stats: this.stats,
         enrolledCourses: this.enrolledCourses,

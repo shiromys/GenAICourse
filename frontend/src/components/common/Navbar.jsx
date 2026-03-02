@@ -70,6 +70,13 @@ const Navbar = () => {
                                         >
                                             My Dashboard
                                         </Link>
+                                        <Link
+                                            to="/profile"
+                                            onClick={() => setUserMenuOpen(false)}
+                                            className="block px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-[var(--accent)] transition-colors"
+                                        >
+                                            My Profile
+                                        </Link>
                                         {user?.role === 'admin' && (
                                             <Link
                                                 to="/admin/dashboard"

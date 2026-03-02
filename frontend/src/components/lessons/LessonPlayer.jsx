@@ -227,7 +227,7 @@ const LessonPlayer = () => {
                                 </div>
                                 <div>
                                     <h2 className="text-3xl font-black text-brand">Final Assessment</h2>
-                                    <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">Neural Pattern Verification in Progress</p>
+                                    <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">genaicourse Pattern Verification in Progress</p>
                                 </div>
                             </div>
 

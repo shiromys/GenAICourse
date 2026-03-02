@@ -16,8 +16,8 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    // ── Load user from localStorage on mount ──────────────────────────────────
     useEffect(() => {
-        // Check if user is logged in on mount
         const storedUser = authService.getStoredUser();
         const token = authService.getToken();
 
@@ -28,53 +28,73 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+    // ── Login ─────────────────────────────────────────────────────────────────
     const login = useCallback(async (credentials) => {
-        try {
-            const data = await authService.login(credentials);
-            setUser(data.data.user);
-            setIsAuthenticated(true);
-            return data;
-        } catch (error) {
-            throw error;
-        }
+        const data = await authService.login(credentials);
+        setUser(data.data.user);
+        setIsAuthenticated(true);
+        return data;
     }, []);
 
+    // ── Register — DO NOT auto-login; redirect to /login instead ─────────────
     const register = useCallback(async (userData) => {
-        try {
-            const data = await authService.register(userData);
-            setUser(data.data.user);
-            setIsAuthenticated(true);
-            return data;
-        } catch (error) {
-            throw error;
-        }
+        const data = await authService.register(userData);
+        // Intentionally NOT setting user/isAuthenticated here
+        // student must log in manually after registration
+        return data;
     }, []);
 
+    // ── Logout ────────────────────────────────────────────────────────────────
     const logout = useCallback(() => {
         authService.logout();
         setUser(null);
         setIsAuthenticated(false);
     }, []);
 
+    // ── OAuth callback handler ────────────────────────────────────────────────
     const handleOAuthSuccess = useCallback(async (token) => {
-        try {
-            localStorage.setItem('token', token);
-            const data = await authService.getCurrentUser();
-            setUser(data.data);
-            setIsAuthenticated(true);
-            localStorage.setItem('user', JSON.stringify(data.data));
-            return data.data;
-        } catch (error) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            throw error;
-        }
+        localStorage.setItem('token', token);
+        const data = await authService.getCurrentUser();
+        setUser(data.data);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(data.data));
+        return data.data;
     }, []);
 
+    // ── Update user locally (for profile edits etc.) ──────────────────────────
     const updateUser = useCallback((userData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
     }, []);
+
+    /**
+     * refreshUser — fetches the latest user profile from the server.
+     * ⚠️  CRITICAL: Call this after payment success to pick up new enrolledCourses.
+     */
+    const refreshUser = useCallback(async () => {
+        try {
+            const data = await authService.getCurrentUser();
+            if (data.success) {
+                setUser(data.data);
+                localStorage.setItem('user', JSON.stringify(data.data));
+                return data.data;
+            }
+        } catch (error) {
+            console.error('❌ Failed to refresh user profile:', error.message);
+        }
+    }, []);
+
+    // ── Check if user has access to a specific course ─────────────────────────
+    const checkCourseAccess = useCallback((courseId) => {
+        if (!user) return false;
+        if (user.role === 'admin') return true;
+        if (user.hasAllCoursesAccess) return true;
+
+        return user.enrolledCourses?.some(enrollment => {
+            const id = enrollment.courseId?._id || enrollment.courseId;
+            return id?.toString() === courseId?.toString();
+        }) ?? false;
+    }, [user]);
 
     const value = {
         user,
@@ -85,7 +105,9 @@ export const AuthProvider = ({ children }) => {
         logout,
         handleOAuthSuccess,
         updateUser,
-        isAdmin: user?.role === 'admin'
+        refreshUser,        // ← NEW: use after payment confirmation
+        checkCourseAccess,
+        isAdmin: user?.role === 'admin',
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

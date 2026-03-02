@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import courseService from '@/services/courseService.js';
 import { useAuth } from '@/context/AuthContext.jsx';
 import Loader from '../components/common/Loader.jsx';
@@ -8,12 +8,13 @@ import { FaPlay, FaLock, FaBookOpen, FaClock, FaSignal, FaUsers } from 'react-ic
 
 const CourseEnrollment = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { user, isAuthenticated } = useAuth();
-    const [course, setCourse] = React.useState(null);
-    const [loading, setLoading] = React.useState(true);
-    const [enrolling, setEnrolling] = React.useState(false);
+    const [course, setCourse] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [enrolling, setEnrolling] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchCourse = async () => {
             try {
                 const data = await courseService.getCourse(id);
@@ -35,12 +36,24 @@ const CourseEnrollment = () => {
             return;
         }
 
+        // Check if user already has access
+        const hasAccess = user?.enrolledCourses?.some(e => e.courseId === id || e.courseId?._id === id) || user?.hasAllCoursesAccess;
+        if (hasAccess) {
+            toast.info('You already have access to this course!');
+            navigate(`/courses/${id}/learn`);
+            return;
+        }
+
+        if (!course.isFree) {
+            navigate(`/checkout/${id}?type=single`);
+            return;
+        }
+
         setEnrolling(true);
         try {
             await courseService.enrollCourse(id);
             toast.success('Successfully enrolled in course!');
-            // Navigate directly to course viewer after enrollment
-            window.location.href = `/courses/${id}/learn`;
+            navigate(`/courses/${id}/learn`);
         } catch (error) {
             setEnrolling(false);
             toast.error(error.response?.data?.message || 'Enrollment failed');

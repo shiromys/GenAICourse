@@ -24,12 +24,12 @@ const router = express.Router();
  * All routes require admin authentication
  */
 
-// Public JSON upload (for testing)
-router.post('/courses/save-json', uploadCourseFromJSON);
-
 // Apply admin authorization to all routes
 router.use(protect);
 router.use(authorize('admin'));
+
+// JSON upload
+router.post('/courses/save-json', uploadCourseFromJSON);
 
 // Dashboard
 router.get('/stats', getDashboardStats);

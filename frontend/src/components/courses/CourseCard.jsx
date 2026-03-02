@@ -1,59 +1,120 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { FaBookOpen, FaClock, FaChevronRight } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaBookOpen, FaChevronRight, FaLock } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext.jsx';
 
 const CourseCard = ({ course }) => {
+    const { checkCourseAccess, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    const courseId = course._id || course.id;
+    const hasAccess = checkCourseAccess(courseId);
+    const price = course.isFree ? 'FREE' : `$${course.price || 29}`;
+
+    const handleActionClick = (e) => {
+        if (!hasAccess) {
+            e.preventDefault();
+            // Route to checkout
+            if (!isAuthenticated) {
+                navigate(`/register?redirect=checkout/${courseId}&type=single`);
+            } else {
+                navigate(`/checkout/${courseId}?type=single`);
+            }
+        }
+        // If has access, Link handles the navigation to /courses/:id
+    };
+
     return (
-        <div className="course-card glass-card group flex flex-col h-full !pb-0 active:scale-[0.98] transition-transform bg-white border border-gray-200">
-            {/* Thumbnail Box */}
-            <div className="relative h-60 overflow-hidden">
+        <motion.div
+            whileHover={{ y: -4 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="course-card glass-card group flex flex-col h-full !pb-0 bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:border-red-100 transition-all duration-300 rounded-[2rem] overflow-hidden"
+        >
+            {/* Thumbnail */}
+            <div className="relative h-56 overflow-hidden flex-shrink-0">
                 <img
                     src={course.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'}
                     alt={course.title}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-                {/* Badges */}
-                <div className="absolute top-6 left-6 flex flex-col gap-2">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest text-brand border border-gray-200">
-                        {course.level}
+                {/* Level & Category badges */}
+                <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    <span className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-700 border border-white/60 shadow">
+                        {course.level || 'Beginner'}
                     </span>
-                    <span className="px-3 py-1 bg-accent rounded-lg text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
-                        {course.category}
-                    </span>
+                    {course.category && (
+                        <span className="px-3 py-1 bg-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest text-white shadow">
+                            {course.category}
+                        </span>
+                    )}
+                </div>
+
+                {/* Price / Access badge */}
+                <div className="absolute top-4 right-4">
+                    {hasAccess ? (
+                        <span className="px-3 py-1.5 bg-green-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">
+                            ✓ Enrolled
+                        </span>
+                    ) : (
+                        <span className="px-3 py-1.5 bg-white/95 backdrop-blur text-slate-900 rounded-xl text-[11px] font-black shadow border border-white/60">
+                            {price}
+                        </span>
+                    )}
                 </div>
             </div>
 
-            {/* Content Box */}
-            <div className="p-8 flex flex-col flex-1">
-                <h3 className="text-2xl font-black text-brand mb-4 line-clamp-2 leading-tight tracking-tight group-hover:text-accent transition-colors">
+            {/* Content */}
+            <div className="p-7 flex flex-col flex-1">
+                <h3 className="text-xl font-black text-brand mb-3 line-clamp-2 leading-tight tracking-tight group-hover:text-red-600 transition-colors">
                     {course.title}
                 </h3>
 
-                <p className="text-gray-500 text-sm mb-8 line-clamp-2 font-medium leading-relaxed">
+                <p className="text-gray-400 text-sm mb-6 line-clamp-2 font-medium leading-relaxed">
                     {course.description}
                 </p>
 
-                <div className="mt-auto space-y-6">
-                    <div className="flex items-center gap-6 py-4 border-t border-gray-100">
-                        <div className="flex items-center gap-2 text-gray-500 font-bold text-[10px] uppercase tracking-widest">
-                            <FaBookOpen className="text-accent/60" size={14} />
+                <div className="mt-auto space-y-4">
+                    {/* Meta row */}
+                    <div className="flex items-center gap-5 py-3 border-t border-gray-100">
+                        <div className="flex items-center gap-1.5 text-gray-400 font-bold text-[10px] uppercase tracking-widest">
+                            <FaBookOpen className="text-red-400" size={12} />
                             <span>{course.totalLessons || 0} Lessons</span>
                         </div>
                     </div>
 
-                    <Link
-                        to={`/courses/${course._id || course.id}`}
-                        className="btn-premium btn-primary w-full group/btn !py-3 mb-2 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
-                    >
-                        Initialize Module
-                        <FaChevronRight className="text-[10px] group-hover/btn:translate-x-1 transition-transform" />
-                    </Link>
+                    {/* CTA Button */}
+                    {hasAccess ? (
+                        // Enrolled: go directly to the course reader
+                        <Link
+                            to={`/courses/${courseId}`}
+                            className="btn-premium btn-primary w-full group/btn !py-3 mb-2 flex items-center justify-center gap-2"
+                        >
+                            CONTINUE COURSE
+                            <FaChevronRight className="text-[10px] group-hover/btn:translate-x-1 transition-transform" />
+                        </Link>
+                    ) : (
+                        // Not enrolled: go to checkout
+                        <button
+                            onClick={handleActionClick}
+                            className="btn-premium btn-primary w-full group/btn !py-3 mb-2 flex items-center justify-center gap-2"
+                        >
+                            {course.isFree ? (
+                                'ENROLL FREE'
+                            ) : (
+                                <>
+                                    <FaLock size={11} className="opacity-70" />
+                                    BUY NOW — {price}
+                                </>
+                            )}
+                            <FaChevronRight className="text-[10px] group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
+                    )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

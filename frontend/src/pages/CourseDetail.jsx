@@ -42,7 +42,23 @@ const CourseDetail = () => {
     const handleEnroll = async () => {
         if (!isAuthenticated) {
             toast.info('Please login to enroll');
-            navigate('/login', { state: { from: `/courses/${id}` } });
+            navigate(`/login?redirect=checkout/${id}&type=single`);
+            return;
+        }
+
+        // Check enrollment or bundle access
+        const hasAccess = user?.enrolledCourses?.some(enrollment =>
+            enrollment.courseId?.toString() === id || enrollment._id?.toString() === id || enrollment.courseId?._id?.toString() === id
+        ) || user?.hasAllCoursesAccess;
+
+        if (hasAccess) {
+            toast.info('You already have access to this course!');
+            navigate(`/courses/${id}/learn`);
+            return;
+        }
+
+        if (!course.isFree) {
+            navigate(`/checkout/${id}?type=single`);
             return;
         }
 
@@ -51,8 +67,8 @@ const CourseDetail = () => {
             await courseService.enrollCourse(id);
             setIsEnrolled(true);
             toast.success('Successfully enrolled!');
-            // Update local user state if needed by refreshing or context update
-            window.location.reload(); // Simple reload to sync state
+            // Update local state or redirect
+            navigate(`/courses/${id}/learn`);
         } catch (error) {
             toast.error(error.response?.data?.message || 'Enrollment failed');
         } finally {
@@ -61,13 +77,13 @@ const CourseDetail = () => {
     };
 
     const startLearning = () => {
-        // Navigate to the appropriate page based on enrollment status
-        if (isEnrolled) {
-            // User is enrolled - go to course access/reading progress
-            navigate(`/courses/${id}/access`);
+        // Enrollment or bundle access check
+        const hasAccess = isEnrolled || user?.hasAllCoursesAccess;
+
+        if (hasAccess) {
+            navigate(`/courses/${id}/learn`);
         } else {
-            // User is not enrolled - go to enrollment page
-            navigate(`/courses/${id}/enroll`);
+            handleEnroll();
         }
     };
 
@@ -117,7 +133,7 @@ const CourseDetail = () => {
                                 data-testid={isEnrolled ? "start-learning-button" : "enroll-button"}
                             >
                                 <FaPlay className="mr-2" />
-                                {isEnrolled ? 'Continue Learning' : 'Enroll Now - Free'}
+                                {isEnrolled || user?.hasAllCoursesAccess ? 'Continue Learning' : (course.isFree ? 'Enroll Now - Free' : `Enroll Now - $${course.price || 29}`)}
                             </button>
                         </div>
 

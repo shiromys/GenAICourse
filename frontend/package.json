@@ -16,6 +16,8 @@
         "test:e2e:headed": "playwright test e2e/tests --headed"
     },
     "dependencies": {
+        "@stripe/react-stripe-js": "^5.6.0",
+        "@stripe/stripe-js": "^8.8.0",
         "axios": "^1.6.2",
         "framer-motion": "^10.16.5",
         "lucide-react": "^0.563.0",

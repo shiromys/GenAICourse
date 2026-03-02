@@ -1,15 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaCheck, FaBolt } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 
 const Pricing = () => {
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    const handleBundlePurchase = () => {
+        if (!isAuthenticated) {
+            navigate('/register?redirect=checkout/all&type=all');
+        } else {
+            navigate('/checkout/all?type=all');
+        }
+    };
+
     return (
         <section id="pricing" className="py-32 bg-[#F8FAFC] min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
             {/* Ambient Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-indigo-100/50 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-blue-100/50 blur-[120px] rounded-full" />
+                <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-red-100/50 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-slate-100/50 blur-[120px] rounded-full" />
             </div>
 
             <div className="container mx-auto px-4 relative z-10">
@@ -17,9 +29,9 @@ const Pricing = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-block px-4 py-1.5 mb-6 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-black uppercase tracking-[0.2em]"
+                        className="inline-block px-4 py-1.5 mb-6 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-black uppercase tracking-[0.2em]"
                     >
-                        Our Pricing
+                        genaicourse Pricing
                     </motion.div>
                     <motion.h2
                         initial={{ opacity: 0, y: 10 }}
@@ -27,7 +39,7 @@ const Pricing = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight"
                     >
-                        Simple <span className="text-indigo-600">and Transparent </span>
+                        Simple <span className="text-red-600">and Transparent </span>
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
@@ -46,7 +58,7 @@ const Pricing = () => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="bg-white rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col group hover:border-indigo-200 transition-all duration-500"
+                        className="bg-white rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col group hover:border-red-200 transition-all duration-500"
                     >
                         <div className="mb-8">
                             <h3 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">One-Course plan</h3>
@@ -86,7 +98,7 @@ const Pricing = () => {
 
                         <div className="mb-8">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
+                                <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg shadow-red-600/20">
                                     <FaBolt size={18} />
                                 </div>
                                 <h3 className="text-2xl font-black text-white uppercase tracking-tight">All Courses pack</h3>
@@ -107,9 +119,12 @@ const Pricing = () => {
                             <FeatureItem text="Future Course Updates (Free)" dark />
                         </div>
 
-                        <Link to="/register?plan=pro" className="w-full py-5 px-8 rounded-2xl bg-indigo-600 text-white font-black text-center shadow-[0_20px_40px_rgba(79,70,229,0.3)] hover:bg-indigo-500 transition-all text-lg">
+                        <button
+                            onClick={handleBundlePurchase}
+                            className="w-full py-5 px-8 rounded-2xl bg-red-600 text-white font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] hover:bg-red-500 transition-all text-lg"
+                        >
                             Get All-Access Pass
-                        </Link>
+                        </button>
                     </motion.div>
                 </div>
             </div>
@@ -119,8 +134,8 @@ const Pricing = () => {
 
 const FeatureItem = ({ text, dark }) => (
     <div className="flex items-center gap-4 group">
-        <div className={`w-3 h-3 rounded-full flex items-center justify-center flex-shrink-0 ${dark ? 'bg-indigo-500' : 'bg-indigo-100'}`}>
-            <FaCheck size={8} className={dark ? 'text-white' : 'text-indigo-600'} />
+        <div className={`w-3 h-3 rounded-full flex items-center justify-center flex-shrink-0 ${dark ? 'bg-red-500' : 'bg-red-100'}`}>
+            <FaCheck size={8} className={dark ? 'text-white' : 'text-red-600'} />
         </div>
         <span className={`font-bold transition-colors text-sm uppercase tracking-wide ${dark ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>{text}</span>
     </div>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { toast } from 'react-toastify';
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle, FaGithub, FaLinkedinIn } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const Register = () => {
+    const [searchParams] = useSearchParams();
+    const redirectPath = searchParams.get('redirect');
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -39,8 +42,8 @@ const Register = () => {
         try {
             const { confirmPassword, ...registerData } = formData;
             await register(registerData);
-            toast.success('Account created successfully!');
-            navigate('/dashboard');
+            toast.success('Registration successful! Please log in with your credentials.');
+            navigate('/login');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Registration failed');
         } finally {

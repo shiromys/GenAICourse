@@ -77,20 +77,18 @@ const CourseAccess = () => {
             {/* Header */}
             <div className="bg-white border-b border-gray-200 sticky top-16 z-40 shadow-sm">
                 <div className="container py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-6">
-                            <Link
-                                to={`/courses/${id}`}
-                                className="text-gray-500 hover:text-brand transition-colors flex items-center absolute left-0 font-medium"
-                            >
-                                <span className="text-lg">←</span>
-                                <span className="ml-2 hidden md:inline">Back to Course</span>
-                            </Link>
+                    <div className="flex items-center">
+                        <Link
+                            to={`/courses/${id}`}
+                            className="text-gray-500 hover:text-brand transition-colors flex items-center font-medium"
+                        >
+                            <span className="text-lg">←</span>
+                            <span className="ml-2 hidden md:inline">Back to Course</span>
+                        </Link>
 
-                            <h1 className="text-xl font-black text-brand w-full text-center">
-                                My Learning Progress
-                            </h1>
-                        </div>
+                        <h1 className="flex-1 text-xl font-black text-brand text-center">
+                            My Learning Progress
+                        </h1>
 
                         <div className="text-accent">
                             <FaBookOpen size={24} />

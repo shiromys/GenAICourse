@@ -76,7 +76,7 @@ const moduleSchema = new mongoose.Schema({
     description: {
         type: String,
         trim: true,
-        maxlength: [1000, 'Description cannot be more than 1000 characters']
+        maxlength: [2000, 'Description cannot be more than 2000 characters']
     },
     learningObjectives: [{
         type: String,
@@ -106,12 +106,12 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a course title'],
         trim: true,
-        maxlength: [100, 'Title cannot be more than 100 characters']
+        maxlength: [200, 'Title cannot be more than 200 characters']
     },
     description: {
         type: String,
         required: [true, 'Please provide a course description'],
-        maxlength: [500, 'Description cannot be more than 500 characters']
+        maxlength: [2000, 'Description cannot be more than 2000 characters']
     },
     thumbnail: {
         type: String,

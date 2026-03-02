@@ -40,10 +40,7 @@ export const resetPasswordTemplate = (name, resetUrl) => `
       </p>
     </div>
 
-    <div style="margin-top: 30px; font-size: 14px; color: #64748b; text-align: center;">
-      <p>Alternatively, you can copy and paste the following link into your browser:</p>
-      <p style="word-break: break-all; color: #4f46e5; background-color: #f8fafc; padding: 10px; border-radius: 4px; font-family: monospace;">${resetUrl}</p>
-    </div>
+    
 
     <div style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center;">
       <p style="color: #9ca3af; font-size: 12px;">

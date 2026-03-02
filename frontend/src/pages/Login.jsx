@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { toast } from 'react-toastify';
 import { FaEye, FaEyeSlash, FaGoogle, FaGithub, FaLinkedinIn } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Login = () => {
+    const [searchParams] = useSearchParams();
+    const redirectPath = searchParams.get('redirect');
+
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -31,7 +34,7 @@ const Login = () => {
         try {
             await login(formData);
             toast.success('Welcome back!');
-            navigate('/dashboard');
+            navigate(redirectPath ? `/${redirectPath}` : '/dashboard');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Login failed');
         } finally {

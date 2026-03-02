@@ -107,7 +107,7 @@ const AdminJSONUpload = () => {
                             {isSaving ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                    Processing Neural Data...
+                                    Processing genaicourse Data...
                                 </>
                             ) : (
                                 'Publish Global Access'

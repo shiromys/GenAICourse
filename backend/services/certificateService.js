@@ -351,7 +351,7 @@ export function generateCertificateHTML(data) {
                 </div>
                 
                 <div class="sig">
-                    <div class="sig-font">Certifying Authority</div>
+                    <div class="sig-font">GenAiCourse.io</div>
                     <div class="sig-line"></div>
                     <div class="sig-label">Certifying Authority</div>
                 </div>

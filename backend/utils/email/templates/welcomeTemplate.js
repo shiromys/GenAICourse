@@ -14,7 +14,7 @@ export const welcomeTemplate = (name) => `
     <div style="text-align: center; margin-bottom: 30px;">
       <h1 style="color: #2563eb; font-size: 28px; margin: 0;">GENAICOURSE.IO</h1>
       <p style="color: #64748b; font-size: 16px;">Transform Your Career with AI</p>
-    </div>
+    </div> 
     
     <div style="text-align: center; margin-bottom: 30px;">
       <h2 style="color: #1e293b; font-size: 24px; margin-bottom: 10px;">Welcome Aboard, ${name}! 🎉</h2>

@@ -354,7 +354,7 @@ const AdminDashboard = () => {
                                         <thead className="bg-slate-50/80 text-slate-500 uppercase text-[10px] font-black tracking-[0.2em]">
                                             <tr>
                                                 <th className="px-8 py-5">Identify</th>
-                                                <th className="px-8 py-5">Neural ID</th>
+                                                <th className="px-8 py-5">genaicourse ID</th>
                                                 <th className="px-8 py-5">Security Role</th>
                                                 <th className="px-8 py-5">Initial Sync</th>
                                                 <th className="px-8 py-5 text-right">Directives</th>

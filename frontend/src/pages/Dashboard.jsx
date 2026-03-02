@@ -1,122 +1,177 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import courseService from '@/services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
-import { Link } from 'react-router-dom';
-import { FaGraduationCap, FaClock, FaTrophy, FaPlay } from 'react-icons/fa';
+import { Link, useSearchParams } from 'react-router-dom';
+import { FaGraduationCap, FaTrophy, FaPlay, FaBookOpen } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { motion } from 'framer-motion';
 
 const Dashboard = () => {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // ── On mount: detect payment=success in URL and refresh user ──────────────
     useEffect(() => {
-        const fetchEnrolledCourses = async () => {
-            try {
-                // We need to fetch details for courses in user.enrolledCourses
-                // A better approach in a real app would be an API endpoint like /api/courses/enrolled
-                // For now, let's fetch individual course progress which includes course info
-                if (user.enrolledCourses && user.enrolledCourses.length > 0) {
-                    const promises = user.enrolledCourses.map(course => {
-                        const courseId = typeof course === 'object' && course !== null ? course._id : course;
-                        return courseService.getCourseProgress(courseId).catch(() => null);
-                    });
+        if (searchParams.get('payment') === 'success') {
+            // Remove the query param from URL cleanly
+            setSearchParams({}, { replace: true });
+            // Refresh user profile to pick up the new enrollment
+            refreshUser().then(() => {
+                toast.success('🎉 Access Activated! Your course is now available.', { toastId: 'payment-success' });
+            });
+        }
+    }, []); // run once on mount
 
-                    const results = await Promise.all(promises);
-                    // Filter out failed requests or nulls
-                    setEnrolledCourses(results.filter(r => r && r.success).map(r => r.data));
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
+    // ── Fetch enrolled course progress details ─────────────────────────────────
+    const fetchEnrolledCourses = useCallback(async () => {
+        setLoading(true);
+        try {
+            if (user?.enrolledCourses && user.enrolledCourses.length > 0) {
+                const promises = user.enrolledCourses.map(enrollment => {
+                    const courseId = enrollment.courseId?._id || enrollment.courseId;
+                    return courseService.getCourseProgress(courseId).catch(() => null);
+                });
+
+                const results = await Promise.all(promises);
+                setEnrolledCourses(results.filter(r => r && r.success).map(r => r.data));
+            } else {
+                setEnrolledCourses([]);
             }
-        };
-
-        fetchEnrolledCourses();
+        } catch (error) {
+            console.error('Failed to fetch enrolled courses:', error);
+        } finally {
+            setLoading(false);
+        }
     }, [user]);
 
+    useEffect(() => {
+        fetchEnrolledCourses();
+    }, [fetchEnrolledCourses]);
+
     if (loading) return <Loader />;
+
+    const stats = [
+        {
+            label: 'Enrolled Courses',
+            value: user?.hasAllCoursesAccess ? 'All Access' : (user?.enrolledCourses?.length || 0),
+            icon: <FaGraduationCap size={26} />,
+            color: 'indigo',
+        },
+        {
+            label: 'Completed',
+            value: enrolledCourses.filter(c => c?.progressPercentage === 100).length,
+            icon: <FaTrophy size={26} />,
+            color: 'red',
+        },
+        {
+            label: 'In Progress',
+            value: enrolledCourses.filter(c => c?.progressPercentage > 0 && c?.progressPercentage < 100).length,
+            icon: <FaPlay size={22} />,
+            color: 'emerald',
+        },
+    ];
 
     return (
         <div className="section section-pt min-h-screen bg-[var(--bg-main)]">
             <div className="container">
-                <div className="flex items-center justify-between mb-10">
+
+                {/* Header */}
+                <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h1 className="text-3xl font-black mb-2 text-brand">My Dashboard</h1>
-                        <p className="text-gray-500">Welcome back, {user.name}!</p>
+                        <p className="text-xs font-black text-slate-400 uppercase tracking-[0.25em] mb-2">Welcome back</p>
+                        <h1 className="text-4xl font-black text-brand tracking-tight">
+                            {user?.name?.split(' ')[0]}'s Dashboard
+                        </h1>
                     </div>
+                    <Link to="/courses" className="btn-premium btn-primary hidden md:flex">
+                        Browse Courses
+                    </Link>
                 </div>
 
-                {/* Stats */}
-                <div className="grid grid-3 mb-12">
-                    <div className="card p-6 border border-gray-200 bg-white flex items-center shadow-sm rounded-2xl">
-                        <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4">
-                            <FaGraduationCap size={24} />
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-brand">{enrolledCourses.length}</div>
-                            <div className="text-sm text-gray-500">Enrolled Courses</div>
-                        </div>
-                    </div>
-                    <div className="card p-6 border border-gray-200 bg-white flex items-center shadow-sm rounded-2xl">
-                        <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mr-4">
-                            <FaTrophy size={24} />
-                        </div>
-                        <div>
-                            <div className="text-2xl font-bold text-brand">
-                                {enrolledCourses.filter(c => c && c.progressPercentage === 100).length}
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                    {stats.map((stat, idx) => (
+                        <motion.div
+                            key={stat.label}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className={`group card p-8 bg-white border border-gray-100 hover:border-${stat.color}-100 hover:shadow-xl transition-all duration-500 rounded-[2rem] flex items-center shadow-lg shadow-${stat.color}-500/5`}
+                        >
+                            <div className={`w-16 h-16 rounded-2xl bg-${stat.color}-50 flex items-center justify-center text-${stat.color}-600 transition-transform duration-300 group-hover:scale-110`}>
+                                {stat.icon}
                             </div>
-                            <div className="text-sm text-gray-500">Certificates Earned</div>
-                        </div>
-                    </div>
+                            <div className="ml-6">
+                                <div className="text-3xl font-black text-brand mb-0.5">{stat.value}</div>
+                                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</div>
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
 
-                <h2 className="section-title text-left mb-6 text-brand">Continue Learning</h2>
+                {/* Course List */}
+                <h2 className="text-2xl font-black text-brand mb-6">Continue Learning</h2>
 
                 {enrolledCourses.length > 0 ? (
-                    <div className="grid grid-2">
-                        {enrolledCourses.filter(progress => progress).map(progress => (
-                            <div key={progress._id} className="card p-6 flex flex-col md:flex-row gap-6 items-center bg-white border border-gray-200 shadow-sm rounded-2xl">
-                                <div className="w-full md:w-48 h-32 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                    <div className="grid grid-2 gap-6">
+                        {enrolledCourses.filter(Boolean).map((progress, idx) => (
+                            <motion.div
+                                key={progress._id || idx}
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.08 }}
+                                className="card p-6 flex flex-col md:flex-row gap-6 items-center bg-white border border-gray-100 shadow-sm rounded-2xl hover:shadow-lg transition-shadow"
+                            >
+                                <div className="w-full md:w-48 h-32 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
                                     <img
-                                        src={progress.courseId.thumbnail || 'https://placehold.co/400x250?text=Course'}
-                                        alt={progress.courseId.title}
+                                        src={progress.courseId?.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400'}
+                                        alt={progress.courseId?.title}
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
 
                                 <div className="flex-1 w-full">
-                                    <h3 className="text-xl font-bold mb-2 text-brand">{progress.courseId.title}</h3>
+                                    <h3 className="text-xl font-bold mb-2 text-brand">{progress.courseId?.title}</h3>
 
-                                    <div className="flex justify-between text-sm text-gray-500 mb-2">
-                                        <span>{progress.progressPercentage}% Completed</span>
-                                        <span>{progress.completedLessons.length} Lessons Done</span>
+                                    <div className="flex justify-between text-sm text-gray-500 mb-3">
+                                        <span className="font-semibold">{progress.progressPercentage || 0}% Completed</span>
+                                        <span>{progress.completedLessons?.length || 0} Lessons Done</span>
                                     </div>
 
-                                    <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+                                    <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
                                         <div
-                                            className="bg-accent h-2 rounded-full transition-all duration-500"
-                                            style={{ width: `${progress.progressPercentage}%` }}
-                                        ></div>
+                                            className="bg-red-600 h-2 rounded-full transition-all duration-500"
+                                            style={{ width: `${progress.progressPercentage || 0}%` }}
+                                        />
                                     </div>
 
                                     <Link
-                                        to={`/courses/${progress.courseId._id}/learn`}
-                                        className="btn-premium btn-primary inline-flex items-center text-sm px-6"
+                                        to={`/courses/${progress.courseId?._id}/learn`}
+                                        className="btn-premium btn-primary inline-flex items-center text-sm px-6 gap-2"
                                     >
-                                        <FaPlay className="mr-2" /> Resume
+                                        <FaPlay size={12} />
+                                        {progress.progressPercentage > 0 ? 'Resume Course' : 'Start Course'}
                                     </Link>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-                        <h3 className="text-xl font-bold text-brand">You haven't enrolled in any courses yet.</h3>
-                        <p className="text-gray-500 mt-2 mb-6">Start your learning journey today!</p>
-                        <Link to="/courses" className="btn-premium btn-primary">Browse Courses</Link>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center py-24 bg-gray-50 rounded-3xl border border-dashed border-gray-200"
+                    >
+                        <FaBookOpen className="mx-auto text-5xl text-gray-300 mb-4" />
+                        <h3 className="text-xl font-bold text-brand mb-2">No courses yet.</h3>
+                        <p className="text-gray-400 mb-6 font-medium">Start your AI learning journey today!</p>
+                        <Link to="/courses" className="btn-premium btn-primary">
+                            Browse Courses
+                        </Link>
+                    </motion.div>
                 )}
             </div>
         </div>

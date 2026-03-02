@@ -339,64 +339,86 @@ export const uploadCourseFromJSON = async (req, res, next) => {
         if (!courseData.title || !courseData.description || !courseData.modules || !Array.isArray(courseData.modules)) {
             return res.status(400).json({
                 success: false,
-                message: 'Invalid JSON: Course must have title, description, and modules array'
+                message: 'Invalid JSON Structure: Course must have title, description, and modules array'
             });
         }
 
-        // Normalize field names to match schema
+        // Normalize Category (Required field in schema)
+        const validCategories = ['AI/ML', 'Web Development', 'Data Science', 'Cloud Computing', 'Human Resources', 'Social Impact & Non-profits', 'Other'];
+
+        // If category is not provided or invalid, guess from title/content or default to 'Other'
+        if (!courseData.category || !validCategories.includes(courseData.category)) {
+            const content = (courseData.title + ' ' + courseData.description).toLowerCase();
+            if (content.includes('hr ') || content.includes('human resources') || content.includes('recruitment')) {
+                courseData.category = 'Human Resources';
+            } else if (content.includes('ai ') || content.includes('machine learning') || content.includes('intelligence')) {
+                courseData.category = 'AI/ML';
+            } else if (content.includes('web ') || content.includes('javascript') || content.includes('react')) {
+                courseData.category = 'Web Development';
+            } else {
+                courseData.category = 'Other';
+            }
+        }
+
+        // Normalize Level
+        const validLevels = ['Beginner', 'Intermediate', 'Advanced', 'Beginner to Intermediate'];
+        if (!courseData.level || !validLevels.includes(courseData.level)) {
+            courseData.level = 'Beginner';
+        }
+
+        // Normalize field names for modules and lessons to match schema
         if (courseData.modules && Array.isArray(courseData.modules)) {
-            courseData.modules = courseData.modules.map(module => ({
-                title: module.moduleTitle || module.title || 'Untitled Module',
+            courseData.modules = courseData.modules.map((module, mIdx) => ({
+                title: module.moduleTitle || module.title || `Module ${mIdx + 1}`,
                 description: module.description || '',
+                order: module.order || mIdx,
                 lessons: (module.lessons && Array.isArray(module.lessons))
-                    ? module.lessons.map(lesson => ({
-                        title: lesson.lessonTitle || lesson.title || 'Untitled Lesson',
+                    ? module.lessons.map((lesson, lIdx) => ({
+                        title: lesson.lessonTitle || lesson.title || `Lesson ${lIdx + 1}`,
                         content: lesson.content || 'No content provided',
                         type: lesson.type || 'text',
-                        keyPoints: lesson.keyPoints || []
+                        keyPoints: lesson.keyPoints || [],
+                        order: lesson.order || lIdx
                     }))
                     : []
             }));
-        } else {
-            courseData.modules = [];
         }
-
-
 
         // Add metadata
         if (req.user && req.user._id) {
             courseData.createdBy = req.user._id;
         } else {
-            // For testing, use a default admin ID or skip
             const defaultAdmin = await User.findOne({ role: 'admin' });
             if (defaultAdmin) {
                 courseData.createdBy = defaultAdmin._id;
             } else {
                 return res.status(400).json({
                     success: false,
-                    message: 'No admin user found'
+                    message: 'No administrative account found to assign as course creator.'
                 });
             }
         }
-        courseData.isPublished = true; // Assume published when uploaded
+
+        courseData.isPublished = true;
 
         const course = new Course(courseData);
         await course.save();
 
-        console.log('Course saved successfully:', course.title);
+        console.log(`✅ Course "${course.title}" published via JSON.`);
         res.status(201).json({
             success: true,
-            message: 'Course uploaded successfully from JSON',
+            message: 'Course published successfully',
             data: course
         });
     } catch (error) {
-        console.error('JSON Upload Error:', error.message);
-        console.error('Full error:', error);
+        console.error('❌ JSON Upload Error:', error);
+
         if (error.name === 'ValidationError') {
+            const validationErrors = Object.values(error.errors).map(e => e.message);
             return res.status(400).json({
                 success: false,
-                message: 'Validation failed',
-                errors: Object.values(error.errors).map(e => e.message)
+                message: 'Data Validation Failed: The JSON provided does not meet the course schema requirements.',
+                errors: validationErrors
             });
         }
         next(error);

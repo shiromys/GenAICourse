@@ -9,6 +9,7 @@ import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import Loader from './components/common/Loader';
 import AdminRoute from './components/routing/AdminRoute';
+import ScrollToTop from './components/common/ScrollToTop';
 
 // Page Imports
 import Home from './pages/Home';
@@ -28,14 +29,20 @@ import AssessmentCenter from './components/assessment/AssessmentCenter';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import OAuthCallback from './pages/OAuthCallback';
+import Profile from './pages/Profile';
+import PaymentPage from './pages/PaymentPage';
+import PaymentSuccess from './pages/PaymentSuccess';
+
+// Legal Page Imports
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
+import RefundPolicy from './pages/RefundPolicy';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CourseForm from './pages/admin/CourseForm';
 import AdminJSONUpload from './pages/admin/AdminJSONUpload';
 import AdminCourseEnrollments from './pages/admin/AdminCourseEnrollments';
-
-
 
 const PrivateRoute = () => {
     const { isAuthenticated, loading } = useAuth();
@@ -52,8 +59,6 @@ const App = () => {
         </AuthProvider>
     );
 };
-
-import ScrollToTop from './components/common/ScrollToTop';
 
 const AppContent = () => {
     const location = useLocation();
@@ -90,8 +95,16 @@ const AppContent = () => {
                         <Route path="/how-it-works" element={<PageContainer><HowItWorks /></PageContainer>} />
                         <Route path="/oauth-callback" element={<PageContainer><OAuthCallback /></PageContainer>} />
 
+                        {/* Legal Routes */}
+                        <Route path="/privacy" element={<PageContainer><PrivacyPolicy /></PageContainer>} />
+                        <Route path="/terms" element={<PageContainer><TermsOfUse /></PageContainer>} />
+                        <Route path="/refund" element={<PageContainer><RefundPolicy /></PageContainer>} />
+
                         <Route element={<PrivateRoute />}>
                             <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />
+                            <Route path="/profile" element={<PageContainer><Profile /></PageContainer>} />
+                            <Route path="/checkout/:id" element={<PageContainer><PaymentPage /></PageContainer>} />
+                            <Route path="/payment-success" element={<PageContainer><PaymentSuccess /></PageContainer>} />
                         </Route>
 
                         {/* Admin Routes */}
