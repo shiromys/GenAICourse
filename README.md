@@ -286,7 +286,7 @@ genaicourse-mern/
 │   │   └── uploadMiddleware.js     # Multer config
 │   ├── models/                     # Mongoose schemas
 │   │   ├── Course.js               # Course structure
-│   │   ├── User.js                 # User profile & auth
+│   │   ├── User.js                 # User profile & authopencode
 │   │   ├── UserQuizAttempt.js      # Assessment records
 │   │   └── Module.js / Lesson.js   # (If separated)
 │   ├── routes/                     # API route definitions
@@ -722,3 +722,12 @@ The GenAI Course Platform is a complete MERN stack application featuring:
 **Last Updated**: 2026-02-05
 **Version**: 1.2.0
 **Status**: Production Ready with Complete Test Suites
+
+
+# OAuth Configuration (GET THESE FROM DEVELOPER CONSOLES)
+GOOGLE_CLIENT_ID=964245209859-5efigq5fr0ghbmfbv3fhdtgksfiejgjo.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GITHUB_CLIENT_ID=Ov23li2XqvFxZlBM8e7j
+GITHUB_CLIENT_SECRET=58143b07b37abee22eba2a19543c1cffee8d0074
+LINKEDIN_CLIENT_ID=REPLACE_WITH_YOUR_LINKEDIN_CLIENT_ID
+LINKEDIN_CLIENT_SECRET=REPLACE_WITH_YOUR_LINKEDIN_CLIENT_SECRET
