@@ -1,13 +1,16 @@
 import axios from 'axios';
 
-// Vite uses import.meta.env for environment variables
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// RELATIVE PATH FIX: 
+// In production, this resolves to https://genaicourse-production.up.railway.app/api
+// In development, it falls back to localhost.
+const API_URL = import.meta.env.MODE === 'production' ? '/api' : 'http://localhost:5000/api';
 
 const api = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: true // Essential for sending/receiving cookies across origins
 });
 
 api.interceptors.request.use(
