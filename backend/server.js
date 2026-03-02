@@ -25,6 +25,8 @@ import quizRoutes from './routes/quizRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js';
 import learningPathRoutes from './routes/learningPathRoutes.js';
 import assessmentRoutes from './routes/assessment.js';
+import assessmentUploadRoutes from './routes/assessmentUpload.js'; // Added missing import
+import courseAssessmentRoutes from './routes/courseAssessment.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import passport from 'passport';
 import configurePassport from './config/passport.js';
@@ -52,6 +54,7 @@ const startServer = async () => {
     configurePassport();
     app.use(passport.initialize());
 
+    // Webhook must be before express.json()
     app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 
     app.use(express.json({ limit: '10mb' }));
@@ -61,19 +64,23 @@ const startServer = async () => {
         app.use(morgan('dev'));
     }
 
-    // API Routes
+    // API Routes - Organized to avoid conflicts
     app.use('/api/auth', authRoutes);
     app.use('/api/courses', courseRoutes);
     app.use('/api/admin', adminRoutes);
     app.use('/api/quizzes', quizRoutes);
     app.use('/api/certificates', certificateRoutes);
     app.use('/api/learning-paths', learningPathRoutes);
-    app.use('/api/assessments', assessmentRoutes);
     app.use('/api/payments', paymentRoutes);
+    app.use('/api/courses', courseAssessmentRoutes);
+
+    // RECTIFIED: Specific upload routes must come BEFORE general assessment routes
+    app.use('/api/assessments', assessmentUploadRoutes); 
+    app.use('/api/assessments', assessmentRoutes); 
 
     // STATIC FILE SERVING FOR PRODUCTION
     if (process.env.NODE_ENV === 'production') {
-        // Updated Path: Ensures it finds the dist folder correctly in Railway Monorepo
+        // Path adjusted for Railway monorepo structure
         const buildPath = path.resolve(__dirname, '..', 'frontend', 'dist');
         app.use(express.static(buildPath));
 
