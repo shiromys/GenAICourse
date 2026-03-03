@@ -1,21 +1,17 @@
 import axios from 'axios';
 
-/**
- * PRODUCTION-READY API CONFIGURATION
- * Forces relative paths in production to ensure the frontend 
- * communicates with the Railway domain instead of localhost.
- */
-
-
-// FORCE relative paths in production to prevent localhost leaks
-const API_URL = import.meta.env.MODE === 'production' 
-    ? '/api' 
-    : 'http://localhost:5000/api';
+// FORCE a relative path in production. This ensures that on Railway, 
+// the app looks for /api on genaicourse-production.up.railway.app instead of localhost.
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api' 
+    : '/api';
 
 const api = axios.create({
     baseURL: API_URL,
+    headers: { 'Content-Type': 'application/json' },
     withCredentials: true 
 });
+
 // ... keep existing interceptors
 
 // Request Interceptor: Attach JWT token to every outgoing request

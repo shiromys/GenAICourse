@@ -1,18 +1,23 @@
 import express from 'express';
-import { protect, authorize } from '../middleware/auth.js'; // Added authorize import
+import { protect, authorize } from '../middleware/auth.js';
 import {
   getAssessmentForCourse,
   takeAssessment,
   getAssessmentResults,
   getAssessmentHistory
 } from '../controllers/assessmentController.js';
-import Course from '../models/Course.js';
-import UserProgress from '../models/UserProgress.js';
 
 const router = express.Router();
 
-// All routes are protected by default
 router.use(protect);
+
+// FIX: Added 'student' to the authorized roles so learners can actually take the quiz
+router.get('/:courseId/quiz', authorize('student', 'instructor', 'admin'), getAssessmentForCourse);
+router.post('/:courseId/take', authorize('student', 'instructor', 'admin'), takeAssessment);
+
+// Ensure results and history are also available to students
+router.get('/:courseId/results/:attemptId', authorize('student', 'instructor', 'admin'), getAssessmentResults);
+router.get('/:courseId/history', authorize('student', 'instructor', 'admin'), getAssessmentHistory);
 
 // @route   GET /api/assessments/:courseId/quiz
 // @desc    Get assessment for taking
