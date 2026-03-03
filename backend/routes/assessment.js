@@ -1,36 +1,39 @@
 import express from 'express';
-import { protect } from '../middleware/auth.js';
+import { protect, authorize } from '../middleware/auth.js'; // Added authorize import
 import {
   getAssessmentForCourse,
   takeAssessment,
   getAssessmentResults,
   getAssessmentHistory
 } from '../controllers/assessmentController.js';
+import Course from '../models/Course.js';
+import UserProgress from '../models/UserProgress.js';
 
 const router = express.Router();
 
-// All routes are protected
+// All routes are protected by default
 router.use(protect);
 
 // @route   GET /api/assessments/:courseId/quiz
 // @desc    Get assessment for taking
-// @access  Private (Student)
-router.get('/:courseId/quiz', getAssessmentForCourse);
+// @access  Private (Student, Instructor, Admin)
+// FIX: Explicitly authorize 'student' to prevent 403 Forbidden errors
+router.get('/:courseId/quiz', authorize('student', 'instructor', 'admin'), getAssessmentForCourse);
 
 // @route   POST /api/assessments/:courseId/take
 // @desc    Take course assessment
-// @access  Private (Student only)
-router.post('/:courseId/take', takeAssessment);
+// @access  Private (Student, Instructor, Admin)
+router.post('/:courseId/take', authorize('student', 'instructor', 'admin'), takeAssessment);
 
 // @route   GET /api/assessments/:courseId/results/:attemptId
 // @desc    Get assessment results and feedback
 // @access  Private
-router.get('/:courseId/results/:attemptId', getAssessmentResults);
+router.get('/:courseId/results/:attemptId', authorize('student', 'instructor', 'admin'), getAssessmentResults);
 
 // @route   GET /api/assessments/:courseId/history
 // @desc    Get user's assessment history for a course
 // @access  Private
-router.get('/:courseId/history', getAssessmentHistory);
+router.get('/:courseId/history', authorize('student', 'instructor', 'admin'), getAssessmentHistory);
 
 // @route   GET /api/assessments/:courseId/progress-check
 // @desc    Check if user can take assessment (debug endpoint)
@@ -60,7 +63,7 @@ router.get('/:courseId/progress-check', async (req, res) => {
         completedLessons: completedLessonsCount,
         totalLessons: totalLessonsCount,
         canTakeAssessment: completedLessonsCount >= totalLessonsCount,
-        progressPercentage: Math.round((completedLessonsCount / totalLessonsCount) * 100)
+        progressPercentage: totalLessonsCount > 0 ? Math.round((completedLessonsCount / totalLessonsCount) * 100) : 0
       }
     });
   } catch (error) {

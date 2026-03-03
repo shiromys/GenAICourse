@@ -5,17 +5,18 @@ import axios from 'axios';
  * Forces relative paths in production to ensure the frontend 
  * communicates with the Railway domain instead of localhost.
  */
+
+
+// FORCE relative paths in production to prevent localhost leaks
 const API_URL = import.meta.env.MODE === 'production' 
     ? '/api' 
     : 'http://localhost:5000/api';
 
 const api = axios.create({
     baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    withCredentials: true // Essential for auth cookies and cross-origin security
+    withCredentials: true 
 });
+// ... keep existing interceptors
 
 // Request Interceptor: Attach JWT token to every outgoing request
 api.interceptors.request.use(
