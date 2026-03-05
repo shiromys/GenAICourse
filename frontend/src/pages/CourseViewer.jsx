@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import courseService from '../services/courseService.js';
+import certificateService from '../services/certificateService.js';
 import Loader from '../components/common/Loader.jsx';
-import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck, FaPlayCircle, FaClock, FaSignal, FaBookOpen } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck, FaPlayCircle, FaClock, FaSignal, FaBookOpen, FaMedal, FaDownload } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import AssessmentCenter from '../components/assessment/AssessmentCenter.jsx';
 
@@ -18,6 +19,9 @@ const CourseViewer = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [completedLessons, setCompletedLessons] = useState(new Set());
     const [showAssessment, setShowAssessment] = useState(false);
+    const [showCertificate, setShowCertificate] = useState(false);
+    const [existingCertificate, setExistingCertificate] = useState(null);
+    const [downloadingCert, setDownloadingCert] = useState(false);
 
     const queryParams = new URLSearchParams(window.location.search);
     const isPreview = queryParams.get('preview') === 'true';
@@ -41,6 +45,19 @@ const CourseViewer = () => {
                             completed.add(String(lesson.lessonId));
                         });
                         setCompletedLessons(completed);
+                    }
+
+                    // Check if this student already has a certificate for this course
+                    try {
+                        const certsData = await certificateService.getUserCertificates();
+                        const certs = certsData?.data?.certificates || [];
+                        const match = certs.find(c =>
+                            c.courseId?._id?.toString() === id ||
+                            c.courseId?.toString() === id
+                        );
+                        if (match) setExistingCertificate(match);
+                    } catch (e) {
+                        // Not critical — ignore
                     }
                 }
             } catch (error) {
@@ -119,6 +136,20 @@ const CourseViewer = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const handleDownloadCertificate = async () => {
+        if (!existingCertificate) return;
+        try {
+            setDownloadingCert(true);
+            const certId = existingCertificate._id || existingCertificate.id;
+            await certificateService.downloadCertificate(certId);
+            toast.success('Certificate downloaded!');
+        } catch (err) {
+            toast.error(err.message || 'Download failed. Please try again.');
+        } finally {
+            setDownloadingCert(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#F8FAFC] text-[var(--text-main)] font-sans pt-24 lg:pt-32 pb-20 selection:bg-red-50 selection:text-red-600">
             <div className="container mx-auto px-4 lg:px-6">
@@ -184,13 +215,28 @@ const CourseViewer = () => {
                                 {course.quizId && (
                                     <div className="mt-6">
                                         <button
-                                            onClick={() => setShowAssessment(true)}
+                                            onClick={() => { setShowAssessment(true); setShowCertificate(false); }}
                                             className={`w-full flex items-center justify-center gap-3 p-5 rounded-3xl font-black text-sm uppercase tracking-widest transition-all duration-500 ${showAssessment
-                                                    ? 'bg-red-600 text-white shadow-xl shadow-red-900/40'
-                                                    : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-xl shadow-indigo-900/20'
+                                                ? 'bg-red-600 text-white shadow-xl shadow-red-900/40'
+                                                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-xl shadow-indigo-900/20'
                                                 }`}
                                         >
                                             <FaClipboardCheck /> Final Assessment
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Certificate button if student already certified this course */}
+                                {existingCertificate && (
+                                    <div className="mt-4">
+                                        <button
+                                            onClick={() => { setShowCertificate(true); setShowAssessment(false); }}
+                                            className={`w-full flex items-center justify-center gap-3 p-5 rounded-3xl font-black text-sm uppercase tracking-widest transition-all duration-500 ${showCertificate
+                                                ? 'bg-yellow-500 text-white shadow-xl shadow-yellow-900/40'
+                                                : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/20'
+                                                }`}
+                                        >
+                                            <FaMedal /> My Certificate
                                         </button>
                                     </div>
                                 )}
@@ -243,14 +289,61 @@ const CourseViewer = () => {
                         <div id="lesson-content" className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[600px]">
                             <AnimatePresence mode='wait'>
                                 <motion.div
-                                    key={showAssessment ? 'assessment' : currentLesson?._id}
+                                    key={showCertificate ? 'certificate' : showAssessment ? 'assessment' : currentLesson?._id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.4 }}
                                     className="p-8 lg:p-16"
                                 >
-                                    {!showAssessment ? (
+                                    {showCertificate && existingCertificate ? (
+                                        <div className="text-center py-12">
+                                            <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-yellow-50 border-2 border-yellow-200 mb-8">
+                                                <FaMedal className="text-yellow-500 text-4xl" />
+                                            </div>
+                                            <h2 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tight">Course Certified</h2>
+                                            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-12">You have already earned this certificate</p>
+
+                                            {/* Certificate Preview Card */}
+                                            <div className="max-w-lg mx-auto bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-3xl p-10 shadow-xl text-left">
+                                                <div className="flex items-center gap-3 mb-6">
+                                                    <div className="w-10 h-10 rounded-xl bg-yellow-500 flex items-center justify-center">
+                                                        <FaMedal className="text-white" />
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-700">Certificate of Achievement</span>
+                                                </div>
+                                                <h3 className="text-2xl font-black text-slate-900 mb-1">{existingCertificate.userName || 'Student'}</h3>
+                                                <p className="text-slate-500 text-sm font-medium mb-6">has successfully completed</p>
+                                                <h4 className="text-xl font-black text-yellow-700 mb-6">{existingCertificate.courseTitle || course.title}</h4>
+                                                <div className="grid grid-cols-2 gap-4 mb-8">
+                                                    <div className="bg-white rounded-2xl p-4 border border-yellow-100">
+                                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Score</div>
+                                                        <div className="text-2xl font-black text-slate-900">{existingCertificate.score ?? 'N/A'}%</div>
+                                                    </div>
+                                                    <div className="bg-white rounded-2xl p-4 border border-yellow-100">
+                                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Grade</div>
+                                                        <div className="text-2xl font-black text-emerald-600">{existingCertificate.grade ?? 'Pass'}</div>
+                                                    </div>
+                                                    <div className="col-span-2 bg-white rounded-2xl p-4 border border-yellow-100">
+                                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Completed On</div>
+                                                        <div className="text-base font-black text-slate-900">
+                                                            {existingCertificate.completionDate
+                                                                ? new Date(existingCertificate.completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                                                                : 'N/A'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={handleDownloadCertificate}
+                                                    disabled={downloadingCert}
+                                                    className="w-full flex items-center justify-center gap-3 p-5 rounded-2xl bg-yellow-500 hover:bg-yellow-600 text-white font-black text-sm uppercase tracking-widest transition-all active:scale-95 disabled:opacity-60"
+                                                >
+                                                    <FaDownload />
+                                                    {downloadingCert ? 'Downloading...' : 'Download Certificate PDF'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : !showAssessment ? (
                                         <>
                                             <div className="flex items-center gap-4 mb-10">
                                                 <span className="px-4 py-1.5 bg-red-50 text-red-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-red-100">

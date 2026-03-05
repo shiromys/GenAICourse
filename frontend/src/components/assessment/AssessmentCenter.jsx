@@ -218,7 +218,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
               <div className="flex items-center gap-4 text-gray-500 font-bold text-xs uppercase tracking-widest">
                 <span className="flex items-center gap-1.5"><HelpCircle size={14} />Question {currentQuestion + 1} of {assessment.questions.length}</span>
                 <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                <span className="flex items-center gap-1.5"><BookOpen size={14} />80% to pass</span>
+                <span className="flex items-center gap-1.5"><BookOpen size={14} />50% to pass</span>
               </div>
             </div>
 
@@ -398,7 +398,7 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
             <p className="text-xl text-gray-500 max-w-xl mx-auto font-medium leading-[1.6]">
               {isPassed
                 ? "You've successfully conquered the final challenge. Your professional certification is ready for validation."
-                : "You didn’t pass this time. Please review the lessons and try the quiz again."
+                : "You didn't reach 50% this time. Please review the lessons and try the quiz again."
               }
             </p>
           </div>
@@ -406,7 +406,7 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
           {/* Stats Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100 bg-gray-50">
             <ResultStat label="Sync Score" value={`${results.attempt?.score ?? results.score ?? 0}`} sub={`of ${results.attempt?.totalPoints ?? results.totalPoints ?? 0} pts`} />
-            <ResultStat label="Course Accuracy" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub="80% required" highlight={isPassed} />
+            <ResultStat label="Course Accuracy" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub="50% required" highlight={isPassed} />
             <ResultStat label="Course Rank" value={results.attempt?.grade ?? results.grade ?? 'N/A'} sub="Standard Certified" />
           </div>
 

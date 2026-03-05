@@ -175,8 +175,8 @@ export const takeAssessment = asyncHandler(async (req, res) => {
     percentageScore = Math.round((score / totalPoints) * 100);
   }
 
-  // Determine pass/fail (80% required)
-  const passed = percentageScore >= 80;
+  // Determine pass/fail (50% required)
+  const passed = percentageScore >= 50;
   const grade = passed ? getGrade(percentageScore) : 'Fail';
 
   // Prepare answers in the correct format for UserQuizAttempt model
@@ -328,15 +328,16 @@ export const getAssessmentHistory = asyncHandler(async (req, res) => {
   });
 });
 
-// Helper function to determine grade
+// Helper function to determine grade (50% passing threshold)
 function getGrade(score) {
   if (score >= 95) return 'A+';
   if (score >= 90) return 'A';
   if (score >= 85) return 'B+';
   if (score >= 80) return 'B';
-  if (score >= 75) return 'C+';
-  if (score >= 70) return 'C';
-  return 'Pass';
+  if (score >= 70) return 'C+';
+  if (score >= 60) return 'C';
+  if (score >= 50) return 'Pass';
+  return 'Fail';
 }
 
 // Helper function to generate certificate
