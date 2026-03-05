@@ -151,265 +151,213 @@ const CourseViewer = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] text-[var(--text-main)] font-sans pt-24 lg:pt-32 pb-20 selection:bg-red-50 selection:text-red-600">
-            <div className="container mx-auto px-4 lg:px-6">
-                <div className="flex flex-col lg:flex-row gap-10">
+        <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-orange-100 selection:text-orange-600">
+            <div className="flex flex-col lg:flex-row min-h-screen">
 
-                    {/* LEFT COLUMN: Sidebar Navigation */}
-                    <div className="w-full lg:w-96 flex-shrink-0 lg:sticky lg:top-32 h-fit">
-                        <div className="bg-[#0F172A] rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-800 flex flex-col max-h-[calc(100vh-160px)]">
-                            <div className="p-8 border-b border-slate-800 bg-slate-900/50">
-                                <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-3">
-                                    <FaBookOpen className="text-red-500" />
-                                    Course Content
-                                </h3>
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar pb-8">
-                                {course.modules.map((mod, mIdx) => (
-                                    <div key={mod._id} className="bg-slate-900/40 rounded-3xl overflow-hidden border border-slate-800/50">
-                                        <div className="px-5 py-4 bg-slate-800/80 border-b border-slate-800/30">
-                                            <h4 className="font-bold text-white text-[10px] uppercase tracking-widest flex items-center gap-2">
-                                                <span className="text-red-500">M{mIdx + 1}</span>
-                                                <span className="truncate">{mod.title}</span>
-                                            </h4>
-                                        </div>
-                                        <div className="divide-y divide-slate-800/20">
-                                            {mod.lessons.map((less, lIdx) => {
-                                                const lessonId = less._id || less.id;
-                                                const isCompleted = completedLessons.has(String(lessonId));
-                                                const isCurrent = mIdx === currentModuleIndex && lIdx === currentLessonIndex;
-
-                                                return (
-                                                    <button
-                                                        key={lessonId}
-                                                        onClick={() => {
-                                                            setShowAssessment(false);
-                                                            setCurrentModuleIndex(mIdx);
-                                                            setCurrentLessonIndex(lIdx);
-                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                        }}
-                                                        className={`w-full text-left p-4 flex items-center justify-between group transition-all duration-300 ${isCurrent ? 'bg-red-600 shadow-lg shadow-red-900/20' : 'hover:bg-slate-800/60'
-                                                            }`}
-                                                    >
-                                                        <div className="flex items-center gap-4 overflow-hidden">
-                                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isCurrent ? 'bg-white/20 text-white' : isCompleted ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-700 text-slate-500'
-                                                                }`}>
-                                                                {isCompleted ? <FaCheck size={10} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
-                                                            </div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <p className={`text-sm font-bold truncate transition-colors ${isCurrent ? 'text-white' : 'text-slate-300 group-hover:text-white'
-                                                                    }`}>{less.title}</p>
-                                                                <p className={`text-[10px] font-black uppercase tracking-tighter ${isCurrent ? 'text-white/60' : 'text-slate-500'
-                                                                    }`}>{less.duration || 5} MINS</p>
-                                                            </div>
-                                                        </div>
-                                                        <FaPlayCircle size={14} className={isCurrent ? 'text-white/40' : 'opacity-0 group-hover:opacity-100 text-red-500'} />
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {course.quizId && (
-                                    <div className="mt-6">
-                                        <button
-                                            onClick={() => { setShowAssessment(true); setShowCertificate(false); }}
-                                            className={`w-full flex items-center justify-center gap-3 p-5 rounded-3xl font-black text-sm uppercase tracking-widest transition-all duration-500 ${showAssessment
-                                                ? 'bg-red-600 text-white shadow-xl shadow-red-900/40'
-                                                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-xl shadow-indigo-900/20'
-                                                }`}
-                                        >
-                                            <FaClipboardCheck /> Final Assessment
-                                        </button>
-                                    </div>
-                                )}
-
-                                {/* Certificate button if student already certified this course */}
-                                {existingCertificate && (
-                                    <div className="mt-4">
-                                        <button
-                                            onClick={() => { setShowCertificate(true); setShowAssessment(false); }}
-                                            className={`w-full flex items-center justify-center gap-3 p-5 rounded-3xl font-black text-sm uppercase tracking-widest transition-all duration-500 ${showCertificate
-                                                ? 'bg-yellow-500 text-white shadow-xl shadow-yellow-900/40'
-                                                : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/20'
-                                                }`}
-                                        >
-                                            <FaMedal /> My Certificate
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                {/* LEFT SIDEBAR: Redesigned for Screenshot matching */}
+                <div className={`w-full lg:w-80 flex-shrink-0 border-r border-slate-100 bg-white lg:sticky lg:top-0 h-screen overflow-y-auto no-scrollbar transition-all duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+                    <div className="p-6 border-b border-slate-50">
+                        <Link to={`/courses/${id}`} className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-orange-600 transition-colors mb-8 group">
+                            <FaChevronLeft className="group-hover:-translate-x-1 transition-transform" />
+                            Back to Course
+                        </Link>
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Course Content</h2>
                     </div>
 
-                    {/* RIGHT COLUMN: Content Viewer */}
-                    <div className="flex-1 space-y-8">
-                        {/* Header Area */}
-                        <div>
-                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-                                <div className="flex-1">
-                                    <nav className="flex items-center gap-4 mb-4 text-[10px] font-black text-red-600 uppercase tracking-widest">
-                                        <Link to="/dashboard" className="hover:text-red-700 transition-colors">Academy</Link>
-                                        <span className="text-slate-300">/</span>
-                                        <span className="text-slate-400">Knowledge Phase</span>
-                                    </nav>
-                                    <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-[1.1] tracking-tight mb-4">
-                                        {course.title}
-                                    </h1>
-                                    <div className="flex flex-wrap items-center gap-6 text-xs font-black text-slate-400 uppercase tracking-widest">
-                                        <span className="flex items-center gap-2"><FaClock className="text-red-500" /> {course.totalDuration || 60} MINS</span>
-                                        <span className="flex items-center gap-2"><FaSignal className="text-red-500" /> {course.level || 'Expert'}</span>
-                                        <span className="flex items-center gap-2"><FaBookOpen className="text-red-500" /> {course.modules.length} MODULES</span>
-                                    </div>
+                    <div className="p-4 space-y-8">
+                        {course.modules.map((mod, mIdx) => (
+                            <div key={mod._id} className="space-y-4">
+                                <div className="px-2">
+                                    <h4 className="text-[10px] uppercase tracking-[0.2em] font-black text-orange-600 mb-1">
+                                        {mod.category || 'Course Module'}
+                                    </h4>
+                                    <h5 className="text-[11px] uppercase tracking-wider font-extrabold text-slate-400">
+                                        {mod.title}
+                                    </h5>
                                 </div>
-                                {!isPreview && (
-                                    <div className="bg-white px-8 py-5 rounded-3xl border border-gray-100 shadow-xl shadow-slate-200/50 flex items-center gap-6">
-                                        <div className="text-center">
-                                            <div className="text-2xl font-black text-slate-900 leading-none mb-1">{completedLessons.size}</div>
-                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">DONE</div>
+
+                                <div className="space-y-1">
+                                    {mod.lessons.map((less, lIdx) => {
+                                        const lessonId = less._id || less.id;
+                                        const isCompleted = completedLessons.has(String(lessonId));
+                                        const isCurrent = !showAssessment && !showCertificate && mIdx === currentModuleIndex && lIdx === currentLessonIndex;
+
+                                        return (
+                                            <button
+                                                key={lessonId}
+                                                onClick={() => {
+                                                    setShowAssessment(false);
+                                                    setShowCertificate(false);
+                                                    setCurrentModuleIndex(mIdx);
+                                                    setCurrentLessonIndex(lIdx);
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                }}
+                                                className={`w-full text-left p-3.5 rounded-xl flex items-center justify-between group transition-all duration-200 ${isCurrent ? 'bg-orange-50/80' : 'hover:bg-slate-50'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3 overflow-hidden">
+                                                    <div className={`w-5 h-5 flex-shrink-0 flex items-center justify-center ${isCompleted ? 'text-emerald-500' : isCurrent ? 'text-orange-600' : 'text-slate-300'
+                                                        }`}>
+                                                        {isCompleted ? <FaCheck size={12} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                                                    </div>
+                                                    <p className={`text-xs font-bold truncate leading-tight ${isCurrent ? 'text-orange-700' : 'text-slate-600 group-hover:text-slate-900'
+                                                        }`}>{less.title}</p>
+                                                </div>
+                                                <span className="text-[10px] font-black text-slate-300 group-hover:text-slate-400">
+                                                    {lIdx + 1}
+                                                </span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+
+                        {/* Special Buttons */}
+                        <div className="pt-4 space-y-3">
+                            {course.quizId && (
+                                <button
+                                    onClick={() => { setShowAssessment(true); setShowCertificate(false); }}
+                                    className={`w-full flex items-center justify-between p-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${showAssessment
+                                        ? 'bg-slate-900 text-white shadow-lg'
+                                        : 'bg-white border border-slate-100 text-slate-600 hover:border-orange-200 hover:text-orange-600'
+                                        }`}
+                                >
+                                    <span>Final Assessment</span>
+                                    <FaClipboardCheck size={14} />
+                                </button>
+                            )}
+
+                            {existingCertificate && (
+                                <button
+                                    onClick={() => { setShowCertificate(true); setShowAssessment(false); }}
+                                    className={`w-full flex items-center justify-between p-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${showCertificate
+                                        ? 'bg-orange-600 text-white shadow-lg'
+                                        : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                                        }`}
+                                >
+                                    <span>My Certificate</span>
+                                    <FaMedal size={14} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* MAIN CONTENT AREA */}
+                <div className="flex-1 overflow-y-auto bg-white">
+                    <div className="max-w-4xl mx-auto px-8 lg:px-16 py-12 lg:py-20">
+                        <AnimatePresence mode='wait'>
+                            <motion.div
+                                key={showCertificate ? 'certificate' : showAssessment ? 'assessment' : currentLesson?._id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                {showCertificate && existingCertificate ? (
+                                    <div className="text-center py-12">
+                                        <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2.5rem] bg-orange-50 text-orange-600 mb-8 border border-orange-100">
+                                            <FaMedal size={40} />
                                         </div>
-                                        <div className="h-10 w-px bg-gray-100"></div>
-                                        <div className="relative w-14 h-14">
-                                            <svg className="w-full h-full transform -rotate-90">
-                                                <circle cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-gray-100" />
-                                                <circle cx="28" cy="28" r="24" stroke="currentColor" strokeWidth="6" fill="transparent" strokeDasharray={150.796} strokeDashoffset={150.796 - (150.796 * (completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)))} className="text-red-600 transition-all duration-1000" />
-                                            </svg>
-                                            <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-slate-900">
-                                                {Math.round((completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)) * 100)}%
+                                        <h2 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tight">Credential Issued</h2>
+                                        <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-12">Global AI Certification</p>
+
+                                        <div className="max-w-lg mx-auto bg-white border border-slate-100 rounded-3xl p-10 shadow-2xl shadow-slate-200/50 text-left">
+                                            <h3 className="text-2xl font-black text-slate-900 mb-1">{existingCertificate.userName}</h3>
+                                            <p className="text-slate-500 text-sm font-medium mb-8">Completed: {existingCertificate.courseTitle || course.title}</p>
+
+                                            <div className="grid grid-cols-2 gap-4 mb-8">
+                                                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Score</div>
+                                                    <div className="text-2xl font-black text-slate-900">{existingCertificate.score}%</div>
+                                                </div>
+                                                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Grade</div>
+                                                    <div className="text-2xl font-black text-orange-600">{existingCertificate.grade}</div>
+                                                </div>
                                             </div>
+
+                                            <button
+                                                onClick={handleDownloadCertificate}
+                                                disabled={downloadingCert}
+                                                className="w-full flex items-center justify-center gap-3 p-5 rounded-2xl bg-slate-900 hover:bg-black text-white font-black text-xs uppercase tracking-[0.2em] transition-all active:scale-95 disabled:opacity-60"
+                                            >
+                                                <FaDownload />
+                                                {downloadingCert ? 'Processing...' : 'Download Certificate PDF'}
+                                            </button>
                                         </div>
                                     </div>
-                                )}
-                            </div>
-                        </div>
+                                ) : !showAssessment ? (
+                                    <div className="space-y-12">
+                                        <div>
+                                            <h4 className="text-[11px] uppercase tracking-[0.3em] font-black text-orange-600 mb-3">
+                                                {currentModule.title}
+                                            </h4>
+                                            <h1 className="text-4xl lg:text-6xl font-black text-slate-900 leading-[1.1] mb-4">
+                                                {currentLesson.title}
+                                            </h1>
+                                            <div className="text-3xl font-bold text-slate-200">0</div>
+                                        </div>
 
-                        {/* Content Container */}
-                        <div id="lesson-content" className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[600px]">
-                            <AnimatePresence mode='wait'>
-                                <motion.div
-                                    key={showCertificate ? 'certificate' : showAssessment ? 'assessment' : currentLesson?._id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    transition={{ duration: 0.4 }}
-                                    className="p-8 lg:p-16"
-                                >
-                                    {showCertificate && existingCertificate ? (
-                                        <div className="text-center py-12">
-                                            <div className="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-yellow-50 border-2 border-yellow-200 mb-8">
-                                                <FaMedal className="text-yellow-500 text-4xl" />
+                                        {/* Styled Key Points Box */}
+                                        {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
+                                            <div className="bg-[#FBFCFD] border-2 border-slate-50 rounded-[2.5rem] p-10 relative overflow-hidden">
+                                                <div className="absolute left-0 top-10 bottom-10 w-1.5 bg-orange-600 rounded-r-full" />
+                                                <h3 className="text-lg font-bold text-slate-900 mb-8 flex items-center gap-3">
+                                                    Key Points
+                                                </h3>
+                                                <ul className="space-y-5">
+                                                    {currentLesson.keyPoints.map((point, idx) => (
+                                                        <li key={idx} className="flex items-start gap-4">
+                                                            <FaCheck className="text-emerald-500 mt-1 flex-shrink-0" size={14} />
+                                                            <span className="text-base font-medium text-slate-600 leading-relaxed">{point}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
-                                            <h2 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tight">Course Certified</h2>
-                                            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-12">You have already earned this certificate</p>
+                                        )}
 
-                                            {/* Certificate Preview Card */}
-                                            <div className="max-w-lg mx-auto bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-3xl p-10 shadow-xl text-left">
-                                                <div className="flex items-center gap-3 mb-6">
-                                                    <div className="w-10 h-10 rounded-xl bg-yellow-500 flex items-center justify-center">
-                                                        <FaMedal className="text-white" />
-                                                    </div>
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-700">Certificate of Achievement</span>
-                                                </div>
-                                                <h3 className="text-2xl font-black text-slate-900 mb-1">{existingCertificate.userName || 'Student'}</h3>
-                                                <p className="text-slate-500 text-sm font-medium mb-6">has successfully completed</p>
-                                                <h4 className="text-xl font-black text-yellow-700 mb-6">{existingCertificate.courseTitle || course.title}</h4>
-                                                <div className="grid grid-cols-2 gap-4 mb-8">
-                                                    <div className="bg-white rounded-2xl p-4 border border-yellow-100">
-                                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Score</div>
-                                                        <div className="text-2xl font-black text-slate-900">{existingCertificate.score ?? 'N/A'}%</div>
-                                                    </div>
-                                                    <div className="bg-white rounded-2xl p-4 border border-yellow-100">
-                                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Grade</div>
-                                                        <div className="text-2xl font-black text-emerald-600">{existingCertificate.grade ?? 'Pass'}</div>
-                                                    </div>
-                                                    <div className="col-span-2 bg-white rounded-2xl p-4 border border-yellow-100">
-                                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Completed On</div>
-                                                        <div className="text-base font-black text-slate-900">
-                                                            {existingCertificate.completionDate
-                                                                ? new Date(existingCertificate.completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                                                                : 'N/A'}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    onClick={handleDownloadCertificate}
-                                                    disabled={downloadingCert}
-                                                    className="w-full flex items-center justify-center gap-3 p-5 rounded-2xl bg-yellow-500 hover:bg-yellow-600 text-white font-black text-sm uppercase tracking-widest transition-all active:scale-95 disabled:opacity-60"
-                                                >
-                                                    <FaDownload />
-                                                    {downloadingCert ? 'Downloading...' : 'Download Certificate PDF'}
-                                                </button>
+                                        <div className="prose prose-slate prose-lg max-w-none">
+                                            <div className="text-lg font-medium text-slate-500 leading-loose space-y-6">
+                                                {currentLesson.content.split('\n').map((p, i) => (
+                                                    <p key={i}>{p}</p>
+                                                ))}
                                             </div>
                                         </div>
-                                    ) : !showAssessment ? (
-                                        <>
-                                            <div className="flex items-center gap-4 mb-10">
-                                                <span className="px-4 py-1.5 bg-red-50 text-red-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-red-100">
-                                                    Module {currentModuleIndex + 1}
-                                                </span>
-                                                <span className="text-slate-300">/</span>
-                                                <span className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                                                    {currentModule.title}
-                                                </span>
-                                            </div>
 
-                                            <h2 className="text-3xl lg:text-5xl font-black mb-8 text-slate-900 tracking-tight">
-                                                {currentLesson.title}
-                                            </h2>
-
-                                            {/* Key Takeaways */}
-                                            {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                                                    <div className="md:col-span-1 border-l-4 border-red-600 pl-6 text-left">
-                                                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-2">Deep Insights</h3>
-                                                        <p className="text-xs font-medium text-slate-500 leading-relaxed uppercase">The technical architecture and strategic implementation nodes for this session.</p>
-                                                    </div>
-                                                    <div className="md:col-span-2 bg-[#F8FAFC] rounded-3xl p-8 border border-slate-100">
-                                                        <ul className="space-y-4">
-                                                            {currentLesson.keyPoints.map((point, idx) => (
-                                                                <li key={idx} className="flex items-start gap-3 group">
-                                                                    <FaCheck className="text-red-500 mt-1 flex-shrink-0 group-hover:scale-125 transition-transform" />
-                                                                    <span className="text-sm font-bold text-slate-700 leading-relaxed">{point}</span>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
+                                        {/* Bottom Navigation */}
+                                        <div className="pt-20 flex flex-col sm:flex-row items-center justify-between gap-8 border-t border-slate-50">
+                                            <button
+                                                onClick={handlePrev}
+                                                disabled={currentModuleIndex === 0 && currentLessonIndex === 0}
+                                                className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-20"
+                                            >
+                                                <div className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center">
+                                                    <FaChevronLeft size={10} />
                                                 </div>
-                                            )}
+                                                Previous Lesson
+                                            </button>
 
-                                            <div className="prose prose-slate prose-lg max-w-none">
-                                                <div className="text-lg font-medium text-slate-600 leading-loose space-y-6">
-                                                    {currentLesson.content.split('\n').map((p, i) => (
-                                                        <p key={i}>{p}</p>
-                                                    ))}
-                                                </div>
+                                            <div className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
+                                                Lesson {currentLessonIndex + 1} of {currentModule.lessons.length}
                                             </div>
 
-                                            {/* Navigation Section */}
-                                            <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mt-20 pt-12 border-t border-gray-100">
-                                                <button
-                                                    onClick={handlePrev}
-                                                    disabled={currentModuleIndex === 0 && currentLessonIndex === 0}
-                                                    className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-white border border-gray-200 text-slate-600 font-black text-sm uppercase tracking-widest hover:bg-gray-50 disabled:opacity-30 transition-all active:scale-95"
-                                                >
-                                                    Roll Back
-                                                </button>
-                                                <button
-                                                    onClick={handleNext}
-                                                    className="w-full sm:w-auto px-12 py-5 rounded-2xl bg-red-600 text-white font-black text-sm uppercase tracking-widest hover:bg-red-700 shadow-xl shadow-red-900/10 transition-all active:scale-95"
-                                                >
-                                                    {isLastLesson ? 'Authorize Completion' : 'Proceed to Next Node'}
-                                                </button>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <AssessmentCenter isEmbedded={true} courseId={id} />
-                                    )}
-                                </motion.div>
-                            </AnimatePresence>
-                        </div>
+                                            <button
+                                                onClick={handleNext}
+                                                className="flex items-center gap-4 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all active:scale-95 shadow-xl shadow-slate-200"
+                                            >
+                                                {isLastLesson ? 'Finish Course' : 'Next Lesson'}
+                                                <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                                                <FaChevronRight size={10} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <AssessmentCenter isEmbedded={true} courseId={id} />
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 </div>
             </div>

@@ -268,7 +268,7 @@ export const downloadCertificate = async (req, res, next) => {
             throw new Error('Generated PDF is empty or invalid');
         }
 
-        const fileName = `certificate_${certificateData.certificateId}.pdf`;
+        const fileName = `${certificateData.userName.replace(/\s+/g, '_')}_Certificate.pdf`;
 
         // Set headers for PDF download - Using res.type to avoid charset appending
         res.type('application/pdf');
