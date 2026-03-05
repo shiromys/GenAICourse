@@ -38,27 +38,27 @@ router.get('/auth-test', protect, (req, res) => {
   });
 });
 
-// All routes require instructor/admin role
+// All routes below require authentication
 router.use(protect);
-router.use(authorize('instructor', 'admin'));
 
+// Instructor/Admin-only routes — each uses authorize individually
 // @route   GET /api/assessments/template
-router.get('/template', getAssessmentTemplate);
+router.get('/template', authorize('instructor', 'admin'), getAssessmentTemplate);
 
 // @route   POST /api/assessments/upload
-router.post('/upload', uploadAssessment);
+router.post('/upload', authorize('instructor', 'admin'), uploadAssessment);
 
 // @route   POST /api/assessments/import-file
-router.post('/import-file', upload.single('assessmentFile'), importAssessmentFromFile);
+router.post('/import-file', authorize('instructor', 'admin'), upload.single('assessmentFile'), importAssessmentFromFile);
 
 // @route   GET /api/assessments/instructor
-router.get('/instructor', getInstructorAssessments);
+router.get('/instructor', authorize('instructor', 'admin'), getInstructorAssessments);
 
 // @route   PUT /api/assessments/:id
-router.put('/:id', updateAssessment);
+router.put('/:id', authorize('instructor', 'admin'), updateAssessment);
 
 // @route   DELETE /api/assessments/:id
-router.delete('/:id', deleteAssessment);
+router.delete('/:id', authorize('instructor', 'admin'), deleteAssessment);
 
 
 

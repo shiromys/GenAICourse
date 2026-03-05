@@ -1,16 +1,14 @@
 import axios from 'axios';
 
-// FORCE a relative path in production. This ensures that on Railway, 
-// the app looks for /api on genaicourse-production.up.railway.app instead of localhost.
-const API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api' 
-    : '/api';
+// This logic ensures that if the site is LIVE, it NEVER looks for localhost
+const isLocal = window.location.hostname === 'localhost';
+const API_URL = isLocal ? 'http://localhost:5000/api' : '/api';
 
 const api = axios.create({
     baseURL: API_URL,
-    headers: { 'Content-Type': 'application/json' },
     withCredentials: true 
 });
+
 
 // ... keep existing interceptors
 

@@ -40,18 +40,48 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
       setLoading(true);
       setError('');
 
-      const completionStatus = await courseService.checkCourseCompletion(courseId);
+      // Step 1: Check if the student has completed all lessons
+      let completionStatus;
+      try {
+        completionStatus = await courseService.checkCourseCompletion(courseId);
+      } catch (completionErr) {
+        const status = completionErr.response?.status;
+        if (status === 404) {
+          setError('Course not found. It may have been removed or the link is invalid.');
+        } else if (status === 403) {
+          setError('You are not enrolled in this course. Please enroll first.');
+        } else {
+          setError(completionErr.response?.data?.message || 'Failed to verify course completion status.');
+        }
+        return;
+      }
+
       if (!completionStatus?.data?.allLessonsCompleted) {
         setError('Please complete all lessons before taking the assessment.');
         return;
       }
 
-      const data = await assessmentService.getAssessment(courseId);
+      // Step 2: Load the assessment quiz
+      let data;
+      try {
+        data = await assessmentService.getAssessment(courseId);
+      } catch (quizErr) {
+        const status = quizErr.response?.status;
+        if (status === 404) {
+          setError('No assessment is linked to this course yet. Please contact your instructor.');
+        } else if (status === 403) {
+          setError('You are not authorized to take this assessment. Please ensure you are enrolled.');
+        } else {
+          setError(quizErr.response?.data?.message || 'Failed to load assessment. Please try again.');
+        }
+        return;
+      }
+
       setAssessment(data);
       setTimeRemaining(data.timeLimit * 60);
       setAnswers(new Array(data.questions.length).fill(null));
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Failed to load assessment';
+      const msg = err.response?.data?.message || err.message || 'Unexpected error loading assessment.';
       setError(msg);
     } finally {
       setLoading(false);
