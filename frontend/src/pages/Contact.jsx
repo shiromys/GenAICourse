@@ -40,11 +40,11 @@ const Contact = () => {
                     {/* Left Column - Contact Info */}
                     <div className="md:w-5/12 bg-[#0F172A] text-white p-12 lg:p-16 relative overflow-hidden">
                         {/* Decorative background blur */}
-                        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-red-600 rounded-full blur-[100px] opacity-20"></div>
+                        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-red-600 rounded-full blur-[20px] opacity-20"></div>
                         <div className="absolute top-10 -left-10 w-32 h-32 bg-purple-600 rounded-full blur-[80px] opacity-30"></div>
 
                         <div className="relative z-10">
-                            <h2 className="text-4xl font-black tracking-tight mb-4">Get in touch</h2>
+                            <h1 className="text-4xl color:white font-black tracking-tight mb-4">Get in touch</h1>
                             <p className="text-slate-400 text-lg mb-12 leading-relaxed">
                                 Have a question about our AI courses? Need help with a certificate? We're here to help.
                             </p>

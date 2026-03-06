@@ -106,8 +106,8 @@ export const generateCertificatePDF = async (certificateData) => {
 
             // ── 7. Course Completion Text ────────────────────────────────────
             doc.fontSize(11).fillColor('#64748b').font('Times-Roman')
-                .text('has demonstrated exceptional mastery and successfully completed all requirements', 0, 350, { align: 'center' })
-                .text('for the professional certification in', 0, 368, { align: 'center' });
+                .text('has successfully completed the course', 0, 350, { align: 'center' });
+
 
             doc.fontSize(22).fillColor('#1e293b').font('Times-Bold')
                 .text(courseTitle, 60, 410, { align: 'center', width: width - 120 });
@@ -247,7 +247,7 @@ export function generateCertificateHTML(data) {
             <p class="sub-header">OF ACHIEVEMENT</p>
             <p class="certify-text">This is to officially certify that</p>
             <h2 class="name">${data.userName}</h2>
-            <p class="achievement-text">has demonstrated exceptional mastery and successfully completed all requirements for the professional certification in</p>
+            <p class="achievement-text">has successfully completed the course</p>
             <h3 class="course-name">${data.courseTitle}</h3>
             <div class="score-box">
                 <span class="score-val">ACHIEVEMENT: ${data.score}% Score &nbsp;|&nbsp; Grade: ${data.grade}</span>

@@ -7,7 +7,7 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: "#f50b0bff", // Keep for now or map to brand? Let's add new ones first.
+                primary: "#cc1b1bff", // Keep for now or map to brand? Let's add new ones first.
                 brand: "#111827", // Deep navy
                 accent: "#C2410C", // Burnt orange
                 success: "#059669", // Emerald
