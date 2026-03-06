@@ -55,7 +55,10 @@ const CourseViewer = () => {
                             c.courseId?._id?.toString() === id ||
                             c.courseId?.toString() === id
                         );
-                        if (match) setExistingCertificate(match);
+                        if (match) {
+                            setExistingCertificate(match);
+                            setShowCertificate(true);
+                        }
                     } catch (e) {
                         // Not critical — ignore
                     }
@@ -165,57 +168,64 @@ const CourseViewer = () => {
                     </div>
 
                     <div className="p-4 space-y-8">
-                        {course.modules.map((mod, mIdx) => (
-                            <div key={mod._id} className="space-y-4">
-                                <div className="px-2">
-                                    <h4 className="text-[10px] uppercase tracking-[0.2em] font-black text-orange-600 mb-1">
-                                        {mod.category || 'Course Module'}
-                                    </h4>
-                                    <h5 className="text-[11px] uppercase tracking-wider font-extrabold text-slate-400">
-                                        {mod.title}
-                                    </h5>
-                                </div>
-
-                                <div className="space-y-1">
-                                    {mod.lessons.map((less, lIdx) => {
-                                        const lessonId = less._id || less.id;
-                                        const isCompleted = completedLessons.has(String(lessonId));
-                                        const isCurrent = !showAssessment && !showCertificate && mIdx === currentModuleIndex && lIdx === currentLessonIndex;
-
-                                        return (
-                                            <button
-                                                key={lessonId}
-                                                onClick={() => {
-                                                    setShowAssessment(false);
-                                                    setShowCertificate(false);
-                                                    setCurrentModuleIndex(mIdx);
-                                                    setCurrentLessonIndex(lIdx);
-                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                }}
-                                                className={`w-full text-left p-3.5 rounded-xl flex items-center justify-between group transition-all duration-200 ${isCurrent ? 'bg-orange-50/80' : 'hover:bg-slate-50'
-                                                    }`}
-                                            >
-                                                <div className="flex items-center gap-3 overflow-hidden">
-                                                    <div className={`w-5 h-5 flex-shrink-0 flex items-center justify-center ${isCompleted ? 'text-emerald-500' : isCurrent ? 'text-orange-600' : 'text-slate-300'
-                                                        }`}>
-                                                        {isCompleted ? <FaCheck size={12} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
-                                                    </div>
-                                                    <p className={`text-xs font-bold truncate leading-tight ${isCurrent ? 'text-orange-700' : 'text-slate-600 group-hover:text-slate-900'
-                                                        }`}>{less.title}</p>
-                                                </div>
-                                                <span className="text-[10px] font-black text-slate-300 group-hover:text-slate-400">
-                                                    {lIdx + 1}
-                                                </span>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
+                        {existingCertificate ? (
+                            <div className="p-4 bg-emerald-50 text-emerald-700 rounded-xl mb-6">
+                                <h3 className="font-bold mb-2">🎓 Course Certified</h3>
+                                <p className="text-sm">You have successfully completed this course and earned your certificate.</p>
                             </div>
-                        ))}
+                        ) : (
+                            course.modules.map((mod, mIdx) => (
+                                <div key={mod._id} className="space-y-4">
+                                    <div className="px-2">
+                                        <h4 className="text-[10px] uppercase tracking-[0.2em] font-black text-orange-600 mb-1">
+                                            {mod.category || 'Course Module'}
+                                        </h4>
+                                        <h5 className="text-[11px] uppercase tracking-wider font-extrabold text-slate-400">
+                                            {mod.title}
+                                        </h5>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        {mod.lessons.map((less, lIdx) => {
+                                            const lessonId = less._id || less.id;
+                                            const isCompleted = completedLessons.has(String(lessonId));
+                                            const isCurrent = !showAssessment && !showCertificate && mIdx === currentModuleIndex && lIdx === currentLessonIndex;
+
+                                            return (
+                                                <button
+                                                    key={lessonId}
+                                                    onClick={() => {
+                                                        setShowAssessment(false);
+                                                        setShowCertificate(false);
+                                                        setCurrentModuleIndex(mIdx);
+                                                        setCurrentLessonIndex(lIdx);
+                                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                    }}
+                                                    className={`w-full text-left p-3.5 rounded-xl flex items-center justify-between group transition-all duration-200 ${isCurrent ? 'bg-orange-50/80' : 'hover:bg-slate-50'
+                                                        }`}
+                                                >
+                                                    <div className="flex items-center gap-3 overflow-hidden">
+                                                        <div className={`w-5 h-5 flex-shrink-0 flex items-center justify-center ${isCompleted ? 'text-emerald-500' : isCurrent ? 'text-orange-600' : 'text-slate-300'
+                                                            }`}>
+                                                            {isCompleted ? <FaCheck size={12} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                                                        </div>
+                                                        <p className={`text-xs font-bold truncate leading-tight ${isCurrent ? 'text-orange-700' : 'text-slate-600 group-hover:text-slate-900'
+                                                            }`}>{less.title}</p>
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-slate-300 group-hover:text-slate-400">
+                                                        {lIdx + 1}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))
+                        )}
 
                         {/* Special Buttons */}
                         <div className="pt-4 space-y-3">
-                            {course.quizId && (
+                            {!existingCertificate && course.quizId && (
                                 <button
                                     onClick={() => { setShowAssessment(true); setShowCertificate(false); }}
                                     className={`w-full flex items-center justify-between p-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${showAssessment
