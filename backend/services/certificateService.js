@@ -79,9 +79,7 @@ export const generateCertificatePDF = async (certificateData) => {
             drawCorner(cornerMargin, height - cornerMargin, 1, -1); // Bottom Left
             drawCorner(width - cornerMargin, height - cornerMargin, -1, -1); // Bottom Right
 
-            // ── 3. Header Section: Authority Label ───────────────────────────
-            doc.fontSize(12).fillColor('#1e293b').font('Times-Roman')
-                .text('CERTIFYING AUTHORITY', 0, 65, { align: 'center', characterSpacing: 4 });
+
 
             // ── 4. Main Titles ───────────────────────────────────────────────
             doc.fontSize(46).fillColor('#1e293b').font('Times-Roman')
@@ -114,9 +112,6 @@ export const generateCertificatePDF = async (certificateData) => {
             doc.fontSize(22).fillColor('#1e293b').font('Times-Bold')
                 .text(courseTitle, 60, 410, { align: 'center', width: width - 120 });
 
-            // ── 8. Success Metric ────────────────────────────────────────────
-            doc.fontSize(11).fillColor('#1e293b').font('Helvetica-Bold')
-                .text(`ACHIEVEMENT: ${score}% SCORE`, 0, 465, { align: 'center', characterSpacing: 1 });
 
             // ── 9. Footer Signatures ─────────────────────────────────────────
             const footerY = height - 70;
@@ -138,7 +133,7 @@ export const generateCertificatePDF = async (certificateData) => {
             doc.lineWidth(1).strokeColor('#cbd5e1').moveTo(width - 80 - lineLength, footerY).lineTo(width - 80, footerY).stroke();
 
             doc.fontSize(9).font('Helvetica-Bold').fillColor('#64748b')
-                .text('CERTIFYING AUTHORITY', width - 80 - lineLength, footerY + 10, { width: lineLength, align: 'center', characterSpacing: 2 });
+                .text('GenAiCourse.io', width - 80 - lineLength, footerY + 10, { width: lineLength, align: 'center', characterSpacing: 2 });
 
             // ── 10. Central Digital Seal ─────────────────────────────────────
             const sealX = width / 2 - 35;
