@@ -38,61 +38,66 @@ const Navbar = () => {
                 </Link>
 
                 {/* Desktop Menu */}
-                <div className="hidden lg:flex items-center gap-8">
-                    <div className="flex items-center gap-6 bg-white/60 px-8 py-2.5 rounded-full border border-slate-200/50 backdrop-blur-md shadow-sm">
+                <div className="hidden lg:flex items-center gap-6">
+                    {/* Liquid Glass Pill Navbar */}
+                    <div className="flex items-center gap-6 bg-white/95 px-8 py-3 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-2xl">
                         <NavLink to="/" active={isActive('/')}>Home</NavLink>
                         <NavLink to="/courses" active={isActive('/courses')}>Courses</NavLink>
                         <NavLink to="/pricing" active={isActive('/pricing')}>Pricing</NavLink>
+                        <NavLink to="/contact" active={isActive('/contact')}>Contact</NavLink>
                     </div>
 
                     {isAuthenticated ? (
-                        <div className="relative ml-4">
+                        <div className="relative ml-2">
                             <button
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                className="w-10 h-10 rounded-full bg-[var(--brand)] text-white font-bold flex items-center justify-center hover:bg-slate-800 transition-all border border-slate-200 shadow-lg"
+                                className="w-[42px] h-[42px] rounded-full bg-[#0F172A] text-white font-black text-sm flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-md"
                                 data-testid="user-menu"
                             >
-                                {user?.name?.[0]}
+                                {user?.name?.[0]?.toUpperCase()}
                             </button>
 
                             <AnimatePresence>
                                 {userMenuOpen && (
                                     <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute right-0 top-14 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 overflow-hidden z-50 origin-top-right backdrop-blur-xl"
+                                        transition={{ duration: 0.2, ease: "easeOut" }}
+                                        className="absolute right-0 top-[60px] w-56 bg-white rounded-3xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100 py-4 overflow-hidden z-50 origin-top-right backdrop-blur-xl"
                                     >
-                                        <Link
-                                            to="/dashboard"
-                                            onClick={() => setUserMenuOpen(false)}
-                                            className="block px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-[var(--accent)] transition-colors"
-                                        >
-                                            My Dashboard
-                                        </Link>
-                                        <Link
-                                            to="/profile"
-                                            onClick={() => setUserMenuOpen(false)}
-                                            className="block px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-[var(--accent)] transition-colors"
-                                        >
-                                            My Profile
-                                        </Link>
-                                        {user?.role === 'admin' && (
+                                        <div className="px-2 space-y-1">
                                             <Link
-                                                to="/admin/dashboard"
+                                                to="/dashboard"
                                                 onClick={() => setUserMenuOpen(false)}
-                                                className="block px-4 py-2 text-sm font-semibold text-[var(--accent)] hover:bg-slate-50 transition-colors"
+                                                className="block px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all"
                                             >
-                                                Admin Console
+                                                My Dashboard
                                             </Link>
-                                        )}
-                                        <div className="my-1 border-t border-slate-100"></div>
-                                        <button
-                                            onClick={() => { logout(); setUserMenuOpen(false); toast.success('Logout successful'); }}
-                                            className="w-full text-left px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
-                                        >
-                                            Logout
-                                        </button>
+                                            <Link
+                                                to="/profile"
+                                                onClick={() => setUserMenuOpen(false)}
+                                                className="block px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all"
+                                            >
+                                                My Profile
+                                            </Link>
+                                            {user?.role === 'admin' && (
+                                                <Link
+                                                    to="/admin/dashboard"
+                                                    onClick={() => setUserMenuOpen(false)}
+                                                    className="block px-4 py-2.5 text-[13px] font-bold text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                                                >
+                                                    Admin Console
+                                                </Link>
+                                            )}
+                                            <div className="my-2 border-t border-slate-50"></div>
+                                            <button
+                                                onClick={() => { logout(); setUserMenuOpen(false); toast.success('Logout successful'); }}
+                                                className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                            >
+                                                Logout
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -134,6 +139,7 @@ const Navbar = () => {
                             <MobileNavLink to="/" onClick={() => setIsOpen(false)}>Home</MobileNavLink>
                             <MobileNavLink to="/courses" onClick={() => setIsOpen(false)}>Courses</MobileNavLink>
                             <MobileNavLink to="/pricing" onClick={() => setIsOpen(false)}>Pricing</MobileNavLink>
+                            <MobileNavLink to="/contact" onClick={() => setIsOpen(false)}>Contact</MobileNavLink>
                             <div className="h-px bg-gray-200"></div>
                             {isAuthenticated ? (
                                 <>
@@ -173,13 +179,13 @@ const NavLink = ({ to, children, active }) => {
         <Link
             to={to}
             onClick={handleClick}
-            className={`text-sm font-bold transition-all relative px-2 py-1 ${active ? 'text-brand' : 'text-gray-500 hover:text-brand'}`}
+            className={`text-[13px] font-extrabold transition-all relative px-3 py-1.5 rounded-lg ${active ? 'text-slate-900' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50/50'}`}
         >
             {children}
             {active && (
                 <motion.div
                     layoutId="nav-underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent rounded-full"
+                    className="absolute -bottom-[6px] left-[10%] right-[10%] h-[3px] bg-orange-600 rounded-t-full"
                 />
             )}
         </Link>

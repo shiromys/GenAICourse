@@ -25,6 +25,7 @@ import CourseReadingProgress from './components/courses/CourseReadingProgress';
 import LessonPlayer from './components/lessons/LessonPlayer';
 import HowItWorks from './pages/HowItWorks';
 import Pricing from './pages/Pricing';
+import Contact from './pages/Contact';
 import AssessmentCenter from './components/assessment/AssessmentCenter';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -88,6 +89,7 @@ const AppContent = () => {
                         <Route path="/courses/:id/assessment" element={<PageContainer><AssessmentCenter /></PageContainer>} />
                         <Route path="/courses/:courseId/lessons/:lessonId" element={<PageContainer><LessonPlayer /></PageContainer>} />
                         <Route path="/pricing" element={<PageContainer><Pricing /></PageContainer>} />
+                        <Route path="/contact" element={<PageContainer><Contact /></PageContainer>} />
                         <Route path="/login" element={<PageContainer><Login /></PageContainer>} />
                         <Route path="/register" element={<PageContainer><Register /></PageContainer>} />
                         <Route path="/forgot-password" element={<PageContainer><ForgotPassword /></PageContainer>} />
