@@ -12,6 +12,12 @@ const adminService = {
         return response.data;
     },
 
+    // Get payment analytics
+    getPaymentAnalytics: async () => {
+        const response = await api.get('/admin/payments/analytics');
+        return response.data;
+    },
+
     // Get all users
     getAllUsers: async () => {
         const response = await api.get('/admin/users');

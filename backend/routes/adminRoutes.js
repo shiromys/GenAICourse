@@ -11,7 +11,8 @@ import {
     deleteCourse,
     uploadCourseFromJSON,
     getDashboardStats,
-    getCourseEnrollments
+    getCourseEnrollments,
+    getPaymentAnalytics
 } from '../controllers/adminController.js';
 
 import { protect, authorize } from '../middleware/auth.js';
@@ -32,7 +33,9 @@ router.use(authorize('admin'));
 router.post('/courses/save-json', uploadCourseFromJSON);
 
 // Dashboard
+// Dashboard & Analytics
 router.get('/stats', getDashboardStats);
+router.get('/payments/analytics', getPaymentAnalytics);
 
 // User management
 router.get('/users', getAllUsers);

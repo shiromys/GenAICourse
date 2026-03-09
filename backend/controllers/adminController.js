@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import Course from '../models/Course.js';
 import UserProgress from '../models/UserProgress.js';
+import Payment from '../models/Payment.js';
 
 /**
  * Admin Controller
@@ -446,6 +447,112 @@ export const getCourseEnrollments = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Get payment analytics and revenue insights (Admin only)
+ * @route   GET /api/admin/payments/analytics
+ * @access  Private/Admin
+ */
+export const getPaymentAnalytics = async (req, res, next) => {
+    try {
+        // 1. Total Revenue & Total Transactions
+        const totalAgg = await Payment.aggregate([
+            { $match: { status: 'completed' } },
+            { $group: { _id: null, totalRevenue: { $sum: "$amountPaid" }, totalTransactions: { $sum: 1 } } }
+        ]);
+        const totalRevenueResult = totalAgg[0] || { totalRevenue: 0, totalTransactions: 0 };
+        const totalRevenue = totalRevenueResult.totalRevenue / 100; // Assuming cents
+
+        // 2. Revenue by Purchase Type
+        const byTypeAgg = await Payment.aggregate([
+            { $match: { status: 'completed' } },
+            { $group: { _id: "$purchaseType", revenue: { $sum: "$amountPaid" }, count: { $sum: 1 } } }
+        ]);
+        const revenueByPurchaseType = byTypeAgg.map(item => ({
+            type: item._id,
+            revenue: item.revenue / 100,
+            count: item.count
+        }));
+
+        // 3. Revenue by Course (Top Courses)
+        const byCourseAgg = await Payment.aggregate([
+            { $match: { status: 'completed', courseId: { $ne: null } } },
+            { $group: { _id: "$courseId", revenue: { $sum: "$amountPaid" }, count: { $sum: 1 } } },
+            { $sort: { revenue: -1 } },
+            { $limit: 10 }
+        ]);
+        await Course.populate(byCourseAgg, { path: '_id', select: 'title' });
+        const revenueByCourse = byCourseAgg.map(item => ({
+            courseId: item._id?._id || 'Unknown',
+            courseTitle: item._id?.title || 'Unknown/Deleted Course',
+            revenue: item.revenue / 100,
+            sales: item.count
+        }));
+
+        // 4. Daily Revenue (last 30 days) for heatmap
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const dailyAgg = await Payment.aggregate([
+            { $match: { status: 'completed', createdAt: { $gte: thirtyDaysAgo } } },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    revenue: { $sum: "$amountPaid" },
+                    transactions: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+        const dailyRevenue = dailyAgg.map(item => ({
+            date: item._id,
+            revenue: item.revenue / 100,
+            transactions: item.transactions
+        }));
+
+        // 5. Monthly Revenue (Current Year)
+        const currentYear = new Date().getFullYear();
+        const startOfYear = new Date(currentYear, 0, 1);
+        const monthlyAgg = await Payment.aggregate([
+            { $match: { status: 'completed', createdAt: { $gte: startOfYear } } },
+            {
+                $group: {
+                    _id: { $month: "$createdAt" },
+                    revenue: { $sum: "$amountPaid" }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+        const monthlyRevenue = monthlyAgg.map(item => ({
+            month: item._id,
+            revenue: item.revenue / 100
+        }));
+
+        // 6. Conversion metrics (Mock metrics or inferred from tracking user flow if possible)
+        // Without full funnel analytics tracking standard visits, we infer checkout successful vs abandoned
+        const totalAttempts = await Payment.countDocuments({});
+        const conversionMetrics = {
+            totalCheckoutsInitiated: totalAttempts,
+            successfulPurchases: totalRevenueResult.totalTransactions,
+            checkoutConversionRate: totalAttempts > 0 ? ((totalRevenueResult.totalTransactions / totalAttempts) * 100).toFixed(1) + '%' : '0%'
+        };
+
+        res.json({
+            success: true,
+            data: {
+                totalRevenue,
+                totalTransactions: totalRevenueResult.totalTransactions,
+                monthlyRevenue,
+                dailyRevenue,
+                revenueByCourse,
+                revenueByPurchaseType,
+                conversionMetrics
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     getAllUsers,
     getUserById,
@@ -458,5 +565,6 @@ export default {
     deleteCourse,
     uploadCourseFromJSON,
     getDashboardStats,
-    getCourseEnrollments
+    getCourseEnrollments,
+    getPaymentAnalytics
 };
