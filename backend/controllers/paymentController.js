@@ -187,7 +187,7 @@ export const createCheckoutSession = async (req, res, next) => {
 // ──────────────────────────────────────────────────────────────────────────────
 export const stripeWebhook = async (req, res) => {
     const sig = req.headers['stripe-signature'];
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_KEY;
 
     let event;
 
