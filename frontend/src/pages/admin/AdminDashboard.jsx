@@ -566,6 +566,24 @@ const GlassStatCard = ({ title, value, icon }) => {
     );
 };
 
+const StatCard = ({ title, value, icon, gradient }) => {
+    return (
+        <div className="relative group overflow-hidden bg-white rounded-3xl p-8 border border-slate-200/60 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-indigo-100 text-slate-900">
+            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${gradient} opacity-5 rounded-full -mr-16 -mt-16 group-hover:opacity-10 transition-opacity blur-2xl`}></div>
+
+            <div className="relative z-10 flex items-center justify-between">
+                <div>
+                    <p className="text-slate-500 text-xs font-black uppercase tracking-[0.2em] mb-3">{title}</p>
+                    <h3 className="text-5xl font-black tracking-tighter">{value}</h3>
+                </div>
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-2xl shadow-lg ring-4 ring-white`}>
+                    {icon}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const AdminActionButton = ({ onClick, icon, color, title }) => {
     const colorClasses = {
         blue: 'text-blue-500 hover:bg-blue-50 hover:border-blue-200',
