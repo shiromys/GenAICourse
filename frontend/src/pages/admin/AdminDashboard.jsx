@@ -332,9 +332,9 @@ const AdminDashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Enrollment Efficacy */}
+                                    {/* Enrollment Details */}
                                     <div className="bg-gradient-to-br from-[#1E293B] to-[#0F172A] rounded-3xl p-8 border border-slate-700 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
-                                        <h3 className="text-xl font-black text-white mb-6">Enrollment Efficacy</h3>
+                                        <h3 className="text-xl font-black text-white mb-6">Enrollment Details</h3>
 
                                         <div className="space-y-5">
                                             <div>
