@@ -426,7 +426,7 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
                 onClick={onRetake}
                 className="btn-premium bg-indigo-600 hover:bg-indigo-700 text-white !py-4 !px-12 text-lg"
               >
-                Restart Synchronization <RefreshCw size={20} />
+                Try Again Test <RefreshCw size={20} />
               </button>
             )}
 
