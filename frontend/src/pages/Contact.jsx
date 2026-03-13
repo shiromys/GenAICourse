@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import api from '../services/api';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -17,15 +18,25 @@ const Contact = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
-            toast.success("Message sent successfully! We'll be in touch soon.");
-            setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
+
+        try {
+            const response = await api.post('/contact', formData);
+            if (response.data.success) {
+                toast.success(response.data.message || "Message sent successfully! We'll be in touch soon.");
+                setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
+            } else {
+                toast.error(response.data.message || "Failed to send message. Please try again.");
+            }
+        } catch (error) {
+            console.error('Contact Form Error:', error);
+            const errorMessage = error.response?.data?.message || "Failed to send message. Please try again later.";
+            toast.error(errorMessage);
+        } finally {
             setIsSubmitting(false);
-        }, 1500);
+        }
     };
 
     return (
@@ -44,7 +55,7 @@ const Contact = () => {
                         <div className="absolute top-10 -left-10 w-32 h-32 bg-purple-600 rounded-full blur-[80px] opacity-30"></div>
 
                         <div className="relative z-10">
-                            <h1 className="text-4xl color:white font-black tracking-tight mb-4">Get in touch</h1>
+                            <h1 className="text-4xl font-black tracking-tight mb-4">Get in touch</h1>
                             <p className="text-slate-400 text-lg mb-12 leading-relaxed">
                                 Have a question about our AI courses? Need help with a certificate? We're here to help.
                             </p>
@@ -159,7 +170,7 @@ const Contact = () => {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white font-black py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 flex items-center justify-center gap-2"
+                                className="w-full bg-[#b31010] hover:bg-[#C53030] text-white font-black py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 flex items-center justify-center gap-2"
                             >
                                 {isSubmitting ? (
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

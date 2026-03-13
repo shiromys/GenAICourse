@@ -20,6 +20,7 @@ const Dashboard = () => {
             setSearchParams({}, { replace: true });
             // Refresh user profile to pick up the new enrollment
             refreshUser().then(() => {
+                fetchEnrolledCourses();
                 toast.success('🎉 Access Activated! Your course is now available.', { toastId: 'payment-success' });
             });
         }
@@ -29,23 +30,19 @@ const Dashboard = () => {
     const fetchEnrolledCourses = useCallback(async () => {
         setLoading(true);
         try {
-            if (user?.enrolledCourses && user.enrolledCourses.length > 0) {
-                const promises = user.enrolledCourses.map(enrollment => {
-                    const courseId = enrollment.courseId?._id || enrollment.courseId;
-                    return courseService.getCourseProgress(courseId).catch(() => null);
-                });
-
-                const results = await Promise.all(promises);
-                setEnrolledCourses(results.filter(r => r && r.success).map(r => r.data));
+            const result = await courseService.getEnrolledCourses();
+            if (result.success && result.data && result.data.courses) {
+                setEnrolledCourses(result.data.courses);
             } else {
                 setEnrolledCourses([]);
             }
         } catch (error) {
             console.error('Failed to fetch enrolled courses:', error);
+            toast.error('Could not load course progress');
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, []);
 
     useEffect(() => {
         fetchEnrolledCourses();
@@ -115,9 +112,9 @@ const Dashboard = () => {
                 {/* Course List */}
                 <h2 className="text-2xl font-black text-brand mb-6">Continue Learning</h2>
 
-                {enrolledCourses.length > 0 ? (
-                    <div className="grid grid-2 gap-6">
-                        {enrolledCourses.filter(Boolean).map((progress, idx) => (
+                {enrolledCourses.filter(p => p && p.courseId).length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {enrolledCourses.filter(p => p && p.courseId).map((progress, idx) => (
                             <motion.div
                                 key={progress._id || idx}
                                 initial={{ opacity: 0, y: 16 }}
@@ -153,7 +150,7 @@ const Dashboard = () => {
                                         className="btn-premium btn-primary inline-flex items-center text-sm px-6 gap-2"
                                     >
                                         <FaPlay size={12} />
-                                        {progress.progressPercentage > 0 ? 'Resume Course' : 'Start Course'}
+                                        {progress.progressPercentage > 0 ? 'Resume Course' : 'Continue Learning'}
                                     </Link>
                                 </div>
                             </motion.div>

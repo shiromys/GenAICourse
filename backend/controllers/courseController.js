@@ -455,6 +455,30 @@ export const getEnrolledCourses = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, status } = req.query;
 
+        // ── SELF-HEALING: Ensure UserProgress exists for all enrolled courses ──
+        const user = await User.findById(req.user._id).select('enrolledCourses hasAllCoursesAccess');
+
+        if (user && user.enrolledCourses.length > 0) {
+            for (const enrollment of user.enrolledCourses) {
+                const cId = enrollment.courseId;
+                const progressExists = await UserProgress.exists({ userId: req.user._id, courseId: cId });
+                if (!progressExists) {
+                    await UserProgress.create({ userId: req.user._id, courseId: cId });
+                    console.log(`🛠️ Auto-created missing progress record for course: ${cId}`);
+                }
+            }
+        }
+
+        // If user has all access, optionally ensure progress for ALL courses? 
+        // We'll leave it to appear as they open them, or if you want them on dashboard:
+        if (user?.hasAllCoursesAccess) {
+            const allPublished = await Course.find({ isPublished: true }).select('_id');
+            for (const c of allPublished) {
+                const exists = await UserProgress.exists({ userId: req.user._id, courseId: c._id });
+                if (!exists) await UserProgress.create({ userId: req.user._id, courseId: c._id });
+            }
+        }
+
         const userProgress = await UserProgress.find({ userId: req.user._id })
             .populate('courseId', 'title thumbnail category level averageRating')
             .sort({ lastAccessedAt: -1 })

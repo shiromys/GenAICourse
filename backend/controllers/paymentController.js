@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import User from '../models/User.js';
 import Course from '../models/Course.js';
 import Payment from '../models/Payment.js';
+import UserProgress from '../models/UserProgress.js';
 import { sendEmail } from '../services/emailService.js';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -258,6 +259,24 @@ export const stripeWebhook = async (req, res) => {
             await user.save();
             console.log(`✅ Enrollment updated for user: ${user.email}`);
 
+            // ── Step 5b: Create UserProgress record for dashboard ──────────────
+            if (courseId && courseId !== 'none' && purchaseType !== 'all') {
+                const existingProgress = await UserProgress.findOne({ userId, courseId });
+                if (!existingProgress) {
+                    await UserProgress.create({ userId, courseId });
+                    console.log(`✅ Progress record created for course: ${courseId}`);
+                }
+            } else if (purchaseType === 'all') {
+                // For all-access, we could optionally pre-create progress for all published courses
+                // but usually we create them on-the-fly when user first opens them.
+                // However, to show them in dashboard, we need the records.
+                const allCourses = await Course.find({ isPublished: true }).select('_id');
+                for (const c of allCourses) {
+                    const exists = await UserProgress.findOne({ userId, courseId: c._id });
+                    if (!exists) await UserProgress.create({ userId, courseId: c._id });
+                }
+            }
+
             // ── Step 6: Create Payment record ──────────────────────────────────
             const paymentRecord = new Payment({
                 userId,
@@ -357,6 +376,20 @@ export const verifyPaymentSession = async (req, res, next) => {
         }
 
         await user.save();
+
+        // ── Fallback Step: Create UserProgress record if missing ──────────────
+        if (courseId && courseId !== 'none' && purchaseType !== 'all') {
+            const existingProgress = await UserProgress.findOne({ userId, courseId });
+            if (!existingProgress) {
+                await UserProgress.create({ userId, courseId });
+            }
+        } else if (purchaseType === 'all') {
+            const allCourses = await Course.find({ isPublished: true }).select('_id');
+            for (const c of allCourses) {
+                const exists = await UserProgress.findOne({ userId, courseId: c._id });
+                if (!exists) await UserProgress.create({ userId, courseId: c._id });
+            }
+        }
 
         await Payment.create({
             userId,

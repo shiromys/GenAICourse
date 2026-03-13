@@ -28,11 +28,16 @@ import assessmentRoutes from './routes/assessment.js';
 import assessmentUploadRoutes from './routes/assessmentUpload.js'; // Added missing import
 import courseAssessmentRoutes from './routes/courseAssessment.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 import passport from 'passport';
 import configurePassport from './config/passport.js';
 import { stripeWebhook } from './controllers/paymentController.js';
 
 const app = express();
+
+
+// ... AFTER other imports, and BEFORE startServer initialization, let's look at where routes are placed ...
+// Actually, I should update the startServer function's route list.
 
 const startServer = async () => {
     await connectDB();
@@ -49,7 +54,7 @@ const startServer = async () => {
     app.use(cors(corsOptions));
 
     app.use(helmet({
-        contentSecurityPolicy: false, 
+        contentSecurityPolicy: false,
     }));
     configurePassport();
     app.use(passport.initialize());
@@ -73,10 +78,11 @@ const startServer = async () => {
     app.use('/api/learning-paths', learningPathRoutes);
     app.use('/api/payments', paymentRoutes);
     app.use('/api/courses', courseAssessmentRoutes);
+    app.use('/api/contact', contactRoutes);
 
     // RECTIFIED: Specific upload routes must come BEFORE general assessment routes
-    app.use('/api/assessments', assessmentUploadRoutes); 
-    app.use('/api/assessments', assessmentRoutes); 
+    app.use('/api/assessments', assessmentUploadRoutes);
+    app.use('/api/assessments', assessmentRoutes);
 
     // STATIC FILE SERVING FOR PRODUCTION
     if (process.env.NODE_ENV === 'production') {

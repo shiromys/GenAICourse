@@ -133,7 +133,7 @@ const CourseDetail = () => {
                                 data-testid={isEnrolled ? "start-learning-button" : "enroll-button"}
                             >
                                 <FaPlay className="mr-2" />
-                                {isEnrolled || user?.hasAllCoursesAccess ? 'Continue Learning' : (course.isFree ? 'Enroll Now - Free' : `Enroll Now - $${course.price || 29}`)}
+                                {isEnrolled || user?.hasAllCoursesAccess ? 'Continue Learning' : (course.isFree ? 'Enroll Now - Free' : 'Buy Now')}
                             </button>
                         </div>
 
