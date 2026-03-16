@@ -271,12 +271,8 @@ const CourseViewer = () => {
                                             <div className="absolute inset-0 rounded-full border border-amber-500/30 animate-pulse"></div>
                                             <FaMedal size={48} className="drop-shadow-md" />
                                         </div>
-                                        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">Credential Issued</h2>
-                                        <p className="text-slate-400 text-sm font-black uppercase tracking-[0.3em] mb-12 flex items-center justify-center gap-3">
-                                            <span className="w-8 h-px bg-slate-200"></span>
-                                            Global AI Certification
-                                            <span className="w-8 h-px bg-slate-200"></span>
-                                        </p>
+                                        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">Certificate Issued</h2>
+
 
                                         <div className="max-w-xl mx-auto bg-[#0F172A] border border-amber-500/20 rounded-[2.5rem] p-12 text-left shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative overflow-hidden group">
                                             {/* Decorative Background Elements */}
@@ -284,32 +280,28 @@ const CourseViewer = () => {
                                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl -ml-24 -mb-24 pointer-events-none"></div>
 
                                             <div className="relative z-10">
-                                                <div className="mb-8 border-b border-slate-800 pb-8">
-                                                    <div className="text-[10px] font-black text-amber-500/70 uppercase tracking-[0.2em] mb-2">Certified Scholar</div>
-                                                    <h3 className="text-3xl font-black text-white mb-2">{existingCertificate.userName}</h3>
-                                                    <p className="text-slate-400 font-medium">Completed: <span className="text-slate-300 font-bold">{existingCertificate.courseTitle || course.title}</span></p>
+                                                <div className="flex justify-center">
+                                                    <div className="mb-8 border-b border-slate-800 pb-8">
+                                                        <h3 className="text-3xl font-black text-white mb-2">{existingCertificate.userName}</h3>
+                                                        <p className="text-slate-400 font-medium">Completed: <span className="text-slate-300 font-bold">{existingCertificate.courseTitle || course.title}</span></p>
+                                                    </div>
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-6 mb-10">
-                                                    <div className="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 backdrop-blur-sm">
-                                                        <div className="flex items-center gap-3 mb-2">
-                                                            <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-[10px]">
-                                                                <FaCheck />
+
+                                                <div className="flex justify-center">
+                                                    <div className="grid grid-cols-2 gap-6 mb-10">
+                                                        <div className="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 backdrop-blur-sm">
+                                                            <div className="flex items-center gap-3 mb-2">
+                                                                <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-[10px]">
+                                                                    <FaCheck />
+                                                                </div>
+                                                                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Score</div>
                                                             </div>
-                                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Score</div>
+                                                            <div className="text-[40px] font-black text-white">{existingCertificate.score}%</div>
                                                         </div>
-                                                        <div className="text-3xl font-black text-white">{existingCertificate.score}%</div>
-                                                    </div>
-                                                    <div className="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 backdrop-blur-sm">
-                                                        <div className="flex items-center gap-3 mb-2">
-                                                            <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 text-[10px]">
-                                                                <FaMedal />
-                                                            </div>
-                                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Grade</div>
-                                                        </div>
-                                                        <div className="text-3xl font-black text-amber-400">{existingCertificate.grade}</div>
                                                     </div>
                                                 </div>
+
 
                                                 <button
                                                     onClick={handleDownloadCertificate}

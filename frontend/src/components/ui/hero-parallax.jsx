@@ -84,7 +84,7 @@ export const Header = () => {
                 <MagneticButton>
                     <Link to="/courses" className="btn-premium btn-outline !px-10 !py-4 !rounded-full bg-white text-brand border-brand/20 text-lg hover:bg-gray-50">
                         <FaPlay className="mr-2 text-xs" />
-                        AI Course Demo
+                        View Courses
                     </Link>
                 </MagneticButton>
             </div>
