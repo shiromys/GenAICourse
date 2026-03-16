@@ -208,16 +208,7 @@ const Profile = () => {
                                                         placeholder="Your Full Name"
                                                     />
                                                 </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Work Title</label>
-                                                    <input
-                                                        type="text"
-                                                        value={profileData.title}
-                                                        onChange={e => setProfileData({ ...profileData, title: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-red-500 outline-none transition-all shadow-inner"
-                                                        placeholder="e.g. AI Researcher"
-                                                    />
-                                                </div>
+
                                             </div>
 
                                             <div className="space-y-2">
@@ -240,7 +231,7 @@ const Profile = () => {
                                                     {isLoading ? 'Syncing...' : (
                                                         <>
                                                             <FaSave className="mr-2 group-hover:rotate-12 transition-transform" />
-                                                            Commit Changes
+                                                            Update Changes
                                                         </>
                                                     )}
                                                 </button>

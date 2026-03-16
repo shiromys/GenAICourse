@@ -88,17 +88,17 @@ const PaymentPage = () => {
                                 Secure Upgrade
                             </span>
                             <h1 className="text-4xl lg:text-6xl font-black text-slate-900 mt-6 leading-tight tracking-tight">
-                                Unlock your <span className="text-red-600">Future</span>.
+                                Course Enrollment.
                             </h1>
                             <p className="text-slate-500 font-medium mt-4 leading-relaxed text-lg">
-                                You are one step away from joining the next generation of AI professionals.
+                                You are about to enroll in this course.
                             </p>
                         </div>
 
                         <div className="space-y-4">
                             {[
-                                { icon: <FaRocket />, text: 'Instant access to all modules' },
-                                { icon: <FaShieldAlt />, text: 'Secure Stripe verification' },
+                                { icon: <FaRocket />, text: 'Access to course' },
+                                { icon: <FaShieldAlt />, text: 'Payment processed via Stripe' },
                             ].map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-4 p-5 rounded-3xl bg-white border border-gray-100 shadow-sm">
                                     <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-red-600 text-xl">
@@ -127,7 +127,7 @@ const PaymentPage = () => {
                                 <div className="flex justify-between items-end">
                                     <div>
                                         <h4 className="font-black text-slate-900 text-xl">{purchaseType === 'all' ? 'All-Access Bundle' : course?.title}</h4>
-                                        <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Neural Academy Enrollment</p>
+                                        <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Course Enrollment</p>
                                     </div>
                                     <div className="text-right">
                                         <span className="text-3xl font-black text-red-600">${purchaseType === 'all' ? 159 : (course?.price || 29)}</span>
@@ -165,7 +165,7 @@ const PaymentPage = () => {
                                             Connecting to Gateway...
                                         </>
                                     ) : (
-                                        'Initialize Checkout'
+                                        'Continue to Payment'
                                     )}
                                 </button>
                             </div>
