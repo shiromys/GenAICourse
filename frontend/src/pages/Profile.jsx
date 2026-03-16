@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import authService from '../services/authService.js';
 import paymentService from '../services/paymentService.js';
 import certificateService from '../services/certificateService.js';
+import courseService from '../services/courseService.js';
 import { MagneticButton } from '../components/ui/MagneticButton';
 
 const Profile = () => {
@@ -14,16 +15,34 @@ const Profile = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [payments, setPayments] = useState([]);
     const [certificates, setCertificates] = useState([]);
+    const [enrolledCourses, setEnrolledCourses] = useState([]);
+    const [coursesLoading, setCoursesLoading] = useState(false);
     const [paymentsLoading, setPaymentsLoading] = useState(false);
     const [certificatesLoading, setCertificatesLoading] = useState(false);
 
     useEffect(() => {
-        if (activeTab === 'payments' && payments.length === 0) {
+        if (activeTab === 'courses' && enrolledCourses.length === 0) {
+            fetchEnrolledCourses();
+        } else if (activeTab === 'payments' && payments.length === 0) {
             fetchPayments();
         } else if (activeTab === 'certificates' && certificates.length === 0) {
             fetchCertificates();
         }
     }, [activeTab]);
+
+    const fetchEnrolledCourses = async () => {
+        try {
+            setCoursesLoading(true);
+            const result = await courseService.getEnrolledCourses();
+            if (result.success && result.data && result.data.courses) {
+                setEnrolledCourses(result.data.courses);
+            }
+        } catch (error) {
+            console.error('Failed to load courses', error);
+        } finally {
+            setCoursesLoading(false);
+        }
+    };
 
     const fetchPayments = async () => {
         try {
@@ -71,7 +90,6 @@ const Profile = () => {
     });
 
     const [passwordData, setPasswordData] = useState({
-        currentPassword: '',
         newPassword: '',
         confirmPassword: ''
     });
@@ -105,14 +123,16 @@ const Profile = () => {
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             return toast.error('New passwords do not match');
         }
+        if (passwordData.newPassword.length < 6) {
+            return toast.error('Password must be at least 6 characters');
+        }
         try {
             setIsLoading(true);
             await authService.changePassword({
-                currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword
             });
             toast.success('Password changed successfully!');
-            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            setPasswordData({ newPassword: '', confirmPassword: '' });
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to change password');
         } finally {
@@ -144,7 +164,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <h2 className="text-xl font-black text-slate-900 mb-1">{user?.name}</h2>
-                                <p className="text-sm font-bold text-red-600 uppercase tracking-widest">{user?.role || 'Student'}</p>
+                                <p className="text-sm font-bold text-red-600 uppercase tracking-widest">{user?.role === 'student' ? 'User' : user?.role || 'User'}</p>
                             </div>
 
                             {/* Navigation List */}
@@ -248,19 +268,9 @@ const Profile = () => {
                                         </div>
 
                                         <form onSubmit={handlePasswordChange} className="space-y-8 max-w-xl">
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Current Password</label>
-                                                <input
-                                                    type="password"
-                                                    required
-                                                    value={passwordData.currentPassword}
-                                                    onChange={e => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-red-500 outline-none transition-all shadow-inner"
-                                                />
-                                            </div>
 
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">New genaicourse Key</label>
+                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">New Password</label>
                                                 <input
                                                     type="password"
                                                     required
@@ -271,7 +281,7 @@ const Profile = () => {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Confirm New Key</label>
+                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Confirm New Password</label>
                                                 <input
                                                     type="password"
                                                     required
@@ -287,7 +297,7 @@ const Profile = () => {
                                                     disabled={isLoading}
                                                     className="btn-premium btn-primary group !rounded-2xl !py-5 !px-10"
                                                 >
-                                                    {isLoading ? 'Encrypting...' : 'Update Keychain'}
+                                                    {isLoading ? 'Updating...' : 'Update Password'}
                                                 </button>
                                             </div>
                                         </form>
@@ -302,8 +312,10 @@ const Profile = () => {
                                         </div>
 
                                         <div className="space-y-6">
-                                            {user?.enrolledCourses?.length > 0 ? (
-                                                user.enrolledCourses.map((enrollment, idx) => (
+                                            {coursesLoading ? (
+                                                <div className="text-center py-20 text-gray-500">Loading courses...</div>
+                                            ) : enrolledCourses?.length > 0 ? (
+                                                enrolledCourses.map((enrollment, idx) => (
                                                     <div key={idx} className="flex flex-col md:flex-row gap-6 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-xl transition-all duration-500">
                                                         <div className="w-full md:w-32 h-20 rounded-2xl bg-indigo-100 flex-shrink-0 flex items-center justify-center text-indigo-500">
                                                             <FaBook size={32} />
@@ -312,10 +324,10 @@ const Profile = () => {
                                                             <h4 className="font-black text-lg text-slate-900 mb-1">{enrollment.courseId?.title || 'Unknown Course'}</h4>
                                                             <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">
                                                                 <span className="flex items-center gap-1"><FaHistory className="text-red-500" /> Joined {new Date(enrollment.enrolledAt).toLocaleDateString()}</span>
-                                                                <span className="flex items-center gap-1"><FaCertificate className="text-red-500" /> {enrollment.progress}% Finished</span>
+                                                                <span className="flex items-center gap-1"><FaCertificate className="text-red-500" /> {enrollment.progressPercentage || 0}% Finished</span>
                                                             </div>
                                                             <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                                                <div className="h-full bg-red-600 rounded-full" style={{ width: `${enrollment.progress}%` }}></div>
+                                                                <div className="h-full bg-red-600 rounded-full" style={{ width: `${enrollment.progressPercentage || 0}%` }}></div>
                                                             </div>
                                                         </div>
                                                     </div>
