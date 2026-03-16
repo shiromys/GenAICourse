@@ -1,15 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaLock, FaCog, FaCamera, FaSave, FaSignOutAlt, FaBook, FaHistory, FaBell, FaCertificate } from 'react-icons/fa';
+import { FaUser, FaLock, FaCog, FaCamera, FaSave, FaSignOutAlt, FaBook, FaHistory, FaBell, FaCertificate, FaFileInvoiceDollar, FaDownload } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import authService from '../services/authService.js';
+import paymentService from '../services/paymentService.js';
+import certificateService from '../services/certificateService.js';
 import { MagneticButton } from '../components/ui/MagneticButton';
 
 const Profile = () => {
     const { user, updateUser, logout } = useAuth();
     const [activeTab, setActiveTab] = useState('profile');
     const [isLoading, setIsLoading] = useState(false);
+    const [payments, setPayments] = useState([]);
+    const [certificates, setCertificates] = useState([]);
+    const [paymentsLoading, setPaymentsLoading] = useState(false);
+    const [certificatesLoading, setCertificatesLoading] = useState(false);
+
+    useEffect(() => {
+        if (activeTab === 'payments' && payments.length === 0) {
+            fetchPayments();
+        } else if (activeTab === 'certificates' && certificates.length === 0) {
+            fetchCertificates();
+        }
+    }, [activeTab]);
+
+    const fetchPayments = async () => {
+        try {
+            setPaymentsLoading(true);
+            const res = await paymentService.getMyPayments();
+            if (res.success) {
+                setPayments(res.data);
+            }
+        } catch (error) {
+            toast.error('Failed to load payments');
+        } finally {
+            setPaymentsLoading(false);
+        }
+    };
+
+    const fetchCertificates = async () => {
+        try {
+            setCertificatesLoading(true);
+            const res = await certificateService.getUserCertificates();
+            if (res.success) {
+                setCertificates(res.data.certificates || []);
+            }
+        } catch (error) {
+            toast.error('Failed to load certificates');
+        } finally {
+            setCertificatesLoading(false);
+        }
+    };
+
+    const handleDownloadCertificate = async (id) => {
+        try {
+            await certificateService.downloadCertificate(id);
+            toast.success('Certificate downloaded successfully');
+        } catch (error) {
+            toast.error(error.message || 'Failed to download certificate');
+        }
+    };
 
     // Form States
     const [profileData, setProfileData] = useState({
@@ -73,7 +124,8 @@ const Profile = () => {
         { id: 'profile', label: 'Basic Profile', icon: <FaUser /> },
         { id: 'security', label: 'Security', icon: <FaLock /> },
         { id: 'courses', label: 'My Learning', icon: <FaBook /> },
-        { id: 'notifications', label: 'Notifications', icon: <FaBell /> }
+        { id: 'payments', label: 'Payments', icon: <FaFileInvoiceDollar /> },
+        { id: 'certificates', label: 'Certificates', icon: <FaCertificate /> }
     ];
 
     return (
@@ -90,9 +142,6 @@ const Profile = () => {
                                     <div className="w-32 h-32 rounded-3xl bg-red-100 flex items-center justify-center text-red-600 text-4xl font-black border-4 border-white shadow-2xl transition-transform duration-500 group-hover:scale-105">
                                         {user?.name?.[0].toUpperCase()}
                                     </div>
-                                    <button className="absolute -bottom-2 -right-2 w-10 h-10 bg-red-600 text-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-white hover:bg-red-700 transition-all">
-                                        <FaCamera size={14} />
-                                    </button>
                                 </div>
                                 <h2 className="text-xl font-black text-slate-900 mb-1">{user?.name}</h2>
                                 <p className="text-sm font-bold text-red-600 uppercase tracking-widest">{user?.role || 'Student'}</p>
@@ -289,13 +338,84 @@ const Profile = () => {
                                     </div>
                                 )}
 
-                                {activeTab === 'notifications' && (
-                                    <div className="text-center py-20">
-                                        <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center text-red-500 mx-auto mb-6">
-                                            <FaBell size={32} />
+                                {activeTab === 'payments' && (
+                                    <div>
+                                        <div className="mb-10">
+                                            <h3 className="text-2xl font-black text-slate-900 mb-2">Payment History</h3>
+                                            <p className="text-slate-500 font-medium font-sans">View your payment invoices and transactions.</p>
                                         </div>
-                                        <h3 className="text-xl font-black text-slate-900 mb-2">Notification Hub</h3>
-                                        <p className="text-slate-500 font-bold max-w-sm mx-auto">Settings for genaicourse pings and marketing communications will appear here soon.</p>
+
+                                        <div className="space-y-6">
+                                            {paymentsLoading ? (
+                                                <div className="text-center py-20 text-gray-500">Loading payments...</div>
+                                            ) : payments?.length > 0 ? (
+                                                payments.map((payment, idx) => (
+                                                    <div key={idx} className="flex flex-col md:flex-row gap-6 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-xl transition-all duration-500">
+                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-green-100 flex-shrink-0 flex items-center justify-center text-green-600">
+                                                            <FaFileInvoiceDollar size={32} />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="flex justify-between items-start mb-1">
+                                                                <h4 className="font-black text-lg text-slate-900">{payment.courseId?.title || (payment.purchaseType === 'all' ? 'All-Access Pass' : 'Unknown Purchase')}</h4>
+                                                                <span className="font-bold text-lg text-green-600">${(payment.amountPaid / 100).toFixed(2)}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                                                <span className="flex items-center gap-1">Date: {new Date(payment.createdAt).toLocaleDateString()}</span>
+                                                                <span className={`px-2 py-1 rounded-full text-[10px] ${payment.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                                    {payment.status}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-sm text-gray-500">Transaction ID: {payment.stripeSessionId}</p>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-center py-20 bg-gray-50/50 rounded-[2rem] border border-dashed border-gray-200">
+                                                    <p className="text-gray-400 font-bold italic">No payments found.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'certificates' && (
+                                    <div>
+                                        <div className="mb-10">
+                                            <h3 className="text-2xl font-black text-slate-900 mb-2">My Certificates</h3>
+                                            <p className="text-slate-500 font-medium font-sans">View and download your earned certificates.</p>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            {certificatesLoading ? (
+                                                <div className="text-center py-20 text-gray-500">Loading certificates...</div>
+                                            ) : certificates?.length > 0 ? (
+                                                certificates.map((cert, idx) => (
+                                                    <div key={idx} className="flex flex-col md:flex-row gap-6 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-xl transition-all duration-500 items-center">
+                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-yellow-100 flex-shrink-0 flex items-center justify-center text-yellow-600">
+                                                            <FaCertificate size={32} />
+                                                        </div>
+                                                        <div className="flex-1 w-full">
+                                                            <h4 className="font-black text-lg text-slate-900 mb-1">{cert.courseTitle}</h4>
+                                                            <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                                                                <span className="flex items-center gap-1">Issued: {new Date(cert.completionDate).toLocaleDateString()}</span>
+                                                                <span className="flex items-center gap-1">Score: {cert.score}%</span>
+                                                            </div>
+                                                            <p className="text-sm text-gray-500">ID: {cert.certificateId}</p>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleDownloadCertificate(cert._id)}
+                                                            className="mt-4 md:mt-0 px-6 py-3 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl font-bold transition-colors flex items-center gap-2"
+                                                        >
+                                                            <FaDownload /> Download
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-center py-20 bg-gray-50/50 rounded-[2rem] border border-dashed border-gray-200">
+                                                    <p className="text-gray-400 font-bold italic">No certificates earned yet.</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                             </motion.div>

@@ -18,6 +18,14 @@ const paymentService = {
         const response = await api.get(`/payments/verify-session/${sessionId}`);
         return response.data;
     },
+
+    /**
+     * Get all payments for the current logged in user.
+     */
+    getMyPayments: async () => {
+        const response = await api.get('/payments/my-payments');
+        return response.data;
+    },
 };
 
 export default paymentService;

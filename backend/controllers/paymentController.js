@@ -427,3 +427,27 @@ export const verifyPaymentSession = async (req, res, next) => {
         next(error);
     }
 };
+
+// ──────────────────────────────────────────────────────────────────────────────
+// CONTROLLER 4 — Get all payments for the logged-in user
+// GET /api/payments/my-payments
+// ──────────────────────────────────────────────────────────────────────────────
+export const getMyPayments = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+
+        const payments = await Payment.find({ userId })
+            .populate('courseId', 'title thumbnail')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: payments.length,
+            data: payments
+        });
+    } catch (error) {
+        console.error('❌ getMyPayments error:', error.message);
+        next(error);
+    }
+};
+
