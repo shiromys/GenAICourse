@@ -10,9 +10,9 @@ const RefundPolicy = () => {
     return (
         <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-red-50 selection:text-red-600">
             <div className="container max-w-4xl mx-auto px-6">
-                
+
                 {/* Header Section */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
@@ -29,7 +29,7 @@ const RefundPolicy = () => {
                 </motion.div>
 
                 {/* Content Card */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
@@ -41,14 +41,14 @@ const RefundPolicy = () => {
                     </div>
 
                     <div className="prose prose-slate prose-lg max-w-none relative z-10 text-slate-600 leading-relaxed font-medium">
-                        
+
                         <div className="bg-red-600 text-white p-8 rounded-3xl mb-12 shadow-xl shadow-red-900/10">
                             <div className="flex items-center gap-4 mb-4">
                                 <FaExclamationTriangle size={24} />
                                 <h2 className="text-white font-black text-2xl m-0 uppercase tracking-tight">General Policy</h2>
                             </div>
                             <p className="m-0 font-bold opacity-90 leading-loose">
-                                Due to the digital nature of our training materials and the immediate delivery of intellectual property upon purchase, **GenAICourse generally does not offer refunds**. 
+                                Due to the digital nature of our training materials and the immediate delivery of intellectual property upon purchase, **GenAICourse generally does not offer refunds**.
                                 By completing a transaction, you acknowledge that **all sales are final**.
                             </p>
                         </div>
@@ -65,13 +65,6 @@ const RefundPolicy = () => {
                                     <div>
                                         <h4 className="font-black text-brand uppercase text-sm m-0">Duplicate Billing</h4>
                                         <p className="text-xs font-medium m-0">You were erroneously charged multiple times for the same module due to a payment gateway glitch.</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <FaCheckCircle className="text-emerald-500 mt-1 flex-shrink-0" />
-                                    <div>
-                                        <h4 className="font-black text-brand uppercase text-sm m-0">Persistent Technical Failure</h4>
-                                        <p className="text-xs font-medium m-0">A platform-side error prevents access to purchased content, and our technical team is unable to resolve it within 72 hours of your initial report.</p>
                                     </div>
                                 </div>
                             </div>
@@ -93,15 +86,7 @@ const RefundPolicy = () => {
                     </div>
                 </motion.div>
 
-                {/* Claim Submission Node */}
-                <div className="mt-12 text-center">
-                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">
-                        Need to submit a claim? 
-                        <a href="mailto:info@genaicourse.io" className="text-red-600 ml-2 hover:underline">
-                            info@genaicourse.io (Include Transaction ID)
-                        </a>
-                    </p>
-                </div>
+
             </div>
         </div>
     );

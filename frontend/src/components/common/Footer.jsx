@@ -16,11 +16,7 @@ const Footer = () => {
                         <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-xs">
                             Empowering professionals with practical, prompt-based AI skills for the modern workplace.
                         </p>
-                        <div className="flex gap-4">
-                            <SocialLink icon={<FaTwitter />} href="#" />
-                            <SocialLink icon={<FaLinkedin />} href="#" />
-                            <SocialLink icon={<FaInstagram />} href="#" />
-                        </div>
+
                     </div>
 
                     {/* Explore Section */}

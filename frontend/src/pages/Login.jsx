@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { toast } from 'react-toastify';
-import { FaEye, FaEyeSlash, FaGoogle, FaGithub, FaLinkedinIn } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Login = () => {
@@ -20,11 +20,6 @@ const Login = () => {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSocialLogin = (provider) => {
-        // Redirection to the backend OAuth root
-        window.location.href = `http://localhost:5000/api/auth/${provider}`;
     };
 
     const handleSubmit = async (e) => {
@@ -124,27 +119,6 @@ const Login = () => {
                         </motion.button>
                     </form>
 
-                    <div className="my-10 flex items-center gap-4">
-                        <div className="h-[1px] flex-1 bg-slate-200"></div>
-                        <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest text-[10px]">or sign in with</p>
-                        <div className="h-[1px] flex-1 bg-slate-200"></div>
-                    </div>
-
-                    <div className="flex gap-4 justify-center">
-                        <SocialButton
-                            icon={<FaGoogle className="text-red-500" />}
-                            onClick={() => handleSocialLogin('google')}
-                        />
-                        <SocialButton
-                            icon={<FaGithub className="text-slate-900" />}
-                            onClick={() => handleSocialLogin('github')}
-                        />
-                        <SocialButton
-                            icon={<FaLinkedinIn className="text-blue-600" />}
-                            onClick={() => handleSocialLogin('linkedin')}
-                        />
-                    </div>
-
                     <p className="mt-10 text-center text-[15px] text-slate-500 font-medium">
                         Don't have an account?{' '}
                         <Link to="/register" className="font-bold text-blue-600 hover:text-blue-700 transition-all underline underline-offset-4">
@@ -156,16 +130,5 @@ const Login = () => {
         </div>
     );
 };
-
-const SocialButton = ({ icon, onClick }) => (
-    <motion.button
-        whileHover={{ scale: 1.05, translateY: -4, boxShadow: "0 10px 20px rgba(0,0,0,0.05)" }}
-        whileTap={{ scale: 0.95 }}
-        onClick={onClick}
-        className="w-[72px] h-[60px] rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-xl transition-all duration-300 hover:border-slate-300"
-    >
-        {icon}
-    </motion.button>
-);
 
 export default Login;

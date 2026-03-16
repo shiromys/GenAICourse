@@ -54,7 +54,7 @@ const Home = () => {
                         Ready to <br /><span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">Evolve?</span>
                     </motion.h2>
                     <div className="flex justify-center gap-6">
-                        <Link to="/courses" className="btn-premium btn-primary !px-16 !py-6 text-xl shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+                        <Link to="/register" className="btn-premium btn-primary !px-16 !py-6 text-xl shadow-[0_0_15px_rgba(139,92,246,0.3)]">
                             Join Us
                         </Link>
                     </div>
