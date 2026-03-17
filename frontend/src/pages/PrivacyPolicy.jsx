@@ -10,9 +10,9 @@ const PrivacyPolicy = () => {
     return (
         <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-indigo-100 selection:text-indigo-600">
             <div className="container max-w-4xl mx-auto px-6">
-                
+
                 {/* Header Section */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
@@ -29,7 +29,7 @@ const PrivacyPolicy = () => {
                 </motion.div>
 
                 {/* Content Card */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
@@ -41,14 +41,14 @@ const PrivacyPolicy = () => {
                     </div>
 
                     <div className="prose prose-slate prose-lg max-w-none relative z-10 text-slate-600 leading-relaxed">
-                        
+
                         <section className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <FaUserSecret className="text-indigo-600" size={24} />
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">What We Collect</h2>
                             </div>
                             <p>
-                                We collect essential identifiers, including your name, email address, learning telemetry, and quiz performance. 
+                                We collect essential identifiers, including your name, email address, learning telemetry, and quiz performance.
                                 All financial transactions are processed through encrypted channels via **Stripe**; we do not store your full payment card details on our servers.
                             </p>
                         </section>
@@ -59,7 +59,7 @@ const PrivacyPolicy = () => {
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">How We Use It</h2>
                             </div>
                             <p>
-                                Your data is utilised to maintain your personalised learning dashboard, issue verifiable digital certificates, and improve our AI-driven curriculum. 
+                                Your data is utilised to maintain your personalised learning dashboard, issue verifiable digital certificates, and improve our AI-driven curriculum.
                                 We may also use anonymised interaction data to optimise platform performance and video delivery.
                             </p>
                         </section>
@@ -70,7 +70,7 @@ const PrivacyPolicy = () => {
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight text-emerald-700">Data Security</h2>
                             </div>
                             <p>
-                                We employ industry-standard encryption protocols. User credentials and sensitive access tokens are hashed using **bcrypt** before storage. 
+                                We employ industry-standard encryption protocols. User credentials and sensitive access tokens are hashed using **bcrypt** before storage.
                                 We maintain a strict **"No-Sale" policy**—your personal data is never sold to third-party brokers or external marketing agencies.
                             </p> section section-pt
                         </section>
@@ -90,8 +90,8 @@ const PrivacyPolicy = () => {
                                     <p className="text-xs font-medium">Managing secure payment and billing</p>
                                 </div>
                                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm text-center">
-                                    <h4 className="font-black text-indigo-600 mb-2 uppercase text-sm">Cloudflare</h4>
-                                    <p className="text-xs font-medium">Global delivery and DDoS protection</p>
+                                    <h4 className="font-black text-indigo-600 mb-2 uppercase text-sm">Resend</h4>
+                                    <p className="text-xs font-medium">Used for sending Emails</p>
                                 </div>
                             </div>
                         </section>
@@ -99,15 +99,7 @@ const PrivacyPolicy = () => {
                     </div>
                 </motion.div>
 
-                {/* Direct Contact */}
-                <div className="mt-12 text-center">
-                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">
-                        Questions regarding these protocols? 
-                        <a href="mailto:info@genaicourse.io" className="text-indigo-600 ml-2 hover:underline">
-                            Contact Legal Node
-                        </a>
-                    </p>
-                </div>
+
             </div>
         </div>
     );

@@ -17,14 +17,12 @@ const RefundPolicy = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
                 >
-                    <div className="w-20 h-20 bg-red-100 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-red-50">
-                        <FaUndo size={36} />
-                    </div>
+
                     <h1 className="text-4xl md:text-6xl font-black text-brand tracking-tighter uppercase mb-4">
                         Refund Policy
                     </h1>
                     <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
-                        Financial Protocol v1.0 • Updated: February 26, 2026
+                        Updated: February 26, 2026
                     </p>
                 </motion.div>
 

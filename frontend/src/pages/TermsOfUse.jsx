@@ -10,9 +10,9 @@ const TermsOfUse = () => {
     return (
         <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-indigo-100 selection:text-indigo-600">
             <div className="container max-w-4xl mx-auto px-6">
-                
+
                 {/* Header Section */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
@@ -23,13 +23,11 @@ const TermsOfUse = () => {
                     <h1 className="text-4xl md:text-6xl font-black text-brand tracking-tighter uppercase mb-4">
                         Terms of Use
                     </h1>
-                    <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
-                        Effective Protocol Date: February 26, 2026
-                    </p>
+
                 </motion.div>
 
                 {/* Content Card with Neural Aesthetic */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
@@ -41,11 +39,11 @@ const TermsOfUse = () => {
                     </div>
 
                     <div className="prose prose-slate prose-lg max-none relative z-10 text-slate-600 leading-relaxed font-medium">
-                        
+
                         <section className="mb-12">
                             <h2 className="text-brand font-black text-2xl mb-4 uppercase tracking-tight">1. Acceptance of Terms</h2>
                             <p>
-                                By accessing <strong>genaicourse.io</strong>, you agree to be legally bound by these Terms of Use. 
+                                By accessing <strong>genaicourse.io</strong>, you agree to be legally bound by these Terms of Use.
                                 If you do not agree with any part of these protocols, you are prohibited from using the service.
                             </p>
                         </section>
@@ -56,7 +54,7 @@ const TermsOfUse = () => {
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">2. Intellectual Property</h2>
                             </div>
                             <p>
-                                All original content, including video lectures, proprietary prompts, and code snippets, remains the exclusive property of **GenAICourse**. 
+                                All original content, including video lectures, proprietary prompts, and code snippets, remains the exclusive property of **GenAICourse**.
                                 Users are granted a limited, personal license to learn, subject to the following strict restrictions:
                             </p>
                             <ul className="list-disc pl-6 space-y-2 mt-4 text-slate-700">
@@ -72,8 +70,8 @@ const TermsOfUse = () => {
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">3. Certificates & Identity</h2>
                             </div>
                             <p>
-                                Certificates are issued based on the profile name provided at the time of account creation. 
-                                You agree that this name matches your legal identity. 
+                                Certificates are issued based on the profile name provided at the time of account creation.
+                                You agree that this name matches your legal identity.
                                 To maintain the integrity of our verification system, **names cannot be altered once a certificate has been generated**.
                             </p>
                         </section>
@@ -84,7 +82,7 @@ const TermsOfUse = () => {
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight text-red-900">4. Termination of Access</h2>
                             </div>
                             <p className="text-red-800">
-                                We reserve the right to suspend or terminate your access immediately, without prior notice, for conduct that we believe violates these Terms. 
+                                We reserve the right to suspend or terminate your access immediately, without prior notice, for conduct that we believe violates these Terms.
                                 This includes, but is not limited to, "group buying" or account-sharing behaviour.
                             </p>
                         </section>
@@ -92,15 +90,7 @@ const TermsOfUse = () => {
                     </div>
                 </motion.div>
 
-                {/* Direct Contact node */}
-                <div className="mt-12 text-center">
-                    <p className="text-slate-400 text-sm">
-                        Questions regarding these protocols? 
-                        <a href="mailto:info@genaicourse.io" className="text-indigo-600 ml-1 hover:underline font-bold">
-                            Contact Verification Node
-                        </a>
-                    </p>
-                </div>
+
             </div>
         </div>
     );
