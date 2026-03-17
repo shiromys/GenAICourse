@@ -3,10 +3,21 @@ import api from './api';
 const paymentService = {
     /**
      * Creates a Stripe Hosted Checkout Session.
-     * Returns { success, url, sessionId }
+     * Returns { success, url, sessionId } OR { success, freeUpgrade, redirectTo } for zero-cost upgrades.
      */
     createCheckoutSession: async (courseId, purchaseType = 'single') => {
         const response = await api.post('/payments/create-session', { courseId, purchaseType });
+        return response.data;
+    },
+
+    /**
+     * Get the effective bundle price for the logged-in user after deducting credits
+     * from any previously purchased single courses.
+     * Returns { bundlePrice, creditApplied, finalAmount, coursesPurchased, isFreeUpgrade }
+     * (all monetary values are in cents)
+     */
+    getBundlePrice: async () => {
+        const response = await api.get('/payments/bundle-price');
         return response.data;
     },
 

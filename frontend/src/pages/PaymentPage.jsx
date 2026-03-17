@@ -7,7 +7,7 @@ import CheckoutForm from '../components/payment/CheckoutForm.jsx';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
-import { FaShieldAlt, FaRocket, FaChevronLeft } from 'react-icons/fa';
+import { FaShieldAlt, FaRocket, FaChevronLeft, FaTag } from 'react-icons/fa';
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_sample');
@@ -20,6 +20,7 @@ const PaymentPage = () => {
 
     const [loading, setLoading] = useState(true);
     const [course, setCourse] = useState(null);
+    const [bundlePricing, setBundlePricing] = useState(null);
     const [agreedToPolicy, setAgreedToPolicy] = useState(false);
     const [isInitiating, setIsInitiating] = useState(false);
 
@@ -38,6 +39,12 @@ const PaymentPage = () => {
         };
 
         if (id) fetchDetails();
+
+        if (purchaseType === 'all') {
+            paymentService.getBundlePrice()
+                .then(res => { if (res.success) setBundlePricing(res.data); })
+                .catch(() => {});
+        }
     }, [id, purchaseType]);
 
     const handlePaymentAction = async () => {
@@ -49,13 +56,20 @@ const PaymentPage = () => {
         try {
             setIsInitiating(true);
             const response = await paymentService.createCheckoutSession(id, purchaseType);
+
+            // Free upgrade: credit fully covers the bundle — no Stripe redirect
+            if (response.success && response.freeUpgrade && response.redirectTo) {
+                toast.success('All-Access unlocked via your credits!');
+                window.location.href = response.redirectTo;
+                return;
+            }
+
             if (response.success && response.url) {
                 window.location.href = response.url;
             } else {
                 toast.error(response.message || 'Failed to initiate checkout session.');
             }
         } catch (error) {
-            // Show the exact server-side error message
             const serverMessage = error?.response?.data?.message;
             const displayMsg = serverMessage || error.message || 'Payment initialization failed.';
             toast.error(`Error: ${displayMsg}`);
@@ -130,10 +144,25 @@ const PaymentPage = () => {
                                         <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Course Enrollment</p>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-3xl font-black text-red-600">${purchaseType === 'all' ? 159 : (course?.price || 29)}</span>
+                                        {purchaseType === 'all' && bundlePricing && bundlePricing.creditApplied > 0 ? (
+                                            <>
+                                                <div className="text-base font-bold text-slate-400 line-through">${(bundlePricing.bundlePrice / 100).toFixed(0)}</div>
+                                                <span className="text-3xl font-black text-red-600">${(bundlePricing.finalAmount / 100).toFixed(2)}</span>
+                                            </>
+                                        ) : (
+                                            <span className="text-3xl font-black text-red-600">${purchaseType === 'all' ? 159 : (course?.price || 29)}</span>
+                                        )}
                                         <p className="text-[10px] text-slate-400 font-bold">USD</p>
                                     </div>
                                 </div>
+                                {purchaseType === 'all' && bundlePricing && bundlePricing.creditApplied > 0 && (
+                                    <div className="mt-3 flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+                                        <FaTag size={10} className="text-emerald-600" />
+                                        <p className="text-emerald-700 font-bold text-xs">
+                                            ${(bundlePricing.creditApplied / 100).toFixed(0)} credit from {bundlePricing.coursesPurchased} previous purchase{bundlePricing.coursesPurchased > 1 ? 's' : ''} applied
+                                        </p>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-6 flex-1">

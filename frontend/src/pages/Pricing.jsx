@@ -1,19 +1,59 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaCheck, FaBolt } from 'react-icons/fa';
+import { FaCheck, FaBolt, FaTag } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import paymentService from '../services/paymentService';
+import { toast } from 'react-toastify';
 
 const Pricing = () => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const navigate = useNavigate();
 
-    const handleBundlePurchase = () => {
+    const [bundlePricing, setBundlePricing] = useState(null);
+    const [loadingPrice, setLoadingPrice] = useState(false);
+
+    // Fetch real-time upgrade price for authenticated users
+    useEffect(() => {
+        if (isAuthenticated) {
+            setLoadingPrice(true);
+            paymentService.getBundlePrice()
+                .then(res => {
+                    if (res.success) setBundlePricing(res.data);
+                })
+                .catch(() => {
+                    // Silently fail — fall back to showing the standard $159 price
+                })
+                .finally(() => setLoadingPrice(false));
+        }
+    }, [isAuthenticated]);
+
+    const hasCredit = bundlePricing && bundlePricing.creditApplied > 0;
+    const displayPrice = bundlePricing
+        ? `$${(bundlePricing.finalAmount / 100).toFixed(0)}`
+        : '$159';
+
+    const handleBundlePurchase = async () => {
         if (!isAuthenticated) {
             navigate('/register?redirect=checkout/all&type=all');
-        } else {
-            navigate('/checkout/all?type=all');
+            return;
         }
+
+        // If the credit fully covers the bundle, trigger the free upgrade directly
+        if (bundlePricing?.isFreeUpgrade) {
+            try {
+                const result = await paymentService.createCheckoutSession('all', 'all');
+                if (result.success && result.freeUpgrade && result.redirectTo) {
+                    toast.success('All-Access unlocked via your credits! Redirecting...');
+                    window.location.href = result.redirectTo;
+                }
+            } catch (err) {
+                toast.error('Something went wrong. Please try again.');
+            }
+            return;
+        }
+
+        navigate('/checkout/all?type=all');
     };
 
     return (
@@ -92,7 +132,7 @@ const Pricing = () => {
                     >
                         <div className="absolute top-0 right-10 -translate-y-1/2">
                             <span className="bg-red-600 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-2xl ring-4 ring-white/10">
-                                Recommended
+                                {hasCredit ? 'Upgrade Deal' : 'Recommended'}
                             </span>
                         </div>
 
@@ -106,9 +146,37 @@ const Pricing = () => {
                             <p className="text-slate-400 font-bold text-sm tracking-wide">Uninterrupted Access</p>
                         </div>
 
-                        <div className="flex items-baseline gap-2 mb-10 text-white">
-                            <span className="text-7xl font-black tracking-tighter">$159</span>
-                            <span className="text-slate-500 font-black text-sm uppercase tracking-widest">one-time</span>
+                        {/* Dynamic Price Display */}
+                        <div className="mb-10 text-white">
+                            {loadingPrice ? (
+                                <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+                                    <span className="text-slate-400 font-bold text-sm">Calculating your price...</span>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="flex items-baseline gap-2">
+                                        {hasCredit && (
+                                            <span className="text-4xl font-black text-slate-600 line-through tracking-tighter">$159</span>
+                                        )}
+                                        <span className="text-7xl font-black tracking-tighter text-white">{displayPrice}</span>
+                                        <span className="text-slate-500 font-black text-sm uppercase tracking-widest">one-time</span>
+                                    </div>
+                                    {hasCredit && (
+                                        <div className="mt-3 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2.5 w-fit">
+                                            <FaTag size={12} className="text-emerald-400" />
+                                            <p className="text-emerald-400 font-bold text-xs">
+                                                ${(bundlePricing.creditApplied / 100).toFixed(0)} credit applied from {bundlePricing.coursesPurchased} previous purchase{bundlePricing.coursesPurchased > 1 ? 's' : ''}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {bundlePricing?.isFreeUpgrade && (
+                                        <p className="text-emerald-400 font-black text-sm mt-2">
+                                            Your purchases fully cover the bundle — click to unlock for FREE!
+                                        </p>
+                                    )}
+                                </>
+                            )}
                         </div>
 
                         <div className="space-y-5 mb-12 flex-1">
@@ -123,10 +191,26 @@ const Pricing = () => {
                             onClick={handleBundlePurchase}
                             className="w-full py-5 px-8 rounded-2xl bg-red-600 text-white font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] hover:bg-red-500 transition-all text-lg"
                         >
-                            Get All-Access Pass
+                            {bundlePricing?.isFreeUpgrade ? 'Unlock for FREE — Credits Applied' : 'Get All-Access Pass'}
                         </button>
                     </motion.div>
                 </div>
+
+                {/* Note for non-logged in users */}
+                {!isAuthenticated && (
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="text-center text-slate-400 text-sm font-medium mt-8"
+                    >
+                        Already purchased single courses?{' '}
+                        <Link to="/login?redirect=pricing" className="text-red-500 font-bold underline underline-offset-4">
+                            Log in
+                        </Link>{' '}
+                        to see your personalised upgrade price.
+                    </motion.p>
+                )}
             </div>
         </section>
     );
