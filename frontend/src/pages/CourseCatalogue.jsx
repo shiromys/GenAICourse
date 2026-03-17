@@ -65,7 +65,7 @@ const CourseCatalogue = () => {
                     <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter text-center text-brand">
                         GenAi <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Course</span>
                     </h1>
-                    <p className="text-gray-500 font-bold tracking-widest uppercase text-xs text-center">Explore the Infinite Possibilities of AI</p>
+                    <p className="text-gray-500 font-bold tracking-widest uppercase text-xs text-center">Search for Courses from our List Below</p>
                 </motion.div>
 
                 {/* Filters Hub */}
@@ -86,7 +86,7 @@ const CourseCatalogue = () => {
                                 name="search"
                                 value={filters.search}
                                 onChange={handleFilterChange}
-                                placeholder="Search by genaicourse keyword..."
+                                placeholder="Search keywords..."
                                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 pl-14 focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all text-brand placeholder:text-gray-400"
                                 data-testid="course-search"
                             />
