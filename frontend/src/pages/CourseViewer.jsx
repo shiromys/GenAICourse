@@ -160,9 +160,9 @@ const CourseViewer = () => {
                 {/* LEFT SIDEBAR: Redesigned for Screenshot matching */}
                 <div className={`w-full lg:w-80 flex-shrink-0 border-r border-slate-100 bg-white lg:sticky lg:top-0 h-screen overflow-y-auto no-scrollbar transition-all duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                     <div className="p-6 border-b border-slate-50">
-                        <Link to={`/courses/${id}`} className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-orange-600 transition-colors mb-8 group">
+                        <Link to="/dashboard" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-orange-600 transition-colors mb-8 group">
                             <FaChevronLeft className="group-hover:-translate-x-1 transition-transform" />
-                            Back to Course
+                            Back to Dashboard
                         </Link>
                         <h2 className="text-xl font-black text-slate-900 tracking-tight">Course Content</h2>
                     </div>

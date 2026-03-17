@@ -169,12 +169,20 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           </div>
           <h2 className="text-3xl font-black text-brand mb-4">Access Restricted</h2>
           <p className="text-gray-500 mb-8 font-medium leading-relaxed">{error}</p>
-          <button
-            onClick={() => navigate(`/courses/${courseId}`)}
-            className="btn-premium btn-primary w-full"
-          >
-            Return to Course
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => navigate(`/courses/${courseId}`)}
+              className="btn-premium btn-primary w-full"
+            >
+              Return to Course
+            </button>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="btn-link text-gray-500 font-bold text-xs uppercase tracking-widest"
+            >
+              Go to My Dashboard
+            </button>
+          </div>
         </motion.div>
       </div>
     );
@@ -431,10 +439,10 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
             )}
 
             <button
-              onClick={() => navigate(`/courses/${courseId}`)}
+              onClick={() => navigate('/dashboard')}
               className="btn-premium bg-white border border-gray-200 text-brand hover:bg-gray-50 !py-4 !px-10"
             >
-              Back to Module Hub
+              Back to Dashboard
             </button>
           </div>
         </motion.div>

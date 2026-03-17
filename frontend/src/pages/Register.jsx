@@ -39,7 +39,7 @@ const Register = () => {
             const { confirmPassword, ...registerData } = formData;
             await register(registerData);
             toast.success('Registration successful! Please log in with your credentials.');
-            navigate('/login');
+            navigate(redirectPath ? `/login?redirect=${redirectPath}` : '/login');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Registration failed');
         } finally {
