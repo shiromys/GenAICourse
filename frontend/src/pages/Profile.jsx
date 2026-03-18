@@ -21,11 +21,11 @@ const Profile = () => {
     const [certificatesLoading, setCertificatesLoading] = useState(false);
 
     useEffect(() => {
-        if (activeTab === 'courses' && enrolledCourses.length === 0) {
+        if (activeTab === 'courses') {
             fetchEnrolledCourses();
-        } else if (activeTab === 'payments' && payments.length === 0) {
+        } else if (activeTab === 'payments') {
             fetchPayments();
-        } else if (activeTab === 'certificates' && certificates.length === 0) {
+        } else if (activeTab === 'certificates') {
             fetchCertificates();
         }
     }, [activeTab]);

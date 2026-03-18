@@ -3,7 +3,17 @@ import User from '../models/User.js';
 import Course from '../models/Course.js';
 import Payment from '../models/Payment.js';
 import UserProgress from '../models/UserProgress.js';
+import mongoose from 'mongoose';
 import { sendEmail } from '../services/emailService.js';
+import fs from 'fs';
+import path from 'path';
+
+const logToFile = (msg) => {
+    try {
+        const logPath = path.join(process.cwd(), 'payment-debug.log');
+        fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
+    } catch (e) {}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Stripe client
@@ -312,17 +322,24 @@ export const stripeWebhook = async (req, res) => {
                 if (!existingProgress) await UserProgress.create({ userId, courseId });
             }
 
-            const paymentRecord = await Payment.create({
-                userId,
-                courseId: courseId !== 'none' ? courseId : null,
-                purchaseType,
-                stripeSessionId: session.id,
-                stripePaymentIntentId: session.payment_intent,
-                amountPaid,
-                currency: session.currency || 'usd',
-                status: 'completed',
-                enrollmentUpdated: true,
-            });
+            console.log(`📝 Creating record for ${purchaseType} (User: ${userId})...`);
+            let paymentRecord = null;
+            try {
+                paymentRecord = await Payment.create({
+                    userId: new mongoose.Types.ObjectId(userId),
+                    courseId: (courseId && courseId !== 'none') ? new mongoose.Types.ObjectId(courseId) : null,
+                    purchaseType,
+                    stripeSessionId: session.id || null,
+                    stripePaymentIntentId: session.payment_intent || null,
+                    amountPaid,
+                    currency: session.currency || 'usd',
+                    status: 'completed',
+                    enrollmentUpdated: true,
+                });
+                console.log(`✅ Record saved: ${paymentRecord._id}`);
+            } catch (createError) {
+                console.error('❌ Record failed:', createError.message);
+            }
 
             try {
                 await sendEmail(
@@ -330,8 +347,10 @@ export const stripeWebhook = async (req, res) => {
                     `Payment Confirmed: ${courseTitle} — GENAICOURSE.IO`,
                     buildPaymentEmail(user.name, courseTitle, amountPaid, process.env.FRONTEND_URL)
                 );
-                paymentRecord.emailSent = true;
-                await paymentRecord.save();
+                if (paymentRecord) {
+                    paymentRecord.emailSent = true;
+                    await paymentRecord.save();
+                }
             } catch (e) {
                 console.error('Email error:', e.message);
             }
@@ -396,6 +415,28 @@ export const verifyPaymentSession = async (req, res, next) => {
         let courseTitle = 'Your Course';
         const amountPaid = session.amount_total || 0;
 
+        // ── SAVE PAYMENT RECORD FIRST (before slow grantAllAccess loop) ──
+        console.log(`📝 [Fallback] Creating record (User: ${userId}, Type: ${purchaseType})...`);
+        let savedPaymentId = null;
+        try {
+            const paymentRecord = await Payment.create({
+                userId: new mongoose.Types.ObjectId(userId),
+                courseId: (courseId && courseId !== 'none') ? new mongoose.Types.ObjectId(courseId) : null,
+                purchaseType,
+                stripeSessionId: session.id || null,
+                stripePaymentIntentId: session.payment_intent || null,
+                amountPaid,
+                currency: session.currency || 'usd',
+                status: 'completed',
+                enrollmentUpdated: true,
+            });
+            savedPaymentId = paymentRecord._id;
+            console.log(`✅ [Fallback] Record saved: ${savedPaymentId}`);
+        } catch (createError) {
+            console.error('❌ [Fallback] Record failed:', createError.message);
+        }
+
+        // ── NOW run the enrollment grant (may be slow for all-access) ──
         if (purchaseType === 'all') {
             courseTitle = 'All-Access Pass';
             await grantAllAccess(userId, user);
@@ -407,18 +448,6 @@ export const verifyPaymentSession = async (req, res, next) => {
             const exists = await UserProgress.findOne({ userId, courseId });
             if (!exists) await UserProgress.create({ userId, courseId });
         }
-
-        await Payment.create({
-            userId,
-            courseId: courseId !== 'none' ? courseId : null,
-            purchaseType,
-            stripeSessionId: session.id,
-            stripePaymentIntentId: session.payment_intent,
-            amountPaid,
-            currency: session.currency || 'usd',
-            status: 'completed',
-            enrollmentUpdated: true,
-        });
 
         try {
             await sendEmail(
@@ -434,6 +463,7 @@ export const verifyPaymentSession = async (req, res, next) => {
         return res.status(200).json({ success: true, user: updatedUser.getPublicProfile() });
 
     } catch (error) {
+        logToFile(`❌ verifyPaymentSession error: ${error.message}`);
         // Never surface a hard error to the user for this endpoint.
         // Stripe confirmed payment by redirecting here. Webhook is authoritative for enrollment.
         // Any error here is a transient race condition — return success so the UI can redirect cleanly.
@@ -465,6 +495,8 @@ export const getMyPayments = async (req, res, next) => {
             .populate('courseId', 'title thumbnail')
             .sort({ createdAt: -1 });
 
+        // Prevent browser from caching this — always return fresh data
+        res.set('Cache-Control', 'no-store');
         res.status(200).json({ success: true, count: payments.length, data: payments });
     } catch (error) {
         next(error);
