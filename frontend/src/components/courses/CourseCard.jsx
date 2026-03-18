@@ -8,9 +8,9 @@ const CourseCard = ({ course }) => {
     const { checkCourseAccess, isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
-    const courseId = course._id || course.id;
+    const courseId = course?._id || course?.id;
     const hasAccess = checkCourseAccess(courseId);
-    const price = course.isFree ? 'FREE' : `$${course.price || 29}`;
+    const price = course?.isFree ? 'FREE' : `$${course?.price || 29}`;
 
     const handleActionClick = (e) => {
         if (!hasAccess) {
@@ -34,8 +34,8 @@ const CourseCard = ({ course }) => {
             {/* Thumbnail */}
             <div className="relative h-56 overflow-hidden flex-shrink-0">
                 <img
-                    src={course.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'}
-                    alt={course.title}
+                    src={course?.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'}
+                    alt={course?.title || 'Course'}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -43,9 +43,9 @@ const CourseCard = ({ course }) => {
                 {/* Level & Category badges */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                     <span className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-700 border border-white/60 shadow">
-                        {course.level || 'Beginner'}
+                        {course?.level || 'Beginner'}
                     </span>
-                    {course.category && (
+                    {course?.category && (
                         <span className="px-3 py-1 bg-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest text-white shadow">
                             {course.category}
                         </span>
@@ -69,11 +69,11 @@ const CourseCard = ({ course }) => {
             {/* Content */}
             <div className="p-7 flex flex-col flex-1">
                 <h3 className="text-xl font-black text-brand mb-3 line-clamp-2 leading-tight tracking-tight group-hover:text-red-600 transition-colors">
-                    {course.title}
+                    {course?.title || 'Untitled'}
                 </h3>
 
                 <p className="text-gray-400 text-sm mb-6 line-clamp-2 font-medium leading-relaxed">
-                    {course.description}
+                    {course?.description || 'No description available'}
                 </p>
 
                 <div className="mt-auto space-y-4">
@@ -81,7 +81,7 @@ const CourseCard = ({ course }) => {
                     <div className="flex items-center gap-5 py-3 border-t border-gray-100">
                         <div className="flex items-center gap-1.5 text-gray-400 font-bold text-[10px] uppercase tracking-widest">
                             <FaBookOpen className="text-red-400" size={12} />
-                            <span>{course.totalLessons || 0} Lessons</span>
+                            <span>{course?.totalLessons || 0} Lessons</span>
                         </div>
                     </div>
 
@@ -101,7 +101,7 @@ const CourseCard = ({ course }) => {
                             onClick={handleActionClick}
                             className="btn-premium btn-primary w-full group/btn !py-3 mb-2 flex items-center justify-center gap-2"
                         >
-                            {course.isFree ? (
+                            {course?.isFree ? (
                                 'ENROLL FREE'
                             ) : (
                                 <>

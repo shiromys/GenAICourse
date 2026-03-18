@@ -95,7 +95,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < assessment.questions.length - 1) {
+    if (assessment?.questions && currentQuestion < assessment.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -138,6 +138,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
   };
 
   const getProgressPercentage = () => {
+    if (!assessment?.questions) return 0;
     return ((currentQuestion + 1) / assessment.questions.length) * 100;
   };
 
@@ -221,10 +222,10 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-indigo-100">Active Session</span>
-                <h1 className="text-2xl font-black text-brand">{assessment.title}</h1>
+                <h1 className="text-2xl font-black text-brand">{assessment?.title || 'Assessment'}</h1>
               </div>
               <div className="flex items-center gap-4 text-gray-500 font-bold text-xs uppercase tracking-widest">
-                <span className="flex items-center gap-1.5"><HelpCircle size={14} />Question {currentQuestion + 1} of {assessment.questions.length}</span>
+                <span className="flex items-center gap-1.5"><HelpCircle size={14} />Question {currentQuestion + 1} of {assessment?.questions?.length || 0}</span>
                 <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                 <span className="flex items-center gap-1.5"><BookOpen size={14} />50% to pass</span>
               </div>
@@ -245,7 +246,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             <motion.div
               className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500"
               initial={{ width: 0 }}
-              animate={{ width: `${((currentQuestion + 1) / assessment.questions.length) * 100}%` }}
+              animate={{ width: `${((currentQuestion + 1) / (assessment?.questions?.length || 1)) * 100}%` }}
               transition={{ duration: 0.8 }}
             />
           </div>
@@ -320,7 +321,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           </button>
 
           <div className="flex gap-2">
-            {assessment.questions.map((_, idx) => (
+            {assessment?.questions?.map((_, idx) => (
               <div
                 key={idx}
                 className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'w-8 bg-indigo-500' : answers[idx] ? 'w-2 bg-emerald-500' : 'w-2 bg-gray-300'
@@ -329,7 +330,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             ))}
           </div>
 
-          {currentQuestion === assessment.questions.length - 1 ? (
+          {currentQuestion === (assessment?.questions?.length || 0) - 1 ? (
             <button
               onClick={handleSubmit}
               disabled={submitting}

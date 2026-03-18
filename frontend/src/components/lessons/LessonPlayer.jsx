@@ -164,7 +164,7 @@ const LessonPlayer = () => {
                     </div>
 
                     <h2 className="text-xl font-black text-brand mb-6">Course Content</h2>
-                    <h3 className="text-sm font-bold text-accent mb-4 uppercase tracking-wider">{course.title}</h3>
+                    <h3 className="text-sm font-bold text-accent mb-4 uppercase tracking-wider">{course?.title || 'Course'}</h3>
 
                     <div className="space-y-6">
                         {course.modules.map((module, moduleIndex) => (
@@ -249,19 +249,19 @@ const LessonPlayer = () => {
                             {/* Lesson Header */}
                             <div className="mb-8">
                                 <div className="text-sm text-accent font-bold mb-2 uppercase tracking-wide">
-                                    {course.modules[currentModuleIndex]?.title}
+                                    {course?.modules?.[currentModuleIndex]?.title || 'Module'}
                                 </div>
                                 <h1 className="text-3xl md:text-4xl font-black text-brand mb-4">
-                                    {currentLesson.title}
+                                    {currentLesson?.title || 'Lesson'}
                                 </h1>
 
-                                {currentLesson.duration && (
+                                {currentLesson?.duration && (
                                     <div className="flex items-center text-gray-500 text-sm font-medium">
-                                        <span>Duration: {currentLesson.duration} minutes</span>
-                                        {currentLesson.difficulty && (
+                                        <span>Duration: {currentLesson?.duration} minutes</span>
+                                        {currentLesson?.difficulty && (
                                             <>
                                                 <span className="mx-2">•</span>
-                                                <span>Level: {currentLesson.difficulty}</span>
+                                                <span>Level: {currentLesson?.difficulty}</span>
                                             </>
                                         )}
                                     </div>
@@ -272,14 +272,14 @@ const LessonPlayer = () => {
                             <div className="bg-white rounded-2xl p-8 mb-8 border border-gray-200 shadow-sm">
                                 <div className="prose prose-lg max-w-none text-gray-600">
                                     {/* Key Points */}
-                                    {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
+                                    {currentLesson?.keyPoints && currentLesson?.keyPoints?.length > 0 && (
                                         <div className="mb-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
                                             <h3 className="text-lg font-bold text-brand mb-4 flex items-center">
                                                 <span className="w-1 h-5 bg-accent rounded mr-2"></span>
                                                 Key Points
                                             </h3>
                                             <ul className="space-y-3">
-                                                {currentLesson.keyPoints.map((point, index) => (
+                                                {currentLesson?.keyPoints?.map((point, index) => (
                                                     <li key={index} className="text-gray-600 flex items-start">
                                                         <FaCheck className="text-emerald-500 mt-1 mr-3 flex-shrink-0 text-xs" />
                                                         <span>{point}</span>
@@ -291,7 +291,7 @@ const LessonPlayer = () => {
 
                                     {/* Main Content */}
                                     <div className="text-gray-600 leading-relaxed">
-                                        {currentLesson.content ? (
+                                        {currentLesson?.content ? (
                                             <div className="whitespace-pre-wrap">{currentLesson.content}</div>
                                         ) : (
                                             <p className="text-gray-400 italic">No content available for this lesson.</p>
@@ -299,11 +299,11 @@ const LessonPlayer = () => {
                                     </div>
 
                                     {/* Learning Objectives */}
-                                    {currentLesson.learningObjectives && currentLesson.learningObjectives.length > 0 && (
+                                    {currentLesson?.learningObjectives && currentLesson?.learningObjectives?.length > 0 && (
                                         <div className="mt-8 pt-6 border-t border-gray-100">
                                             <h3 className="text-xl font-bold text-brand mb-4">Learning Objectives</h3>
                                             <ul className="space-y-2">
-                                                {currentLesson.learningObjectives.map((objective, index) => (
+                                                {currentLesson?.learningObjectives?.map((objective, index) => (
                                                     <li key={index} className="text-gray-600 flex items-start">
                                                         <span className="text-accent mr-2 font-bold">✓</span>
                                                         <span>{objective}</span>
@@ -314,11 +314,11 @@ const LessonPlayer = () => {
                                     )}
 
                                     {/* Resources */}
-                                    {currentLesson.resources && currentLesson.resources.length > 0 && (
+                                    {currentLesson?.resources && currentLesson?.resources?.length > 0 && (
                                         <div className="mt-8 pt-6 border-t border-gray-100">
                                             <h3 className="text-xl font-bold text-brand mb-4">Resources</h3>
                                             <div className="space-y-2">
-                                                {currentLesson.resources.map((resource, index) => (
+                                                {currentLesson?.resources?.map((resource, index) => (
                                                     <a
                                                         key={index}
                                                         href={resource.url}

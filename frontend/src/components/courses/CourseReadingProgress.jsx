@@ -153,7 +153,7 @@ const CourseReadingProgress = () => {
                             <div className="h-px bg-slate-700 w-px"></div>
                             
                             <h1 className="text-lg font-bold text-white max-w-md truncate">
-                                {course.title}
+                                {course?.title || 'Loading Course...'}
                             </h1>
                         </div>
                         
@@ -166,7 +166,7 @@ const CourseReadingProgress = () => {
                             <div className="bg-slate-700 rounded-lg px-4 py-2">
                                 <div className="flex items-center text-sm">
                                     <FaBookOpen className="mr-2 text-primary" />
-                                    <span>{currentModuleIndex + 1}. {currentLesson.title}</span>
+                                    <span>{currentModuleIndex + 1}. {currentLesson?.title || 'Unknown Lesson'}</span>
                                 </div>
                             </div>
                             
@@ -205,13 +205,13 @@ const CourseReadingProgress = () => {
                             {/* Lesson Header */}
                             <div className="mb-8 pb-6 border-b border-slate-700">
                                 <h1 className="text-3xl font-bold text-white mb-4">
-                                    {currentLesson.title}
+                                    {currentLesson?.title || 'Metadata Missing'}
                                 </h1>
                                 
                                 <div className="flex items-center gap-6 text-gray-400">
                                     <div className="flex items-center">
                                         <FaClock className="mr-2" />
-                                        <span>{currentLesson.duration || 5} minutes</span>
+                                        <span>{currentLesson?.duration || 5} minutes</span>
                                     </div>
                                     {currentLesson.difficulty && (
                                         <div className="flex items-center">
@@ -227,14 +227,14 @@ const CourseReadingProgress = () => {
                             {/* Main Content */}
                             <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed">
                                 {/* Key Points */}
-                                {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
+                                {currentLesson?.keyPoints && currentLesson?.keyPoints?.length > 0 && (
                                     <div className="mb-6">
                                         <h3 className="text-xl font-bold text-white mb-4 flex items-center">
                                             <FaCheckCircle className="mr-2 text-green-500" />
                                             Key Points
                                         </h3>
                                         <ul className="space-y-2">
-                                            {currentLesson.keyPoints.map((point, index) => (
+                                            {currentLesson?.keyPoints?.map((point, index) => (
                                                 <li key={index} className="flex items-start">
                                                     <span className="text-primary mr-2">•</span>
                                                     <span>{point}</span>
@@ -246,7 +246,7 @@ const CourseReadingProgress = () => {
 
                                 {/* Main Text Content */}
                                 <div className="whitespace-pre-wrap text-lg leading-relaxed">
-                                    {currentLesson.content ? (
+                                    {currentLesson?.content ? (
                                         <div>{currentLesson.content}</div>
                                     ) : (
                                         <p className="text-gray-400 italic">No content available for this lesson.</p>
@@ -254,11 +254,11 @@ const CourseReadingProgress = () => {
                                 </div>
 
                                 {/* Learning Objectives */}
-                                {currentLesson.learningObjectives && currentLesson.learningObjectives.length > 0 && (
+                                {currentLesson?.learningObjectives && currentLesson?.learningObjectives?.length > 0 && (
                                     <div className="mt-8 pt-6 border-t border-slate-700">
                                         <h3 className="text-xl font-bold text-white mb-4">Learning Objectives</h3>
                                         <ul className="space-y-2">
-                                            {currentLesson.learningObjectives.map((objective, index) => (
+                                            {currentLesson?.learningObjectives?.map((objective, index) => (
                                                 <li key={index} className="flex items-start">
                                                     <FaCheckCircle className="mr-2 text-green-500 text-sm" />
                                                     <span>{objective}</span>
@@ -269,11 +269,11 @@ const CourseReadingProgress = () => {
                                 )}
 
                                 {/* Resources */}
-                                {currentLesson.resources && currentLesson.resources.length > 0 && (
+                                {currentLesson?.resources && currentLesson?.resources?.length > 0 && (
                                     <div className="mt-8 pt-6 border-t border-slate-700">
                                         <h3 className="text-xl font-bold text-white mb-4">Additional Resources</h3>
                                         <div className="space-y-2">
-                                            {currentLesson.resources.map((resource, index) => (
+                                            {currentLesson?.resources?.map((resource, index) => (
                                                 <a
                                                     key={index}
                                                     href={resource.url}

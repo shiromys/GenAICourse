@@ -78,7 +78,7 @@ const CourseViewer = () => {
     const currentModule = course.modules[currentModuleIndex];
     const currentLesson = currentModule?.lessons[currentLessonIndex];
     const isLastLesson = currentModuleIndex === course.modules.length - 1 &&
-        currentLessonIndex === currentModule.lessons.length - 1;
+        currentLessonIndex === (currentModule?.lessons?.length || 0) - 1;
 
     const markCurrentLessonComplete = async () => {
         if (isPreview) return;
@@ -94,12 +94,13 @@ const CourseViewer = () => {
     };
 
     const handleNext = async () => {
+        if (!currentLesson) return;
         const lessonId = currentLesson._id || currentLesson.id;
         if (!isPreview && !completedLessons.has(String(lessonId))) {
             await markCurrentLessonComplete();
         }
 
-        if (currentLessonIndex < currentModule.lessons.length - 1) {
+        if (currentLessonIndex < (currentModule?.lessons?.length || 0) - 1) {
             setCurrentLessonIndex(prev => prev + 1);
         } else if (currentModuleIndex < course.modules.length - 1) {
             setCurrentModuleIndex(prev => prev + 1);
@@ -109,7 +110,7 @@ const CourseViewer = () => {
                 toast.success("End of course preview.");
                 return;
             }
-            const totalLessons = course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0);
+            const totalLessons = course.modules.reduce((acc, mod) => acc + (mod.lessons?.length || 0), 0);
             const updatedCompleted = new Set([...completedLessons, String(lessonId)]);
 
             if (updatedCompleted.size >= totalLessons) {
@@ -134,7 +135,7 @@ const CourseViewer = () => {
             setCurrentLessonIndex(prev => prev - 1);
         } else if (currentModuleIndex > 0) {
             setCurrentModuleIndex(prev => prev - 1);
-            setCurrentLessonIndex(course.modules[currentModuleIndex - 1].lessons.length - 1);
+            setCurrentLessonIndex(Math.max(0, (course.modules[currentModuleIndex - 1]?.lessons?.length || 1) - 1));
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -174,8 +175,8 @@ const CourseViewer = () => {
                                 <p className="text-sm">You have successfully completed this course and earned your certificate.</p>
                             </div>
                         ) : (
-                            course.modules.map((mod, mIdx) => (
-                                <div key={mod._id} className="space-y-4">
+                            course?.modules?.map((mod, mIdx) => (
+                                <div key={mod._id || mIdx} className="space-y-4">
                                     <div className="px-2">
                                         <h4 className="text-[10px] uppercase tracking-[0.2em] font-black text-orange-600 mb-1">
                                             {mod.category || 'Course Module'}
@@ -186,7 +187,7 @@ const CourseViewer = () => {
                                     </div>
 
                                     <div className="space-y-1">
-                                        {mod.lessons.map((less, lIdx) => {
+                                        {mod?.lessons?.map((less, lIdx) => {
                                             const lessonId = less._id || less.id;
                                             const isCompleted = completedLessons.has(String(lessonId));
                                             const isCurrent = !showAssessment && !showCertificate && mIdx === currentModuleIndex && lIdx === currentLessonIndex;
@@ -318,16 +319,16 @@ const CourseViewer = () => {
                                     <div className="space-y-12">
                                         <div>
                                             <h4 className="text-[11px] uppercase tracking-[0.3em] font-black text-orange-600 mb-3">
-                                                {currentModule.title}
+                                                {currentModule?.title || 'No Module Title'}
                                             </h4>
                                             <h1 className="text-4xl lg:text-6xl font-black text-slate-900 leading-[1.1] mb-4">
-                                                {currentLesson.title}
+                                                {currentLesson?.title || 'No Lesson Found'}
                                             </h1>
                                             <div className="text-3xl font-bold text-slate-200">0</div>
                                         </div>
 
                                         {/* Styled Key Points Box */}
-                                        {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
+                                        {currentLesson?.keyPoints && currentLesson?.keyPoints?.length > 0 && (
                                             <div className="bg-[#FBFCFD] border-2 border-slate-50 rounded-[2.5rem] p-10 relative overflow-hidden">
                                                 <div className="absolute left-0 top-10 bottom-10 w-1.5 bg-orange-600 rounded-r-full" />
                                                 <h3 className="text-lg font-bold text-slate-900 mb-8 flex items-center gap-3">
@@ -346,7 +347,7 @@ const CourseViewer = () => {
 
                                         <div className="prose prose-slate prose-lg max-w-none">
                                             <div className="text-lg font-medium text-slate-500 leading-loose space-y-6">
-                                                {currentLesson.content.split('\n').map((p, i) => (
+                                                {currentLesson?.content?.split('\n').map((p, i) => (
                                                     <p key={i}>{p}</p>
                                                 ))}
                                             </div>
@@ -366,7 +367,7 @@ const CourseViewer = () => {
                                             </button>
 
                                             <div className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                                                Lesson {currentLessonIndex + 1} of {currentModule.lessons.length}
+                                                Lesson {currentLessonIndex + 1} of {currentModule?.lessons?.length || 0}
                                             </div>
 
                                             <button

@@ -107,7 +107,7 @@ const CourseDetail = () => {
                             <span className="inline-block bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-bold mb-4 border border-accent/20">
                                 {course.category}
                             </span>
-                            <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight text-brand" data-testid="course-title">{course.title}</h1>
+                            <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight text-brand" data-testid="course-title">{course?.title || 'Unknown Course'}</h1>
                             <p className="text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl font-medium" data-testid="course-description">
                                 {course.description}
                             </p>
@@ -141,7 +141,7 @@ const CourseDetail = () => {
                             <div className="card p-2 bg-white border border-gray-200 shadow-xl rounded-2xl">
                                 <img
                                     src={course.thumbnail || 'https://placehold.co/400x250?text=Course'}
-                                    alt={course.title}
+                                    alt={course?.title || 'Course'}
                                     className="w-full rounded-xl"
                                 />
                             </div>
@@ -161,7 +161,7 @@ const CourseDetail = () => {
                         <div key={module._id} className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
                             <div className="bg-gray-50 p-4 border-b border-gray-200 flex justify-between items-center">
                                 <h3 className="font-bold text-lg text-brand">
-                                    Module {mIndex + 1}: {module.title}
+                                    Module {mIndex + 1}: {module?.title || 'No Title'}
                                 </h3>
                                 <span className="text-sm text-gray-500 font-bold">{module.lessons?.length} Lessons</span>
                             </div>
@@ -186,8 +186,8 @@ const CourseDetail = () => {
                                                 {lIndex + 1}
                                             </div>
                                             <div className="flex-1">
-                                                <h4 className="text-brand font-bold text-sm">{lesson.title}</h4>
-                                                <p className="text-xs text-gray-500 mt-0.5 font-medium">{lesson.duration || 5} mins</p>
+                                                <h4 className="text-brand font-bold text-sm">{lesson?.title || 'Untitled Lesson'}</h4>
+                                                <p className="text-xs text-gray-500 mt-0.5 font-medium">{lesson?.duration || 5} mins</p>
                                             </div>
                                             <div className={`${isEnrolled ? 'text-accent' : 'text-gray-300'}`}>
                                                 {isEnrolled ? (
