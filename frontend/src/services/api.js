@@ -29,10 +29,13 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Clear local data and force login if token is expired or invalid
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
+            // Avoid force logout while checking for payment success
+            if (!window.location.pathname.includes('/payment-success')) {
+                // Clear local data and force login if token is expired or invalid
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }

@@ -356,12 +356,14 @@ export const verifyPaymentSession = async (req, res, next) => {
         // Step 1: Check if webhook already processed this session
         const existingPayment = await Payment.findOne({ stripeSessionId: sessionId });
         if (existingPayment && existingPayment.enrollmentUpdated) {
-            const user = await User.findById(req.user._id).populate('enrolledCourses.courseId', 'title thumbnail description');
+            const userId = existingPayment.userId;
+            const user = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
+            
             return res.status(200).json({
                 success: true,
                 message: 'Enrollment active.',
                 alreadyProcessed: true,
-                user: user.getPublicProfile(),
+                user: user ? user.getPublicProfile() : null,
             });
         }
 
@@ -372,15 +374,20 @@ export const verifyPaymentSession = async (req, res, next) => {
         }
 
         const { userId, courseId, purchaseType } = session.metadata || {};
-        if (userId !== req.user._id.toString()) {
+        if (!userId) {
+             return res.status(400).json({ success: false, message: 'Missing metadata in session.' });
+        }
+        
+        // If user is logged in, ensure it's their session. If not logged in, we let it pass for the success screen.
+        if (req.user && userId !== req.user._id.toString()) {
             return res.status(403).json({ success: false, message: 'Unauthorized.' });
         }
 
         // Dedup check (in case webhook fired between our first check and now)
         const paymentExists = await Payment.findOne({ stripeSessionId: sessionId });
         if (paymentExists) {
-            const user = await User.findById(req.user._id).populate('enrolledCourses.courseId', 'title thumbnail description');
-            return res.status(200).json({ success: true, user: user.getPublicProfile() });
+            const user = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
+            return res.status(200).json({ success: true, user: user ? user.getPublicProfile() : null });
         }
 
         const user = await User.findById(userId);
@@ -432,7 +439,8 @@ export const verifyPaymentSession = async (req, res, next) => {
         // Any error here is a transient race condition — return success so the UI can redirect cleanly.
         console.warn('verifyPaymentSession non-critical error:', error.message);
         try {
-            const user = await User.findById(req.user._id).populate('enrolledCourses.courseId', 'title thumbnail description');
+            const fallbackUid = req.user?._id;
+            const user = fallbackUid ? await User.findById(fallbackUid).populate('enrolledCourses.courseId', 'title thumbnail description') : null;
             return res.status(200).json({
                 success: true,
                 message: 'Payment received. Enrollment is being processed.',

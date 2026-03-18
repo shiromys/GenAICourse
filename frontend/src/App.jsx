@@ -96,6 +96,7 @@ const AppContent = () => {
                         <Route path="/reset-password/:token" element={<PageContainer><ResetPassword /></PageContainer>} />
                         <Route path="/how-it-works" element={<PageContainer><HowItWorks /></PageContainer>} />
                         <Route path="/oauth-callback" element={<PageContainer><OAuthCallback /></PageContainer>} />
+                        <Route path="/payment-success" element={<PageContainer><PaymentSuccess /></PageContainer>} />
 
                         {/* Legal Routes */}
                         <Route path="/privacy" element={<PageContainer><PrivacyPolicy /></PageContainer>} />
@@ -106,7 +107,6 @@ const AppContent = () => {
                             <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />
                             <Route path="/profile" element={<PageContainer><Profile /></PageContainer>} />
                             <Route path="/checkout/:id" element={<PageContainer><PaymentPage /></PageContainer>} />
-                            <Route path="/payment-success" element={<PageContainer><PaymentSuccess /></PageContainer>} />
                         </Route>
 
                         {/* Admin Routes */}
