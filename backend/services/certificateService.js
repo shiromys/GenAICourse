@@ -81,9 +81,18 @@ export const generateCertificatePDF = async (certificateData) => {
 
 
 
+            // ── 3. Application Logo ───────────────────────────────────────────
+            const mainLogoPath = path.resolve(__dirname, '../../frontend/public/logo.png');
+            try {
+                await fs.access(mainLogoPath);
+                doc.image(mainLogoPath, width / 2 - 50, 25, { width: 100 });
+            } catch (e) {
+                console.log("Main logo not found for certificate, skipping...");
+            }
+
             // ── 4. Main Titles ───────────────────────────────────────────────
-            doc.fontSize(46).fillColor('#1e293b').font('Times-Roman')
-                .text('CERTIFICATE', 0, 105, { align: 'center', characterSpacing: 8 });
+            doc.fontSize(46).fillColor('#1e293b').font('Times-Bold')
+                .text('CERTIFICATE', 0, 115, { align: 'center', characterSpacing: 8 });
 
             doc.fontSize(12).fillColor('#64748b').font('Times-Roman')
                 .text('OF ACHIEVEMENT', 0, 160, { align: 'center', characterSpacing: 6 });
@@ -140,8 +149,9 @@ export const generateCertificatePDF = async (certificateData) => {
             const sealY = height - 120; // Nestled neatly between text and bottom
 
             try {
-                if (await fs.access(path.resolve(__dirname, '../../frontend/public/certified logo.png')).then(() => true).catch(() => false)) {
-                    doc.image(path.resolve(__dirname, '../../frontend/public/certified logo.png'), sealX, sealY, { width: 70 });
+                const certifiedLogoPath = path.resolve(__dirname, '../../frontend/public/certified logo.png');
+                if (await fs.access(certifiedLogoPath).then(() => true).catch(() => false)) {
+                    doc.image(certifiedLogoPath, sealX, sealY, { width: 70 });
                 } else {
                     doc.save()
                         .translate(width / 2, sealY + 35)
@@ -152,7 +162,7 @@ export const generateCertificatePDF = async (certificateData) => {
                     doc.restore();
                 }
             } catch (e) {
-                console.error("Logo failed:", e.message);
+                console.error("Certified logo failed:", e.message);
             }
 
             // Kept ID subtle out of the way to maintain clear canvas
@@ -242,7 +252,9 @@ export function generateCertificateHTML(data) {
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
         <div class="content">
-            <div class="logo"></div>
+            <div class="logo">
+                <img src="${process.env.FRONTEND_URL}/logo.png" style="height: 60px; width: auto;" alt="GenAI" />
+            </div>
             <h1 class="main-title">CERTIFICATE</h1>
             <p class="sub-header">OF ACHIEVEMENT</p>
             <p class="certify-text">This is to officially certify that</p>

@@ -13,6 +13,10 @@ export const certificateTemplate = (name, courseTitle) => `
 <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #fce7f3; margin: 0; padding: 20px;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 0; border-radius: 16px; border-top: 8px solid #be185d; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden;">
     
+    <div style="text-align: center; padding: 25px 0 10px 0;">
+      <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 50px; width: auto;">
+    </div>
+
     <div style="background-color: #fb7185; padding: 40px; text-align: center;">
       <h1 style="color: #ffffff; font-size: 36px; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Congratulations, ${name}! 🎓</h1>
       <p style="color: #ffffff; font-size: 18px; margin-top: 10px; font-weight: 500;">You've Achieved Something Great!</p>

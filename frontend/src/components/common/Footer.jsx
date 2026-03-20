@@ -9,9 +9,9 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Section */}
                     <div className="lg:col-span-1">
-                        <Link to="/" className="flex items-center gap-2 mb-6 group">
-                            <img src="/logo.png" alt="GenAI" className="h-10 w-auto object-contain bg-blend-multiply" />
-                            <span className="text-2xl font-black tracking-tight text-white">genaicourse.io</span>
+                        <Link to="/" className="flex items-center gap-3 mb-6 group">
+                            <img src="/logo-large.png" alt="GenAI" className="h-14 w-auto object-contain" />
+                            <span className="text-2xl font-black tracking-tight text-white">GenAiCourse.io</span>
                         </Link>
                         <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-xs">
                             Empowering professionals with practical, prompt-based AI skills for the modern workplace.

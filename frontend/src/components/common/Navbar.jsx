@@ -29,12 +29,8 @@ const Navbar = () => {
                 }`}
         >
             <div className="container mx-auto px-6 flex justify-between items-center text-[var(--brand)]">
-                <Link to="/" className="flex items-center gap-3 group">
-                    <img src="/logo.png" alt="GenAI" className="h-16 w-auto object-contain" />
-                    <div className="flex items-baseline">
-                        <span className="text-2xl font-black tracking-tight text-brand leading-none">GENAICOURSE</span>
-                        <span className="text-2xl font-bold text-accent tracking-widest uppercase leading-none">.IO</span>
-                    </div>
+                <Link to="/" className="flex items-center group">
+                    <img src="/logo.png" alt="GenAI" className="h-[60px] w-auto object-contain" />
                 </Link>
 
                 {/* Desktop Menu */}
