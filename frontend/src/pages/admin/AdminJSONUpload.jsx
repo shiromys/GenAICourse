@@ -96,7 +96,7 @@ const AdminJSONUpload = () => {
                             className="flex-1 px-8 py-4 rounded-xl border border-gray-200 text-gray-500 font-bold hover:bg-gray-50 transition-all active:scale-95"
                             disabled={isSaving}
                         >
-                            Back to Command Center
+                            Back
                         </button>
                         <button
                             onClick={handleSave}
@@ -110,7 +110,7 @@ const AdminJSONUpload = () => {
                                     Processing genaicourse Data...
                                 </>
                             ) : (
-                                'Publish Global Access'
+                                'Upload Course'
                             )}
                         </button>
                     </div>
