@@ -26,8 +26,8 @@ export const contactTemplate = (data) => {
 <body>
     <div class="container">
         <div class="header">
+            <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 40px; width: auto; margin-bottom: 10px; filter: brightness(0) invert(1);">
             <p>New Inquiry Received</p>
-            <h1>GENAICOURSE.IO</h1>
         </div>
         <div class="content">
             <div class="field">

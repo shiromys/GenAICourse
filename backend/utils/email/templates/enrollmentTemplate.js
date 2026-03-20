@@ -63,6 +63,7 @@ export const enrollmentTemplate = (name, courseTitle) => {
 <body>
   <div class="email-container">
     <div class="header">
+      <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 40px; width: auto; margin-bottom: 20px;">
       <h1>Enrollment Confirmed!</h1>
     </div>
     <div class="content">

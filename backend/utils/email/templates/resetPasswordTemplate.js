@@ -13,6 +13,10 @@ export const resetPasswordTemplate = (name, resetUrl) => `
 <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 12px; border-top: 6px solid #4f46e5; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     
+    <div style="text-align: center; margin-bottom: 25px;">
+      <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 45px; width: auto;">
+    </div>
+
     <div style="text-align: center; margin-bottom: 30px;">
       <h2 style="color: #4f46e5; font-size: 24px; margin: 0;">Password Reset Request</h2>
       <p style="color: #64748b; font-size: 16px; margin-top: 5px;">Secure Account Access</p>

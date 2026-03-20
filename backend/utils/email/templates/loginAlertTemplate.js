@@ -12,6 +12,10 @@ export const loginAlertTemplate = (name) => `
 <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #fce7f3; margin: 0; padding: 20px;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 12px; border-top: 6px solid #be185d; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     
+    <div style="text-align: center; margin-bottom: 25px;">
+      <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 45px; width: auto;">
+    </div>
+
     <div style="text-align: center; margin-bottom: 20px;">
       <h2 style="color: #be185d; font-size: 24px; margin: 0;">🔐 Security Alert</h2>
       <p style="color: #64748b; font-size: 14px; margin-top: 5px;">New Sign-in Detected</p>

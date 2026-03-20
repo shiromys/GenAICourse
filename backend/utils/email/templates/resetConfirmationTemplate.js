@@ -61,7 +61,7 @@ export const resetConfirmationTemplate = (name) => {
 <body>
   <div class="email-container">
     <div class="header">
-      <h1>GENAICOURSE.IO</h1>
+      <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 45px; width: auto; filter: brightness(0) invert(1);">
     </div>
     <div class="content">
       <span class="success-icon">✅</span>

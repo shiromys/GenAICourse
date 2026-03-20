@@ -42,7 +42,7 @@ const buildPaymentEmail = (userName, courseTitle, amount, frontendUrl) => `
       <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.08);">
         <tr>
           <td style="background:linear-gradient(135deg,#E11D48 0%,#9F1239 100%);padding:40px;text-align:center;">
-            <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:900;letter-spacing:-1px;">GENAICOURSE.IO</h1>
+            <img src="${frontendUrl}/logo.png" alt="GenAI Logo" style="height: 45px; width: auto; margin-bottom: 10px; filter: brightness(0) invert(1);">
             <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;">Payment Confirmed</p>
           </td>
         </tr>

@@ -12,9 +12,9 @@ export const verificationTemplate = (name, url) => `
 <html>
 <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <div style="text-align: center; margin-bottom: 30px;">
-      <h1 style="color: #2563eb; font-size: 28px; margin: 0;">GENAICOURSE.IO</h1>
-      <p style="color: #64748b; font-size: 16px;">Transform Your Career with AI</p>
+    <div style="text-align: center; margin-bottom: 20px;">
+      <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 50px; width: auto;">
+      <p style="color: #64748b; font-size: 16px; margin-top: 10px;">Transform Your Career with AI</p>
     </div>
     
     <div style="text-align: center; margin-bottom: 30px;">
