@@ -69,6 +69,17 @@ const startServer = async () => {
         app.use(morgan('dev'));
     }
 
+    // Health check endpoint
+    app.get('/health', (req, res) => {
+        res.json({
+            success: true,
+            message: 'Backend is running',
+            database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+            environment: process.env.NODE_ENV,
+            timestamp: new Date().toISOString()
+        });
+    });
+
     // API Routes - Organized to avoid conflicts
     app.use('/api/auth', authRoutes);
     app.use('/api/courses', courseRoutes);

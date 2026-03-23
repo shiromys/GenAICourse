@@ -18,7 +18,8 @@ const APIStatus = () => {
     const checkConnection = async () => {
         try {
             // Health endpoint is at root level, not under /api
-            const baseURL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+            const isLocal = window.location.hostname === 'localhost';
+            const baseURL = isLocal ? 'http://localhost:5000' : '';
             const response = await fetch(`${baseURL}/health`);
             const data = await response.json();
 

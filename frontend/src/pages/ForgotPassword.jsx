@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ const ForgotPassword = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/forgot-password`, { email });
+            const response = await api.post('/auth/forgot-password', { email });
 
             if (response.data.success) {
                 setIsSubmitted(true);

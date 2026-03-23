@@ -1,7 +1,4 @@
-import axios from 'axios';
 import api from './api';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const certificateService = {
   // Get user's certificates (uses auth)
@@ -78,7 +75,7 @@ const certificateService = {
   // Get certificate details
   getCertificateDetails: async (certificateId) => {
     try {
-      const response = await axios.get(`${API_URL}/certificates/${certificateId}`);
+      const response = await api.get(`/certificates/${certificateId}`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to load certificate details');
@@ -88,7 +85,7 @@ const certificateService = {
   // Verify certificate (public endpoint)
   verifyCertificate: async (certificateId) => {
     try {
-      const response = await axios.get(`${API_URL}/certificates/verify/${certificateId}`);
+      const response = await api.get(`/certificates/verify/${certificateId}`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to verify certificate');
@@ -110,7 +107,7 @@ const certificateService = {
   // Share certificate (get shareable link)
   shareCertificate: async (certificateId) => {
     try {
-      const response = await axios.post(`${API_URL}/certificates/${certificateId}/share`);
+      const response = await api.post(`/certificates/${certificateId}/share`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to share certificate');

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
@@ -29,7 +29,7 @@ const ResetPassword = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/reset-password/${token}`, { password });
+            const response = await api.put(`/auth/reset-password/${token}`, { password });
             
             if (response.data.success) {
                 setIsSuccess(true);
