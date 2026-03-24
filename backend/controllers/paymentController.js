@@ -345,13 +345,14 @@ export const stripeWebhook = async (req, res) => {
                     userId: new mongoose.Types.ObjectId(userId),
                     email: userEmail,
                     purchaseType,
-                    stripeSessionId: session.id || null,
-                    stripePaymentIntentId: session.payment_intent || null,
                     amountPaid,
                     currency: session.currency || 'usd',
                     status: 'completed',
                     enrollmentUpdated: true,
                 };
+                // Only attach sparse properties if they exist
+                if (session.id) paymentData.stripeSessionId = session.id;
+                if (session.payment_intent) paymentData.stripePaymentIntentId = session.payment_intent;
                 // Only attach courseId if it exists and is valid
                 if (courseId && courseId !== 'none' && courseId !== 'null' && courseId !== 'undefined') {
                     paymentData.courseId = new mongoose.Types.ObjectId(courseId);
@@ -447,13 +448,15 @@ export const verifyPaymentSession = async (req, res, next) => {
                 userId: new mongoose.Types.ObjectId(userId),
                 email: email || user.email,
                 purchaseType: purchaseType || 'all',
-                stripeSessionId: session.id,
-                stripePaymentIntentId: session.payment_intent || null,
                 amountPaid: amountPaid,
                 currency: session.currency || 'usd',
                 status: 'completed',
                 enrollmentUpdated: true,
             };
+
+            // Only attach sparse properties if they exist
+            if (session.id) paymentPayload.stripeSessionId = session.id;
+            if (session.payment_intent) paymentPayload.stripePaymentIntentId = session.payment_intent;
 
             // Safely attach courseId if it's a valid ID string
             if (courseId && courseId !== 'none' && courseId !== 'null' && courseId !== 'undefined') {

@@ -341,9 +341,18 @@ const Profile = () => {
 
                                 {activeTab === 'payments' && (
                                     <div>
-                                        <div className="mb-10">
-                                            <h3 className="text-2xl font-black text-slate-900 mb-2">Payment History</h3>
-                                            <p className="text-slate-500 font-medium font-sans">View your payment invoices and transactions.</p>
+                                        <div className="flex justify-between items-center mb-10">
+                                            <div>
+                                                <h3 className="text-2xl font-black text-slate-900 mb-2">Payment History</h3>
+                                                <p className="text-slate-500 font-medium font-sans">View your payment invoices and transactions.</p>
+                                            </div>
+                                            {/* RECTIFIED: Manual Sync Trigger */}
+                                            <button 
+                                                onClick={fetchPayments}
+                                                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl font-bold text-xs hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                            >
+                                                <FaBolt className={paymentsLoading ? "animate-pulse" : ""} /> Sync Records
+                                            </button>
                                         </div>
 
                                         <div className="space-y-6">
