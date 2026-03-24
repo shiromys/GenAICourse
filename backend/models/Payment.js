@@ -11,6 +11,12 @@ const paymentSchema = new mongoose.Schema({
         required: true,
         index: true
     },
+    email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+        index: true
+    },
     courseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course',

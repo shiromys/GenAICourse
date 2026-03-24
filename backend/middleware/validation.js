@@ -105,9 +105,6 @@ export const emailVerificationValidation = [
 
 // Change password validation
 export const changePasswordValidation = [
-    body('currentPassword')
-        .notEmpty().withMessage('Current password is required'),
-    
     body('newPassword')
         .notEmpty().withMessage('New password is required')
         .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaLock, FaCog, FaCamera, FaSave, FaSignOutAlt, FaBook, FaHistory, FaBell, FaCertificate, FaFileInvoiceDollar, FaDownload } from 'react-icons/fa';
+import { FaUser, FaLock, FaCog, FaCamera, FaSave, FaSignOutAlt, FaBook, FaHistory, FaBell, FaCertificate, FaFileInvoiceDollar, FaDownload, FaBolt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import authService from '../services/authService.js';
 import paymentService from '../services/paymentService.js';
@@ -153,7 +153,7 @@ const Profile = () => {
             <div className="container max-w-6xl mx-auto px-4">
                 <div className="flex flex-col lg:flex-row gap-8">
 
-                    {/* Sidebar Sidebar */}
+                    {/* Sidebar */}
                     <div className="w-full lg:w-80 flex-shrink-0">
                         <div className="glass-card bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden sticky top-32">
                             {/* Avatar Section */}
@@ -228,7 +228,6 @@ const Profile = () => {
                                                         placeholder="Your Full Name"
                                                     />
                                                 </div>
-
                                             </div>
 
                                             <div className="space-y-2">
@@ -268,7 +267,6 @@ const Profile = () => {
                                         </div>
 
                                         <form onSubmit={handlePasswordChange} className="space-y-8 max-w-xl">
-
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">New Password</label>
                                                 <input
@@ -359,7 +357,16 @@ const Profile = () => {
                                                         </div>
                                                         <div className="flex-1">
                                                             <div className="flex justify-between items-start mb-1">
-                                                                <h4 className="font-black text-lg text-slate-900">{payment.courseId?.title || (payment.purchaseType === 'all' ? 'All-Access Pass' : 'Unknown Purchase')}</h4>
+                                                                <h4 className="font-black text-lg text-slate-900">
+                                                                    {/* ── RECTIFIED: Bundle Fallback Logic ── */}
+                                                                    {payment.purchaseType === 'all' ? (
+                                                                        <span className="flex items-center gap-2 text-red-600">
+                                                                            <FaBolt className="text-red-500" /> All-Access Pass (GENAICOURSE.IO)
+                                                                        </span>
+                                                                    ) : (
+                                                                        payment.courseId?.title || 'Course Enrollment'
+                                                                    )}
+                                                                </h4>
                                                                 <span className="font-bold text-lg text-green-600">${(payment.amountPaid / 100).toFixed(2)}</span>
                                                             </div>
                                                             <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
@@ -368,13 +375,27 @@ const Profile = () => {
                                                                     {payment.status}
                                                                 </span>
                                                             </div>
-                                                            <p className="text-sm text-gray-500">Transaction ID: {payment.stripeSessionId}</p>
+                                                            <p className="text-sm font-medium text-slate-400">
+                                                                Transaction ID: {payment.stripeSessionId || payment.stripePaymentIntentId || payment._id}
+                                                            </p>
+                                                            {/* ── RECTIFIED: Lifetime Indicator ── */}
+                                                            {payment.purchaseType === 'all' && (
+                                                                <p className="text-[10px] text-red-400 font-bold uppercase mt-1 tracking-widest leading-none">
+                                                                    Lifetime Access Unlocked
+                                                                </p>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 ))
                                             ) : (
                                                 <div className="text-center py-20 bg-gray-50/50 rounded-[2rem] border border-dashed border-gray-200">
                                                     <p className="text-gray-400 font-bold italic">No payments found.</p>
+                                                    <button
+                                                        onClick={fetchPayments}
+                                                        className="mt-4 text-red-600 font-black text-xs uppercase tracking-widest hover:underline"
+                                                    >
+                                                        Sync History
+                                                    </button>
                                                 </div>
                                             )}
                                         </div>

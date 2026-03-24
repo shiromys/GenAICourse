@@ -12,7 +12,7 @@ const logToFile = (msg) => {
     try {
         const logPath = path.join(process.cwd(), 'payment-debug.log');
         fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
-    } catch (e) {}
+    } catch (e) { }
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -137,7 +137,14 @@ export const createCheckoutSession = async (req, res, next) => {
         }
 
         const userId = req.user._id.toString();
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const origin = req.headers.origin || req.headers.referer || '';
+        // If it starts with localhost:3000, use that. Otherwise use env variable or default.
+        let frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        if (origin.includes('localhost:3000')) frontendUrl = 'http://localhost:3000';
+        else if (origin.includes('localhost:5173')) frontendUrl = 'http://localhost:5173';
+
+        console.log(`💳 Creating session for user ${userId} (Frontend Base: ${frontendUrl})`);
+
         let amount = 0;
         let productName = '';
         let productDescription = '';
@@ -162,6 +169,7 @@ export const createCheckoutSession = async (req, res, next) => {
                     await grantAllAccess(userId, user);
                     await Payment.create({
                         userId,
+                        email: user.email,
                         courseId: null,
                         purchaseType: 'all',
                         amountPaid: 0,
@@ -228,6 +236,7 @@ export const createCheckoutSession = async (req, res, next) => {
             cancel_url: `${frontendUrl}/pricing`,
             metadata: {
                 userId,
+                email: req.user.email,
                 courseId: courseId || 'none',
                 purchaseType,
             },
@@ -297,18 +306,25 @@ export const stripeWebhook = async (req, res) => {
 
         if (session.payment_status !== 'paid') return res.json({ received: true });
 
-        const { userId, courseId, purchaseType } = session.metadata || {};
-        if (!userId) return res.json({ received: true });
+        const { userId, courseId, purchaseType, email } = session.metadata || {};
+        if (!userId) {
+            console.error('❌ Webhook: Missing userId in metadata');
+            return res.json({ received: true });
+        }
 
         try {
             const existingPayment = await Payment.findOne({ stripeSessionId: session.id });
             if (existingPayment) return res.json({ received: true });
 
             const user = await User.findById(userId);
-            if (!user) return res.json({ received: true });
+            if (!user) {
+                console.error(`❌ Webhook: User ${userId} not found`);
+                return res.json({ received: true });
+            }
 
             let courseTitle = 'Your Course';
             const amountPaid = session.amount_total || 0;
+            const userEmail = email || user.email;
 
             if (purchaseType === 'all') {
                 courseTitle = 'All-Access Pass (GENAICOURSE.IO)';
@@ -325,9 +341,9 @@ export const stripeWebhook = async (req, res) => {
             console.log(`📝 Creating record for ${purchaseType} (User: ${userId})...`);
             let paymentRecord = null;
             try {
-                paymentRecord = await Payment.create({
+                const paymentData = {
                     userId: new mongoose.Types.ObjectId(userId),
-                    courseId: (courseId && courseId !== 'none') ? new mongoose.Types.ObjectId(courseId) : null,
+                    email: userEmail,
                     purchaseType,
                     stripeSessionId: session.id || null,
                     stripePaymentIntentId: session.payment_intent || null,
@@ -335,7 +351,13 @@ export const stripeWebhook = async (req, res) => {
                     currency: session.currency || 'usd',
                     status: 'completed',
                     enrollmentUpdated: true,
-                });
+                };
+                // Only attach courseId if it exists and is valid
+                if (courseId && courseId !== 'none' && courseId !== 'null' && courseId !== 'undefined') {
+                    paymentData.courseId = new mongoose.Types.ObjectId(courseId);
+                }
+
+                paymentRecord = await Payment.create(paymentData);
                 console.log(`✅ Record saved: ${paymentRecord._id}`);
             } catch (createError) {
                 console.error('❌ Record failed:', createError.message);
@@ -377,7 +399,7 @@ export const verifyPaymentSession = async (req, res, next) => {
         if (existingPayment && existingPayment.enrollmentUpdated) {
             const userId = existingPayment.userId;
             const user = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
-            
+
             return res.status(200).json({
                 success: true,
                 message: 'Enrollment active.',
@@ -392,11 +414,11 @@ export const verifyPaymentSession = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Payment incomplete.' });
         }
 
-        const { userId, courseId, purchaseType } = session.metadata || {};
+        const { userId, courseId, purchaseType, email } = session.metadata || {};
         if (!userId) {
-             return res.status(400).json({ success: false, message: 'Missing metadata in session.' });
+            return res.status(400).json({ success: false, message: 'Missing metadata in session.' });
         }
-        
+
         // If user is logged in, ensure it's their session. If not logged in, we let it pass for the success screen.
         if (req.user && userId !== req.user._id.toString()) {
             return res.status(403).json({ success: false, message: 'Unauthorized.' });
@@ -419,17 +441,27 @@ export const verifyPaymentSession = async (req, res, next) => {
         console.log(`📝 [Fallback] Creating record (User: ${userId}, Type: ${purchaseType})...`);
         let savedPaymentId = null;
         try {
-            const paymentRecord = await Payment.create({
+            console.log(`🎁 [Reconciliation] Finalizing bundle for ${user.email}. Amount: ${amountPaid}`);
+            
+            const paymentPayload = {
                 userId: new mongoose.Types.ObjectId(userId),
-                courseId: (courseId && courseId !== 'none') ? new mongoose.Types.ObjectId(courseId) : null,
-                purchaseType,
-                stripeSessionId: session.id || null,
+                email: email || user.email,
+                purchaseType: purchaseType || 'all',
+                stripeSessionId: session.id,
                 stripePaymentIntentId: session.payment_intent || null,
-                amountPaid,
+                amountPaid: amountPaid,
                 currency: session.currency || 'usd',
                 status: 'completed',
                 enrollmentUpdated: true,
-            });
+            };
+
+            // Safely attach courseId if it's a valid ID string
+            if (courseId && courseId !== 'none' && courseId !== 'null' && courseId !== 'undefined') {
+                paymentPayload.courseId = new mongoose.Types.ObjectId(courseId);
+            }
+
+            const paymentRecord = await Payment.create(paymentPayload);
+            console.log(`✅ [Reconciliation] Success. ID: ${paymentRecord._id}`);
             savedPaymentId = paymentRecord._id;
             console.log(`✅ [Fallback] Record saved: ${savedPaymentId}`);
         } catch (createError) {
@@ -491,11 +523,20 @@ export const verifyPaymentSession = async (req, res, next) => {
 // ─────────────────────────────────────────────────────────────────────────────
 export const getMyPayments = async (req, res, next) => {
     try {
-        const payments = await Payment.find({ userId: req.user._id })
+        const userId = req.user._id;
+        const userEmail = (req.user.email || '').toLowerCase();
+
+        // 🔗 Robust Lookup: Search by both User ID and Current Email
+        const payments = await Payment.find({
+            $or: [
+                { userId },
+                { email: userEmail }
+            ]
+        })
             .populate('courseId', 'title thumbnail')
             .sort({ createdAt: -1 });
 
-        // Prevent browser from caching this — always return fresh data
+        // Prevent browser from caching this
         res.set('Cache-Control', 'no-store');
         res.status(200).json({ success: true, count: payments.length, data: payments });
     } catch (error) {

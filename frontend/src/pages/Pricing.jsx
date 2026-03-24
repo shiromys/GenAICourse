@@ -29,9 +29,10 @@ const Pricing = () => {
     }, [isAuthenticated]);
 
     const hasCredit = bundlePricing && bundlePricing.creditApplied > 0;
-    const displayPrice = bundlePricing
+    const isOwned = user?.hasAllCoursesAccess;
+    const displayPrice = isOwned ? '$0' : (bundlePricing
         ? `$${(bundlePricing.finalAmount / 100).toFixed(0)}`
-        : '$159';
+        : '$159');
 
     const handleBundlePurchase = async () => {
         if (!isAuthenticated) {
@@ -156,13 +157,13 @@ const Pricing = () => {
                             ) : (
                                 <>
                                     <div className="flex items-baseline gap-2">
-                                        {hasCredit && (
+                                        { (hasCredit && !isOwned) && (
                                             <span className="text-4xl font-black text-slate-600 line-through tracking-tighter">$159</span>
                                         )}
                                         <span className="text-7xl font-black tracking-tighter text-white">{displayPrice}</span>
                                         <span className="text-slate-500 font-black text-sm uppercase tracking-widest">one-time</span>
                                     </div>
-                                    {hasCredit && (
+                                    { (hasCredit && !isOwned) && (
                                         <div className="mt-3 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2.5 w-fit">
                                             <FaTag size={12} className="text-emerald-400" />
                                             <p className="text-emerald-400 font-bold text-xs">
@@ -170,9 +171,14 @@ const Pricing = () => {
                                             </p>
                                         </div>
                                     )}
-                                    {bundlePricing?.isFreeUpgrade && (
+                                    { (bundlePricing?.isFreeUpgrade && !isOwned) && (
                                         <p className="text-emerald-400 font-black text-sm mt-2">
                                             Your purchases fully cover the bundle — click to unlock for FREE!
+                                        </p>
+                                    )}
+                                    {isOwned && (
+                                        <p className="text-red-500 font-black text-sm mt-2 uppercase tracking-widest">
+                                            Access Protocol Active: You own all courses
                                         </p>
                                     )}
                                 </>
@@ -187,11 +193,12 @@ const Pricing = () => {
                             <FeatureItem text="Future Course Updates (Free)" dark />
                         </div>
 
-                        <button
+                         <button
                             onClick={handleBundlePurchase}
-                            className="w-full py-5 px-8 rounded-2xl bg-red-600 text-white font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] hover:bg-red-500 transition-all text-lg"
+                            disabled={isOwned}
+                            className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-500'}`}
                         >
-                            {bundlePricing?.isFreeUpgrade ? 'Unlock for FREE — Credits Applied' : 'Get All-Access Pass'}
+                            {isOwned ? 'ALREADY OWNED' : (bundlePricing?.isFreeUpgrade ? 'Unlock for FREE — Credits Applied' : 'Get All-Access Pass')}
                         </button>
                     </motion.div>
                 </div>
