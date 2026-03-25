@@ -29,8 +29,13 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Avoid force logout while checking for payment success
-            if (!window.location.pathname.includes('/payment-success')) {
+            const path = window.location.pathname;
+            // ✅ Do NOT force-logout on any payment-related or session-resuming page.
+            // These pages call /auth/me to re-hydrate the user after a Stripe redirect.
+            const exemptPaths = ['/payment-success', '/dashboard', '/profile'];
+            const isExempt = exemptPaths.some(p => path.startsWith(p));
+
+            if (!isExempt) {
                 // Clear local data and force login if token is expired or invalid
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');

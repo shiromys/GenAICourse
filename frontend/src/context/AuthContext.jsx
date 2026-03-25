@@ -16,16 +16,48 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // ── Load user from localStorage on mount ──────────────────────────────────
+    // ── Load user on mount — verify token with server ────────────────────────
     useEffect(() => {
-        const storedUser = authService.getStoredUser();
-        const token = authService.getToken();
+        const initAuth = async () => {
+            const token = authService.getToken();
 
-        if (storedUser && token) {
-            setUser(storedUser);
-            setIsAuthenticated(true);
-        }
-        setLoading(false);
+            if (!token) {
+                // No token at all — not authenticated
+                setLoading(false);
+                return;
+            }
+
+            // 1. Immediately hydrate from localStorage for instant render (no flash)
+            const storedUser = authService.getStoredUser();
+            if (storedUser) {
+                setUser(storedUser);
+                setIsAuthenticated(true);
+            }
+
+            // 2. Silently verify token with the server in the background
+            //    This catches: expired tokens, Railway cold-start races, post-Stripe redirect states
+            try {
+                const data = await authService.getCurrentUser();
+                if (data.success) {
+                    setUser(data.data);
+                    setIsAuthenticated(true);
+                    localStorage.setItem('user', JSON.stringify(data.data));
+                }
+            } catch (err) {
+                // Token is invalid/expired — only clear if we're NOT on a payment page
+                const path = window.location.pathname;
+                const isPaymentPage = ['/payment-success', '/dashboard', '/profile'].some(p => path.startsWith(p));
+                if (!isPaymentPage) {
+                    authService.logout();
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        initAuth();
     }, []);
 
     // ── Login ─────────────────────────────────────────────────────────────────
