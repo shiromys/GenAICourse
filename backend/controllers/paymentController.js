@@ -167,16 +167,18 @@ export const createCheckoutSession = async (req, res, next) => {
                 const alreadyBundled = await Payment.findOne({ userId, purchaseType: 'all', status: 'completed' });
                 if (!alreadyBundled) {
                     await grantAllAccess(userId, user);
-                    await Payment.create({
-                        userId,
+                    // ✅ Do NOT pass courseId: null — omit it so the sparse index is not affected
+                    const freePayload = {
+                        userId: new mongoose.Types.ObjectId(userId),
                         email: user.email,
-                        courseId: null,
                         purchaseType: 'all',
                         amountPaid: 0,
                         currency: 'usd',
                         status: 'completed',
                         enrollmentUpdated: true,
-                    });
+                    };
+                    const freeRecord = await Payment.create(freePayload);
+                    console.log(`✅ Free-upgrade invoice saved: ${freeRecord._id}`);
                     try {
                         await sendEmail(
                             user.email,
@@ -498,11 +500,9 @@ export const verifyPaymentSession = async (req, res, next) => {
         return res.status(200).json({ success: true, user: updatedUser.getPublicProfile() });
 
     } catch (error) {
-        logToFile(`❌ verifyPaymentSession error: ${error.message}`);
-        // Never surface a hard error to the user for this endpoint.
-        // Stripe confirmed payment by redirecting here. Webhook is authoritative for enrollment.
-        // Any error here is a transient race condition — return success so the UI can redirect cleanly.
-        console.warn('verifyPaymentSession non-critical error:', error.message);
+        // 🔴 LOG the full error so we can debug it properly — previously this was swallowing critical errors
+        console.error('❌ verifyPaymentSession FULL ERROR:', error.message, error.stack);
+        logToFile(`❌ verifyPaymentSession error: ${error.message}\n${error.stack}`);
         try {
             const fallbackUid = req.user?._id;
             const user = fallbackUid ? await User.findById(fallbackUid).populate('enrolledCourses.courseId', 'title thumbnail description') : null;
@@ -530,7 +530,7 @@ export const getMyPayments = async (req, res, next) => {
         const userEmail = (req.user.email || '').toLowerCase();
 
         // 🔗 Robust Lookup: Search by both User ID and Current Email
-        const payments = await Payment.find({
+        let payments = await Payment.find({
             $or: [
                 { userId },
                 { email: userEmail }
@@ -538,6 +538,41 @@ export const getMyPayments = async (req, res, next) => {
         })
             .populate('courseId', 'title thumbnail')
             .sort({ createdAt: -1 });
+
+        // ── LAST-RESORT RECONCILIATION ──────────────────────────────────────────
+        // If the user HAS all-access (flag is true in their User doc) but there is
+        // NO 'all' payment record in the DB (invoice was lost due to a crash during
+        // Payment.create), we create a healed record right now so it shows in the UI.
+        const hasAllRecord = payments.some(p => p.purchaseType === 'all');
+        if (!hasAllRecord) {
+            // Re-fetch user to check the live flag (req.user may be stale)
+            const liveUser = await User.findById(userId).select('hasAllCoursesAccess email');
+            if (liveUser && liveUser.hasAllCoursesAccess) {
+                console.log(`⚕️ [Reconcile] User ${userEmail} has all-access but no invoice — healing now...`);
+                try {
+                    // ✅ Calculate the actual final amount after deducting single-course credits
+                    // e.g. if user bought $29 course first → $159 - $29 = $130 actual payment
+                    const { finalAmount } = await calculateUpgradeCredit(userId);
+                    const actualAmountPaid = finalAmount; // What the user really paid
+
+                    const healedRecord = await Payment.create({
+                        userId: new mongoose.Types.ObjectId(userId),
+                        email: userEmail,
+                        purchaseType: 'all',
+                        amountPaid: actualAmountPaid, // Correct deducted price, not always $159
+                        currency: 'usd',
+                        status: 'completed',
+                        enrollmentUpdated: true,
+                    });
+                    console.log(`✅ [Reconcile] Healed invoice: ${healedRecord._id} — Amount: $${(actualAmountPaid / 100).toFixed(2)}`);
+                    payments = [healedRecord, ...payments];
+                } catch (healErr) {
+                    // Could be a race condition duplicate — just log and move on
+                    console.warn(`⚠️ [Reconcile] Could not heal (likely duplicate): ${healErr.message}`);
+                }
+            }
+        }
+        // ────────────────────────────────────────────────────────────────────────
 
         // Prevent browser from caching this
         res.set('Cache-Control', 'no-store');
