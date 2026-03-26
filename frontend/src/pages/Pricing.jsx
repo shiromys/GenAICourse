@@ -5,6 +5,7 @@ import { FaCheck, FaBolt, FaTag } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import paymentService from '../services/paymentService';
 import { toast } from 'react-toastify';
+import { AuroraBackground } from '../components/ui/aurora-background';
 
 const Pricing = () => {
     const { isAuthenticated, user } = useAuth();
@@ -58,12 +59,7 @@ const Pricing = () => {
     };
 
     return (
-        <section id="pricing" className="py-32 bg-[#F8FAFC] min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-            {/* Ambient Background Elements */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-red-100/50 blur-[120px] rounded-full" />
-                <div className="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-slate-100/50 blur-[120px] rounded-full" />
-            </div>
+        <AuroraBackground id="pricing" className="pt-40 pb-32 overflow-hidden">
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-20">
@@ -80,7 +76,7 @@ const Pricing = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight"
                     >
-                        Simple <span className="text-red-600">and Transparent </span>
+                        Simple <span className="text-indigo-600">and Transparent </span>
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
@@ -157,13 +153,13 @@ const Pricing = () => {
                             ) : (
                                 <>
                                     <div className="flex items-baseline gap-2">
-                                        { (hasCredit && !isOwned) && (
+                                        {(hasCredit && !isOwned) && (
                                             <span className="text-4xl font-black text-slate-600 line-through tracking-tighter">$159</span>
                                         )}
                                         <span className="text-7xl font-black tracking-tighter text-white">{displayPrice}</span>
                                         <span className="text-slate-500 font-black text-sm uppercase tracking-widest">one-time</span>
                                     </div>
-                                    { (hasCredit && !isOwned) && (
+                                    {(hasCredit && !isOwned) && (
                                         <div className="mt-3 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2.5 w-fit">
                                             <FaTag size={12} className="text-emerald-400" />
                                             <p className="text-emerald-400 font-bold text-xs">
@@ -171,7 +167,7 @@ const Pricing = () => {
                                             </p>
                                         </div>
                                     )}
-                                    { (bundlePricing?.isFreeUpgrade && !isOwned) && (
+                                    {(bundlePricing?.isFreeUpgrade && !isOwned) && (
                                         <p className="text-emerald-400 font-black text-sm mt-2">
                                             Your purchases fully cover the bundle — click to unlock for FREE!
                                         </p>
@@ -193,33 +189,17 @@ const Pricing = () => {
                             <FeatureItem text="Future Course Updates (Free)" dark />
                         </div>
 
-                         <button
+                        <button
                             onClick={handleBundlePurchase}
                             disabled={isOwned}
-                            className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-500'}`}
+                            className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}
                         >
                             {isOwned ? 'ALREADY OWNED' : (bundlePricing?.isFreeUpgrade ? 'Unlock for FREE — Credits Applied' : 'Get All-Access Pass')}
                         </button>
                     </motion.div>
                 </div>
-
-                {/* Note for non-logged in users */}
-                {!isAuthenticated && (
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="text-center text-slate-400 text-sm font-medium mt-8"
-                    >
-                        Already purchased single courses?{' '}
-                        <Link to="/login?redirect=pricing" className="text-red-500 font-bold underline underline-offset-4">
-                            Log in
-                        </Link>{' '}
-                        to see your personalised upgrade price.
-                    </motion.p>
-                )}
             </div>
-        </section>
+        </AuroraBackground>
     );
 };
 

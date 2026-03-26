@@ -30,7 +30,7 @@ const Navbar = () => {
         >
             <div className="container mx-auto px-6 flex justify-between items-center text-[var(--brand)]">
                 <Link to="/" className="flex items-center group">
-                    <img src="/logo.png" alt="GenAI" className="h-[60px] w-auto object-contain" />
+                    <img src="/logo.png" alt="GenAI" className="h-[90px] w-auto object-contain" />
                 </Link>
 
                 {/* Desktop Menu */}
