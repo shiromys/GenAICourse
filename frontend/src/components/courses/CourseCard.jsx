@@ -52,7 +52,7 @@ const CourseCard = ({ course }) => {
 
             {/* Content */}
             <div className="p-7 flex flex-col flex-1">
-                <h3 className="text-xl font-black text-brand mb-3 line-clamp-2 leading-tight tracking-tight group-hover:text-red-600 transition-colors">
+                <h3 className="text-xl font-black text-brand mb-3 line-clamp-2 leading-tight tracking-tight group-hover:text-indigo-600 transition-colors">
                     {course?.title || 'Untitled'}
                 </h3>
 

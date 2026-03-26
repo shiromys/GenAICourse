@@ -234,10 +234,7 @@ const Pricing = () => {
                             question="Do you offer refunds?"
                             answer="No, we do not offer any refunds excluding special cases such as double payments."
                         />
-                        <FAQItem
-                            question="Are the certificates accredited?"
-                            answer="Our certificates are industry-recognized and verifiable via a unique ID, perfect for LinkedIn."
-                        />
+
                     </div>
                 </div>
             </div>
