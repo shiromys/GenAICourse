@@ -99,7 +99,7 @@ const Pricing = () => {
                     >
                         <div className="mb-8">
                             <h3 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">One-Course plan</h3>
-                            <p className="text-slate-500 font-bold text-sm tracking-wide">Standard Learning Access</p>
+
                         </div>
 
                         <div className="flex items-baseline gap-2 mb-10">
@@ -140,7 +140,6 @@ const Pricing = () => {
                                 </div>
                                 <h3 className="text-2xl font-black text-white uppercase tracking-tight">All Courses pack</h3>
                             </div>
-                            <p className="text-slate-400 font-bold text-sm tracking-wide">Uninterrupted Access</p>
                         </div>
 
                         {/* Dynamic Price Display */}
