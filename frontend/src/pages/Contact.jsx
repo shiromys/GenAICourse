@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import api from '../services/api';
+import { AuroraBackground } from '../components/ui/aurora-background';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -40,8 +41,8 @@ const Contact = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] py-20 px-4 sm:px-6 lg:px-8 font-sans flex items-center justify-center">
-            <div className="max-w-5xl w-full">
+        <AuroraBackground className="pt-40 pb-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-screen">
+            <div className="max-w-5xl w-full relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -50,19 +51,16 @@ const Contact = () => {
                 >
                     {/* Left Column - Contact Info */}
                     <div className="md:w-5/12 bg-[#0F172A] text-white p-12 lg:p-16 relative overflow-hidden">
-                        {/* Decorative background blur */}
-                        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-red-600 rounded-full blur-[20px] opacity-20"></div>
-                        <div className="absolute top-10 -left-10 w-32 h-32 bg-purple-600 rounded-full blur-[80px] opacity-30"></div>
 
                         <div className="relative z-10">
-                            <h1 className="text-4xl font-black tracking-tight mb-4">Get in touch</h1>
+                            <p className="text-4xl font-white tracking-tight mb-4">Get in touch</p>
                             <p className="text-slate-400 text-lg mb-12 leading-relaxed">
                                 Have a question about our AI courses? Need help with a certificate? We're here to help.
                             </p>
 
                             <div className="space-y-8">
                                 <div className="flex items-start gap-5">
-                                    <div className="mt-1 flex-shrink-0 text-red-500">
+                                    <div className="mt-1 flex-shrink-0 text-indigo-500">
                                         <FaEnvelope size={20} />
                                     </div>
                                     <div>
@@ -72,7 +70,7 @@ const Contact = () => {
                                 </div>
 
                                 <div className="flex items-start gap-5">
-                                    <div className="mt-1 flex-shrink-0 text-red-500">
+                                    <div className="mt-1 flex-shrink-0 text-indigo-500">
                                         <FaPhoneAlt size={20} />
                                     </div>
                                     <div>
@@ -82,7 +80,7 @@ const Contact = () => {
                                 </div>
 
                                 <div className="flex items-start gap-5">
-                                    <div className="mt-1 flex-shrink-0 text-red-500">
+                                    <div className="mt-1 flex-shrink-0 text-indigo-500">
                                         <FaMapMarkerAlt size={20} />
                                     </div>
                                     <div>
@@ -112,7 +110,7 @@ const Contact = () => {
                                     onChange={handleChange}
                                     placeholder="John Doe"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-medium placeholder-slate-400"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium placeholder-slate-400"
                                 />
                             </div>
 
@@ -128,7 +126,7 @@ const Contact = () => {
                                     onChange={handleChange}
                                     placeholder="john@company.com"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-medium placeholder-slate-400"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium placeholder-slate-400"
                                 />
                             </div>
 
@@ -141,7 +139,7 @@ const Contact = () => {
                                     name="subject"
                                     value={formData.subject}
                                     onChange={handleChange}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-medium appearance-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium appearance-none"
                                     style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 1rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
                                 >
                                     <option value="General Inquiry">General Inquiry</option>
@@ -163,14 +161,14 @@ const Contact = () => {
                                     placeholder="Tell us how we can help..."
                                     required
                                     rows="4"
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all font-medium placeholder-slate-400 resize-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium placeholder-slate-400 resize-none"
                                 ></textarea>
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full bg-[#b31010] hover:bg-[#C53030] text-white font-black py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 flex items-center justify-center gap-2"
+                                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-full shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 flex items-center justify-center gap-2"
                             >
                                 {isSubmitting ? (
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -185,7 +183,7 @@ const Contact = () => {
                     </div>
                 </motion.div>
             </div>
-        </div>
+        </AuroraBackground>
     );
 };
 
