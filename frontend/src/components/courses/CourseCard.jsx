@@ -40,27 +40,11 @@ const CourseCard = ({ course }) => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-                {/* Level & Category badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest text-slate-700 border border-white/60 shadow">
-                        {course?.level || 'Beginner'}
-                    </span>
-                    {course?.category && (
-                        <span className="px-3 py-1 bg-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest text-white shadow">
-                            {course.category}
-                        </span>
-                    )}
-                </div>
-
-                {/* Price / Access badge */}
+                {/* Enrolled badge (Keep only this one) */}
                 <div className="absolute top-4 right-4">
-                    {hasAccess ? (
+                    {hasAccess && (
                         <span className="px-3 py-1.5 bg-green-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">
                             ✓ Enrolled
-                        </span>
-                    ) : (
-                        <span className="px-3 py-1.5 bg-white/95 backdrop-blur text-slate-900 rounded-xl text-[11px] font-black shadow border border-white/60">
-                            {price}
                         </span>
                     )}
                 </div>

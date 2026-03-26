@@ -197,10 +197,69 @@ const Pricing = () => {
                         </button>
                     </motion.div>
                 </div>
+
+                {/* FAQ Section */}
+                <div className="mt-32 max-w-4xl mx-auto relative z-10 px-4">
+                    <div className="text-center mb-16">
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest"
+                        >
+                            <span className="flex h-2 w-2 rounded-full bg-indigo-500"></span>
+                            Got Questions?
+                        </motion.div>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight"
+                        >
+                            Frequently Asked Questions
+                        </motion.h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                        <FAQItem
+                            question="Is this a monthly subscription?"
+                            answer="No! We hate subscriptions too. You pay once and own the content forever."
+                        />
+                        <FAQItem
+                            question="Can I upgrade later?"
+                            answer="Yes, you can buy a single course first and then upgrade to the bundle later. We automatically discount the bundle based on what you already own!"
+                        />
+                        <FAQItem
+                            question="Do you offer refunds?"
+                            answer="No, we do not offer any refunds excluding special cases such as double payments."
+                        />
+                        <FAQItem
+                            question="Are the certificates accredited?"
+                            answer="Our certificates are industry-recognized and verifiable via a unique ID, perfect for LinkedIn."
+                        />
+                    </div>
+                </div>
             </div>
         </AuroraBackground>
     );
 };
+
+const FAQItem = ({ question, answer }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="bg-white/40 backdrop-blur-md border border-slate-100 p-8 rounded-[2rem] hover:bg-white transition-all duration-300 shadow-sm hover:shadow-md group"
+    >
+        <h3 className="text-lg font-black text-slate-900 mb-3 tracking-tight group-hover:text-indigo-600 transition-colors">
+            {question}
+        </h3>
+        <p className="text-slate-500 font-medium leading-relaxed">
+            {answer}
+        </p>
+    </motion.div>
+);
 
 const FeatureItem = ({ text, dark }) => (
     <div className="flex items-center gap-4 group">
