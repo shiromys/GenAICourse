@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { CertificationSteps } from '../components/CertificationSteps';
 import { motion } from 'framer-motion';
 import { FaArrowRight, FaPlay, FaCheckCircle, FaStar } from 'react-icons/fa';
-import Pricing from './Pricing';
 import { AuroraBackground } from '../components/ui/aurora-background';
 
 const Home = () => {
@@ -144,10 +143,7 @@ const Home = () => {
                 <CertificationSteps />
             </div>
 
-            {/* Pricing Section */}
-            <div className="relative z-20 bg-slate-50">
-                <Pricing />
-            </div>
+
 
             {/* Bottom CTA — Refined Apple Style */}
             <section className="py-40 relative text-center overflow-hidden bg-white">

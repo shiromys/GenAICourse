@@ -36,7 +36,7 @@ export const CertificationSteps = () => {
                         viewport={{ once: true }}
                         className="mb-4 inline-block tracking-[0.2em] uppercase text-accent font-bold text-sm"
                     >
-                        Path to Mastery
+                        Path to Learning
                     </motion.div>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
