@@ -6,6 +6,7 @@ import Loader from '../../components/common/Loader.jsx';
 import AdminAssessmentManager from './AdminAssessmentManager.jsx';
 import { FaUser, FaBook, FaPlus, FaTrash, FaEdit, FaChartLine, FaGraduationCap, FaClipboardList, FaUsers, FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { AuroraBackground } from '../../components/ui/aurora-background';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -99,12 +100,12 @@ const AdminDashboard = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-amber-500/30 pt-28 pb-12">
-            <div className="container mx-auto px-6 py-8">
+        <AuroraBackground dark className="min-h-screen selection:bg-amber-500/30 pt-28 pb-12">
+            <div className="container mx-auto px-6 py-8 relative z-10">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
                     <div>
                         <h1 className="text-4xl font-black text-white tracking-tight flex items-center gap-3">
-                            <span className="text-amber-400">⚡</span> Command Center
+                            <span className="text-amber-400">⚡</span> Admin console
                         </h1>
                         <p className="text-slate-400 mt-2 font-medium">Manage your platform, analyze intelligence, and control revenue.</p>
                     </div>
@@ -545,7 +546,7 @@ const AdminDashboard = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </AuroraBackground>
     );
 };
 

@@ -63,13 +63,8 @@ const Pricing = () => {
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-20">
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="inline-block px-4 py-1.5 mb-6 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-black uppercase tracking-[0.2em]"
-                    >
-                        genaicourse Pricing
-                    </motion.div>
+
+
                     <motion.h2
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
