@@ -10,7 +10,7 @@ const Home = () => {
         <div className="min-h-screen relative bg-white text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
 
             {/* ── ULTRA-CLEAN APPLE-STYLE HERO ────────────────────────────── */}
-            <AuroraBackground className="pt-32 pb-20 overflow-hidden">
+            <AuroraBackground showBottomFade className="pt-32 pb-20 overflow-hidden">
 
                 <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-5xl">
 

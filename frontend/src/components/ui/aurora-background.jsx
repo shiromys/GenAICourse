@@ -6,6 +6,7 @@ export const AuroraBackground = ({
   children,
   showRadialGradient = true,
   dark = false,
+  showBottomFade = false,
   ...props
 }) => {
   return (
@@ -31,6 +32,9 @@ export const AuroraBackground = ({
             showRadialGradient ? `[mask-image:radial-gradient(ellipse_at_100%_0%,${dark ? '#000' : 'black'} 10%,transparent 70%)]` : ''
           }`}
         ></div>
+        {showBottomFade && (
+          <div className={`absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t ${dark ? 'from-[#0F172A] via-[#0F172A]/80' : 'from-white via-white/80'} to-transparent z-10`} />
+        )}
       </div>
       {children}
     </div>
