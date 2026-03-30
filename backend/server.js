@@ -13,7 +13,6 @@ dotenv.config();
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import connectDB from './config/database.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -44,6 +43,7 @@ const startServer = async () => {
     const corsOptions = {
         origin: [
             'http://localhost:5173',
+            'http://localhost:3000',
             process.env.FRONTEND_URL,
         ].filter(Boolean),
         credentials: true,
@@ -53,10 +53,11 @@ const startServer = async () => {
     app.use(helmet({
         contentSecurityPolicy: false,
     }));
+
     configurePassport();
     app.use(passport.initialize());
 
-    // Webhook must be before express.json()
+    // Webhook must be before express.json() parser
     app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 
     app.use(express.json({ limit: '10mb' }));
@@ -88,14 +89,14 @@ const startServer = async () => {
     app.use('/api/courses', courseAssessmentRoutes);
     app.use('/api/contact', contactRoutes);
 
-    // RECTIFIED: Specific upload routes before general routes
+    // RECTIFIED: Specific upload routes before general assessment routes
     app.use('/api/assessments', assessmentUploadRoutes);
     app.use('/api/assessments', assessmentRoutes);
 
     // STATIC FILE SERVING
-    // RECTIFIED: Robust path resolution for Docker production
+    // RECTIFIED: Aligns with Docker root path (/app/uploads)
     const uploadsPath = process.env.NODE_ENV === 'production'
-        ? path.join(process.cwd(), 'uploads')
+        ? '/app/uploads'
         : path.resolve(__dirname, 'uploads');
 
     if (!fs.existsSync(uploadsPath)) {
@@ -104,14 +105,13 @@ const startServer = async () => {
     app.use('/uploads', express.static(uploadsPath));
 
     if (process.env.NODE_ENV === 'production') {
-        // Fallback-friendly build path resolution
+        // Build path resolution for Docker
         let buildPath = path.resolve(__dirname, '..', 'frontend', 'dist');
 
         if (!fs.existsSync(buildPath)) {
             buildPath = path.resolve(__dirname, 'frontend', 'dist');
         }
 
-        console.log(`📡 Serving static files from: ${buildPath}`);
         app.use(express.static(buildPath, {
             maxAge: '1d',
             etag: true,
