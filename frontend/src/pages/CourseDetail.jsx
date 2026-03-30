@@ -5,6 +5,7 @@ import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
 import { FaPlay, FaCheckCircle, FaLock, FaList, FaArrowLeft } from 'react-icons/fa';
+import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
 
 const CourseDetail = () => {
     const { id } = useParams();
@@ -140,7 +141,7 @@ const CourseDetail = () => {
                         <div className="w-full md:w-1/3 max-w-sm">
                             <div className="card p-2 bg-white border border-gray-200 shadow-xl rounded-2xl">
                                 <img
-                                    src={course.thumbnail || 'https://placehold.co/400x250?text=Course'}
+                                    src={getSafeThumbnailUrl(course.thumbnail, 'https://placehold.co/400x250?text=Course')}
                                     alt={course?.title || 'Course'}
                                     className="w-full rounded-xl"
                                 />

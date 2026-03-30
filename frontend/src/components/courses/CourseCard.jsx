@@ -22,6 +22,14 @@ const CourseCard = ({ course }) => {
             console.error('Invalid thumbnail URL:', thumbnail);
         }
     }
+    // Encode spaces and special characters in relative paths for proper URL handling
+    if (thumbnail && thumbnail.startsWith('/') && !thumbnail.startsWith('//')) {
+        try {
+            thumbnail = encodeURI(thumbnail);
+        } catch (e) {
+            console.error('Failed to encode thumbnail path:', thumbnail);
+        }
+    }
     thumbnail = thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800';
 
 

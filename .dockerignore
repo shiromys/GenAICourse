@@ -1,0 +1,16 @@
+node_modules
+.env
+.git
+.gitignore
+*.md
+.kilo
+.agent
+npm-debug.log
+coverage
+.nyc_output
+*.tmp
+*.temp
+.cache
+logs
+playwright-report
+test-results

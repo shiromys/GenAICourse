@@ -10,6 +10,9 @@ RUN npm run build --prefix frontend
 FROM node:20-slim
 WORKDIR /app
 
+# Ensure production mode for static file serving
+ENV NODE_ENV=production
+
 # Non-root user setup
 RUN groupadd --gid 1001 nodejs && \
     useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home genai

@@ -6,6 +6,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { FaGraduationCap, FaTrophy, FaPlay, FaBookOpen } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
+import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
 
 const Dashboard = () => {
     const { user, refreshUser } = useAuth();
@@ -124,7 +125,7 @@ const Dashboard = () => {
                             >
                                 <div className="w-full md:w-48 h-32 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
                                     <img
-                                        src={progress.courseId?.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=400'}
+                                        src={getSafeThumbnailUrl(progress.courseId?.thumbnail)}
                                         alt={progress.courseId?.title}
                                         className="w-full h-full object-cover"
                                     />

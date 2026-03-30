@@ -96,7 +96,14 @@ const startServer = async () => {
     app.use('/api/assessments', assessmentUploadRoutes);
     app.use('/api/assessments', assessmentRoutes);
 
-    // STATIC FILE SERVING FOR PRODUCTION
+    // STATIC FILE SERVING
+    // Serve uploaded files from backend/uploads directory
+    const uploadsPath = path.resolve(__dirname, 'uploads');
+    if (!fs.existsSync(uploadsPath)) {
+        fs.mkdirSync(uploadsPath, { recursive: true });
+    }
+    app.use('/uploads', express.static(uploadsPath));
+
     if (process.env.NODE_ENV === 'production') {
         // Fallback-friendly build path resolution
         let buildPath = path.resolve(__dirname, '..', 'frontend', 'dist');
@@ -107,7 +114,20 @@ const startServer = async () => {
         }
 
         console.log(`📡 Serving static files from: ${buildPath}`);
-        app.use(express.static(buildPath));
+        app.use(express.static(buildPath, {
+            maxAge: '1d',
+            etag: true,
+            index: false,
+            dotfiles: 'ignore',
+            setHeaders: (res, filePath) => {
+                // Proper MIME types for images with spaces in filenames
+                if (filePath.endsWith('.png')) {
+                    res.setHeader('Content-Type', 'image/png');
+                } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
+                    res.setHeader('Content-Type', 'image/jpeg');
+                }
+            }
+        }));
 
         app.get('*', (req, res) => {
             if (!req.originalUrl.startsWith('/api')) {
