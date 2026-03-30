@@ -24,10 +24,13 @@ RUN npm install --prefix backend --only=production
 # Copy backend source
 COPY backend/ ./backend/
 
-# Copy built frontend from Stage 1 to where the backend expects it
+# RECTIFIED: Copy images into the root uploads folder to match server.js process.cwd() logic
+COPY backend/uploads/ ./uploads/
+
+# Copy built frontend from Stage 1
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-# Change ownership
+# Change ownership and switch user
 RUN chown -R genai:nodejs /app
 USER genai
 
@@ -36,4 +39,3 @@ EXPOSE 5000
 # Start from backend directory inside the container
 WORKDIR /app/backend
 CMD ["node", "server.js"]
-

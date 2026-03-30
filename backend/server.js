@@ -26,7 +26,7 @@ import quizRoutes from './routes/quizRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js';
 import learningPathRoutes from './routes/learningPathRoutes.js';
 import assessmentRoutes from './routes/assessment.js';
-import assessmentUploadRoutes from './routes/assessmentUpload.js'; // Added missing import
+import assessmentUploadRoutes from './routes/assessmentUpload.js';
 import courseAssessmentRoutes from './routes/courseAssessment.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
@@ -35,10 +35,6 @@ import configurePassport from './config/passport.js';
 import { stripeWebhook } from './controllers/paymentController.js';
 
 const app = express();
-
-
-// ... AFTER other imports, and BEFORE startServer initialization, let's look at where routes are placed ...
-// Actually, I should update the startServer function's route list.
 
 const startServer = async () => {
     await connectDB();
@@ -81,7 +77,7 @@ const startServer = async () => {
         });
     });
 
-    // API Routes - Organized to avoid conflicts
+    // API Routes
     app.use('/api/auth', authRoutes);
     app.use('/api/courses', courseRoutes);
     app.use('/api/admin', adminRoutes);
@@ -92,13 +88,16 @@ const startServer = async () => {
     app.use('/api/courses', courseAssessmentRoutes);
     app.use('/api/contact', contactRoutes);
 
-    // RECTIFIED: Specific upload routes must come BEFORE general assessment routes
+    // RECTIFIED: Specific upload routes before general routes
     app.use('/api/assessments', assessmentUploadRoutes);
     app.use('/api/assessments', assessmentRoutes);
 
     // STATIC FILE SERVING
-    // Serve uploaded files from backend/uploads directory
-    const uploadsPath = path.resolve(__dirname, 'uploads');
+    // RECTIFIED: Robust path resolution for Docker production
+    const uploadsPath = process.env.NODE_ENV === 'production'
+        ? path.join(process.cwd(), 'uploads')
+        : path.resolve(__dirname, 'uploads');
+
     if (!fs.existsSync(uploadsPath)) {
         fs.mkdirSync(uploadsPath, { recursive: true });
     }
@@ -108,9 +107,8 @@ const startServer = async () => {
         // Fallback-friendly build path resolution
         let buildPath = path.resolve(__dirname, '..', 'frontend', 'dist');
 
-        // Check if path exists, otherwise adjust for alternate container structures
         if (!fs.existsSync(buildPath)) {
-            buildPath = path.resolve(__dirname, 'frontend', 'dist'); // Try local if parent fails
+            buildPath = path.resolve(__dirname, 'frontend', 'dist');
         }
 
         console.log(`📡 Serving static files from: ${buildPath}`);
@@ -120,7 +118,6 @@ const startServer = async () => {
             index: false,
             dotfiles: 'ignore',
             setHeaders: (res, filePath) => {
-                // Proper MIME types for images with spaces in filenames
                 if (filePath.endsWith('.png')) {
                     res.setHeader('Content-Type', 'image/png');
                 } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
