@@ -12,6 +12,19 @@ const CourseCard = ({ course }) => {
     const hasAccess = checkCourseAccess(courseId);
     const price = course?.isFree ? 'FREE' : `$${course?.price || 29}`;
 
+    // Fix: Client-side cleanup for hardcoded localhost/127.0.0.1 thumbnails from local seeding
+    let thumbnail = course?.thumbnail;
+    if (thumbnail && (thumbnail.includes('localhost') || thumbnail.includes('127.0.0.1'))) {
+        try {
+            const url = new URL(thumbnail);
+            thumbnail = url.pathname;
+        } catch (e) {
+            console.error('Invalid thumbnail URL:', thumbnail);
+        }
+    }
+    thumbnail = thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800';
+
+
     const handleActionClick = (e) => {
         if (!hasAccess) {
             e.preventDefault();
@@ -34,10 +47,11 @@ const CourseCard = ({ course }) => {
             {/* Thumbnail */}
             <div className="relative h-56 overflow-hidden flex-shrink-0">
                 <img
-                    src={course?.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'}
+                    src={thumbnail}
                     alt={course?.title || 'Course'}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
                 {/* Enrolled badge (Keep only this one) */}

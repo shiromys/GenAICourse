@@ -1,34 +1,36 @@
-# Use Node.js 20 slim (Debian-based) for compatibility with native packages
-FROM node:20-slim
+# --- Stage 1: Build Frontend ---
+FROM node:20-slim AS frontend-builder
+WORKDIR /app
+COPY frontend/package*.json ./frontend/
+RUN npm install --prefix frontend
+COPY frontend/ ./frontend/
+RUN npm run build --prefix frontend
 
-# Set working directory
+# --- Stage 2: Final Backend Image ---
+FROM node:20-slim
 WORKDIR /app
 
-# Skip Puppeteer Chromium download during npm install
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-
-# Install dependencies first (for better caching)
-COPY package*.json ./
-RUN npm ci --only=production
-
-# Copy source code
-COPY . .
-
-# Create non-root user (Debian syntax)
+# Non-root user setup
 RUN groupadd --gid 1001 nodejs && \
     useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home genai
+
+# Backend dependencies
+COPY backend/package*.json ./backend/
+RUN npm install --prefix backend --only=production
+
+# Copy backend source
+COPY backend/ ./backend/
+
+# Copy built frontend from Stage 1 to where the backend expects it
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 # Change ownership
 RUN chown -R genai:nodejs /app
 USER genai
 
-# Expose port
 EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:5000/health || exit 1
-
-# Start the application
-CMD ["npm", "start"]
+# Start from backend directory inside the container
+WORKDIR /app/backend
+CMD ["node", "server.js"]
+

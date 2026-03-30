@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import compression from 'compression';
 
@@ -97,8 +98,15 @@ const startServer = async () => {
 
     // STATIC FILE SERVING FOR PRODUCTION
     if (process.env.NODE_ENV === 'production') {
-        // Path adjusted for Railway monorepo structure
-        const buildPath = path.resolve(__dirname, '..', 'frontend', 'dist');
+        // Fallback-friendly build path resolution
+        let buildPath = path.resolve(__dirname, '..', 'frontend', 'dist');
+
+        // Check if path exists, otherwise adjust for alternate container structures
+        if (!fs.existsSync(buildPath)) {
+            buildPath = path.resolve(__dirname, 'frontend', 'dist'); // Try local if parent fails
+        }
+
+        console.log(`📡 Serving static files from: ${buildPath}`);
         app.use(express.static(buildPath));
 
         app.get('*', (req, res) => {
