@@ -21,16 +21,17 @@ RUN groupadd --gid 1001 nodejs && \
 COPY backend/package*.json ./backend/
 RUN npm install --prefix backend --only=production
 
-# Copy backend source
+# ... inside Stage 2 ...
 COPY backend/ ./backend/
 
-# RECTIFIED: Copy images into the root uploads folder to match server.js process.cwd() logic
+# RECTIFIED: Copy files specifically into the root /app/uploads folder
+# This matches your server.js logic: path.join('/app', 'uploads')
 COPY backend/uploads/ ./uploads/
 
 # Copy built frontend from Stage 1
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-# Change ownership and switch user
+# Change ownership of the entire /app directory to the non-root user
 RUN chown -R genai:nodejs /app
 USER genai
 

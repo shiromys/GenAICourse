@@ -31,8 +31,9 @@ Thumbs.db
 Desktop.ini
 
 # Uploads and user-generated content
-backend/uploads/*
-!backend/uploads/.gitkeep
+# backend/uploads/*
+# !backend/uploads/.gitkeep
+
 
 # Test files
 coverage/

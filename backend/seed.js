@@ -40,14 +40,17 @@ const seedDatabase = async () => {
 
         // 2. Update existing course thumbnails
         // Note: These paths assume you have pushed the image files to backend/uploads/
+
+        // Exact filenames from your sidebar
         const newThumbnails = {
-            "Prompt-Based AI for Marketing and Content Strategy": "/uploads/marketing-ai.jpg",
-            "AI Prompt Engineering for Research and Competitive Intelligence": "/uploads/research-ai.jpg",
-            "Prompt-Based AI for Customer Support and Service Teams": "/uploads/customer-ai.jpg",
-            "AI Prompting for Entrepreneurs and Startup Builders": "/uploads/startup-ai.jpg",
-            "Prompt Engineering for Sales and Customer Acquisition": "/uploads/sales-ai.jpg",
-            "Prompt-Based AI for Personal Productivity and Knowledge Work": "/uploads/productivity-ai.jpg"
+            "Prompt-Based AI for Marketing and Content Strategy": "/uploads/prompt-based-ai-marketing-content-strategy.png",
+            "AI Prompt Engineering for Research and Competitive Intelligence": "/uploads/ai-prompt-engineering-research-competitive-intelligence.png",
+            "Prompt-Based AI for Customer Support and Service Teams": "/uploads/prompt-based-ai-customer-support-service-teams.png",
+            "AI Prompting for Entrepreneurs and Startup Builders": "/uploads/ai-prompting-entrepreneurs-startup-builders.jpg",
+            "Prompt Engineering for Sales and Customer Acquisition": "/uploads/prompt-engineering-sales-customer-acquisition.png",
+            "Prompt-Based AI for Personal Productivity and Knowledge Work": "/uploads/productivity.jpg"
         };
+
 
         console.log('🔄 Updating course thumbnails...');
         for (const [title, path] of Object.entries(newThumbnails)) {
