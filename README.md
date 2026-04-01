@@ -11,10 +11,11 @@ A comprehensive MERN stack learning management system for AI and technology cour
 - **Assessment System**: Integrated quizzes with timer, pass/fail logic, and certificate generation
 - **Certificate Generation**: Automatic PDF certificates for students who pass assessments (80%+)
 - **Admin Dashboard**: Full administrative controls for course and user management
-- **Responsive Design**: Modern UI with Tailwind CSS and Framer Motion animations
-- **API-First**: RESTful API with comprehensive documentation
-- **Docker Support**: Containerized deployment with Docker Compose
-- **CI/CD Ready**: GitHub Actions for automated testing and deployment
+- **Responsive Design**: Modern UI with Tailwind CSS, Framer Motion animations, and Apple-inspired minimalism
+- **Unified Deployment**: Optimized for Railway with a single-container backend serving the compiled frontend
+- **Dynamic Pricing**: Intelligent checkout that credits previous single-course purchases toward the All-Access bundle
+- **Auto-Seeding**: Startup diagnostic and database sync system for production stability
+- **CI/CD Ready**: GitHub Actions for automated testing and deployment pipelines
 
 ### Student Course Flow
 1. **Enrollment** → Students enroll in courses with one click
@@ -40,9 +41,11 @@ A comprehensive MERN stack learning management system for AI and technology cour
 - **JWT** for secure authentication
 - **bcryptjs** for password hashing
 - **Express Validator** for input validation
+- **Stripe API** for secure payments and upgrades
+- **Resend API** for high-deliverability transactional emails
 - **Helmet** and **CORS** for security
 - **Puppeteer** for PDF certificate generation
-- **Multer** for file upload handling
+- **Multer** for file handling and processing
 
 ### DevOps
 - **Docker** & **Docker Compose** for containerization
@@ -90,15 +93,38 @@ A comprehensive MERN stack learning management system for AI and technology cour
    - Backend: http://localhost:5000
    - Frontend: http://localhost:3001
 
-### Docker Development
+### Railway Deployment (Production)
+
+The platform is optimized for **Railway's** platform-as-a-service, using a unified build strategy:
+
+1. **Build Process**: The `Dockerfile` runs a multi-stage build:
+   - Builds the React frontend into the `dist/` folder.
+   - Installs production backend dependencies.
+   - Copies the frontend build into the backend container.
+2. **Static Serving**: The Express server automatically serves the `frontend/dist` folder when `NODE_ENV=production`.
+3. **Asset Strategy**: To ensure images never break in the ephemeral Railway filesystem, all course thumbnails are stored in `frontend/public/images/courses/` and bundled into the final build.
 
 ```bash
-# Start all services
-docker-compose up -d
-
-# Stop services
-docker-compose down
+# To trigger a database thumbnail sync on Railway, set:
+RUN_SEED=true
 ```
+
+## 💎 Premium UI System
+
+The platform features a **state-of-the-art interface** inspired by Apple's minimalist design principles:
+
+- **Glassmorphism**: Sophisticated blurred backgrounds for navbars and cards.
+- **Micro-animations**: Subtle hover effects and smooth transitions using Framer Motion.
+- **Dynamic Aurora Backgrounds**: High-performance canvas-based gradients for hero sections.
+- **Responsive Typography**: Clean, modern font hierarchies for professional educational branding.
+- **Dark Mode Excellence**: Curated slate and indigo palettes designed for high readability.
+
+## 💰 Intelligent Pricing & Credits
+
+The checkout system includes a **Deep Synchronization** logic:
+- **Upgrade Credits**: If a user previously purchased single courses, the All-Access bundle price is automatically discounted by the amount already paid.
+- **Free Upgrades**: If accumulated credits cover the full cost of the bundle, the user is upgraded instantly without a Stripe session.
+- **Automatic Enrollment**: Webhooks ensure all courses are unlocked and progress is initialized immediately upon purchase.
 
 ## 🧪 Testing
 
@@ -572,12 +598,19 @@ PORT=5000
 MONGODB_URI=mongodb://localhost:27017/genaicourse
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
 JWT_EXPIRE=7d
-CLIENT_URL=http://localhost:3001
+STRIPE_SECRET_KEY=sk_test_...          # From Stripe Dashboard
+STRIPE_WEBHOOK_KEY=whsec_...          # From Stripe Dashboard / CLI
+RESEND_API_KEY=re_...                 # From Resend Dashboard
+RUN_SEED=false                        # Set to true to trigger DB update on startup
+
+# Frontend URL Configuration
+FRONTEND_URL=https://your-app.railway.app
+CLIENT_URL=https://your-app.railway.app
 ```
 
 ### Frontend `.env`
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=/api
 ```
 
 ## 🚨 Troubleshooting
@@ -717,17 +750,8 @@ The GenAI Course Platform is a complete MERN stack application featuring:
 
 **Ready for**: Development, Testing, and Production Deployment
 
----updating
+---
 
-**Last Updated**: 2026-02-05
-**Version**: 1.2.0
-**Status**: Production Ready with Complete Test Suites
-
-
-# OAuth Configuration (GET THESE FROM DEVELOPER CONSOLES)
-GOOGLE_CLIENT_ID=964245209859-5efigq5fr0ghbmfbv3fhdtgksfiejgjo.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
-GITHUB_CLIENT_ID=Ov23li2XqvFxZlBM8e7j
-GITHUB_CLIENT_SECRET=58143b07b37abee22eba2a19543c1cffee8d0074
-LINKEDIN_CLIENT_ID=REPLACE_WITH_YOUR_LINKEDIN_CLIENT_ID
-LINKEDIN_CLIENT_SECRET=REPLACE_WITH_YOUR_LINKEDIN_CLIENT_SECRET
+**Last Updated**: 2026-04-01
+**Version**: 1.5.0
+**Status**: ✅ FULLY OPERATIONAL (Railway Grade)
