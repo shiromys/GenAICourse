@@ -31,13 +31,16 @@ const seedDatabase = async () => {
         }
 
         // 2. Updated Course Thumbnails Map
+        // IMPORTANT: Paths point to /images/courses/ which is served from the
+        // frontend Vite build (frontend/public/images/courses/ -> dist/images/courses/)
+        // This is reliable on Railway unlike the ephemeral /uploads/ folder.
         const newThumbnails = {
-            "Prompt-Based AI for Marketing and Content Strategy": "/uploads/prompt-based-ai-marketing-content-strategy.png",
-            "AI Prompt Engineering for Research and Competitive Intelligence": "/uploads/ai-prompt-engineering-research-competitive-intelligence.png",
-            "Prompt-Based AI for Customer Support and Service Teams": "/uploads/prompt-based-ai-customer-support-service-teams.png",
-            "AI Prompting for Entrepreneurs and Startup Builders": "/uploads/ai-prompting-entrepreneurs-startup-builders.jpg",
-            "Prompt Engineering for Sales and Customer Acquisition": "/uploads/prompt-engineering-sales-customer-acquisition.png",
-            "Prompt-Based AI for Personal Productivity and Knowledge Work": "/uploads/productivity.jpg"
+            "Prompt-Based AI for Marketing and Content Strategy": "/images/courses/prompt-based-ai-marketing-content-strategy.png",
+            "AI Prompt Engineering for Research and Competitive Intelligence": "/images/courses/ai-prompt-engineering-research-competitive-intelligence.png",
+            "Prompt-Based AI for Customer Support and Service Teams": "/images/courses/prompt-based-ai-customer-support-service-teams.png",
+            "AI Prompting for Entrepreneurs and Startup Builders": "/images/courses/ai-prompting-entrepreneurs-startup-builders.jpg",
+            "Prompt Engineering for Sales and Customer Acquisition": "/images/courses/prompt-engineering-sales-customer-acquisition.png",
+            "Prompt-Based AI for Personal Productivity and Knowledge Work": "/images/courses/productivity.jpg"
         };
 
         console.log('🔄 Syncing thumbnails with fuzzy matching...');

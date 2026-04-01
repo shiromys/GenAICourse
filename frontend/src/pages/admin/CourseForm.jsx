@@ -48,8 +48,7 @@ const CourseForm = ({ isEditing = false }) => {
                 requirements: course.requirements?.length > 0 ? course.requirements : [''],
                 tags: course.tags?.length > 0 ? course.tags : ['']
             });
-            
-            // Fetch course quiz if exists
+
             if (course.quizId) {
                 try {
                     const quizResponse = await adminService.getQuiz(course.quizId);
@@ -122,7 +121,6 @@ const CourseForm = ({ isEditing = false }) => {
         setLoading(true);
 
         try {
-            // Clean up empty array items
             const cleanedData = {
                 ...formData,
                 whatYoullLearn: formData.whatYoullLearn.filter(item => item.trim()),
@@ -247,18 +245,29 @@ const CourseForm = ({ isEditing = false }) => {
                         </div>
 
                         {/* Thumbnail URL */}
-                        <div>
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Thumbnail URL
                             </label>
                             <input
-                                type="url"
+                                type="text"
                                 name="thumbnail"
                                 value={formData.thumbnail}
                                 onChange={handleChange}
                                 className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
-                                placeholder="https://example.com/image.jpg"
+                                placeholder="/images/courses/my-course.jpg or https://example.com/image.jpg"
                             />
+                            {formData.thumbnail && (
+                                <img
+                                    src={formData.thumbnail}
+                                    alt="Thumbnail preview"
+                                    className="mt-3 h-40 w-full object-cover rounded-lg border border-slate-700"
+                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                />
+                            )}
+                            <p className="mt-1 text-xs text-gray-500">
+                                Use a relative path like <code className="text-indigo-400">/images/courses/filename.jpg</code> for images stored in the app, or paste any public image URL.
+                            </p>
                         </div>
 
                         {/* Price */}
@@ -396,7 +405,7 @@ const CourseForm = ({ isEditing = false }) => {
 
                     {/* Course Assessment Section */}
                     <div className="mt-8 pt-8 border-t border-slate-700">
-                        <CourseAssessmentUpload 
+                        <CourseAssessmentUpload
                             courseId={id}
                             onAssessmentUploaded={handleAssessmentUploaded}
                             existingQuiz={courseQuiz}
