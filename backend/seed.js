@@ -12,10 +12,15 @@ const seedDatabase = async () => {
             throw new Error('MONGODB_URI is not defined in .env');
         }
 
-        await mongoose.connect(uri);
-        console.log('✅ Connected to MongoDB for seeding');
+        // Only connect if not already connected (prevents error when called from server.js)
+        if (mongoose.connection.readyState !== 1) {
+            await mongoose.connect(uri);
+            console.log('✅ Connected to MongoDB for seeding');
+        } else {
+            console.log('ℹ️ Using existing database connection for seeding');
+        }
 
-        // 1. Create Admin User
+        // ... existing admin logic ...
         const adminEmail = process.env.ADMIN_EMAIL || 'admin@genaicourse.io';
         const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
 
@@ -30,7 +35,7 @@ const seedDatabase = async () => {
                 role: 'admin',
                 profile: {
                     bio: 'System Administrator',
-                    avatar: 'https://ui-avatars.com/api/?name=System+Admin&background=random'
+                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent('System Admin')}&background=random`
                 }
             });
             console.log('✅ Admin user created');
@@ -39,9 +44,7 @@ const seedDatabase = async () => {
         }
 
         // 2. Update existing course thumbnails
-        // Note: These paths assume you have pushed the image files to backend/uploads/
-
-        // Exact filenames from your sidebar
+        // Matches exact filenames in backend/uploads
         const newThumbnails = {
             "Prompt-Based AI for Marketing and Content Strategy": "/uploads/prompt-based-ai-marketing-content-strategy.png",
             "AI Prompt Engineering for Research and Competitive Intelligence": "/uploads/ai-prompt-engineering-research-competitive-intelligence.png",
@@ -52,26 +55,39 @@ const seedDatabase = async () => {
         };
 
 
-        console.log('🔄 Updating course thumbnails...');
+        console.log('🔄 Updating course thumbnails in database...');
+        let updatedCount = 0;
         for (const [title, path] of Object.entries(newThumbnails)) {
             const result = await Course.updateOne(
                 { title: title },
                 { $set: { thumbnail: path } }
             );
             if (result.matchedCount > 0) {
-                console.log(`  ✓ Updated: ${title}`);
+                updatedCount++;
+                console.log(`  ✓ Updated: ${title} -> ${path}`);
             } else {
-                console.log(`  × Not Found: ${title}`);
+                console.log(`  × Not Found in DB: ${title}`);
             }
         }
-        console.log('✅ Course thumbnails updated in database');
+        console.log(`✅ ${updatedCount} course(s) updated in database`);
 
         console.log('🎉 Seeding completed successfully!');
-        process.exit(0);
+        
+        // Only exit process if running as a standalone script
+        if (import.meta.url === `file://${process.argv[1]}`) {
+            process.exit(0);
+        }
     } catch (error) {
         console.error('❌ Seeding failed:', error);
-        process.exit(1);
+        if (import.meta.url === `file://${process.argv[1]}`) {
+            process.exit(1);
+        }
     }
 };
 
-seedDatabase();
+// Automatic execution when run directly
+if (import.meta.url.includes(process.argv[1]) || process.env.RUN_SEED === 'true') {
+     seedDatabase();
+}
+
+export default seedDatabase;

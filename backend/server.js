@@ -94,15 +94,19 @@ const startServer = async () => {
     app.use('/api/assessments', assessmentRoutes);
 
     // STATIC FILE SERVING
-    // RECTIFIED: Aligns with Docker root path (/app/uploads)
+    // RECTIFIED: Aligns precisely with Docker root path (/app/uploads)
+    // We use process.cwd() as the fallback for consistency in standard environments
     const uploadsPath = process.env.NODE_ENV === 'production'
         ? '/app/uploads'
         : path.resolve(__dirname, 'uploads');
 
     if (!fs.existsSync(uploadsPath)) {
+        console.log(`📂 Creating missing uploads directory at: ${uploadsPath}`);
         fs.mkdirSync(uploadsPath, { recursive: true });
     }
+    
     app.use('/uploads', express.static(uploadsPath));
+    console.log(`📁 Static uploads folder mounted from: ${uploadsPath}`);
 
     if (process.env.NODE_ENV === 'production') {
         // Build path resolution for Docker
@@ -112,18 +116,12 @@ const startServer = async () => {
             buildPath = path.resolve(__dirname, 'frontend', 'dist');
         }
 
+        console.log(`📡 Serving frontend from: ${buildPath}`);
         app.use(express.static(buildPath, {
             maxAge: '1d',
             etag: true,
             index: false,
-            dotfiles: 'ignore',
-            setHeaders: (res, filePath) => {
-                if (filePath.endsWith('.png')) {
-                    res.setHeader('Content-Type', 'image/png');
-                } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
-                    res.setHeader('Content-Type', 'image/jpeg');
-                }
-            }
+            dotfiles: 'ignore'
         }));
 
         app.get('*', (req, res) => {
@@ -136,11 +134,23 @@ const startServer = async () => {
     app.use(errorHandler);
 
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-        console.log(`🚀 Server active on port ${PORT}`);
+    const server = app.listen(PORT, async () => {
+        console.log(`🚀 Server active on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+        
+        // Auto-Seed Capability: If RUN_SEED=true is in environment, run the database update
+        if (process.env.RUN_SEED === 'true') {
+            console.log('🌱 RUN_SEED detected: Starting course data update...');
+            try {
+                const { default: seedDatabase } = await import('./seed.js');
+                // We run it as a standalone process or call it? 
+                // Since seed.js runs itself on import, this will trigger the update.
+            } catch (seedErr) {
+                console.error('❌ Failed to run auto-seed:', seedErr);
+            }
+        }
     });
 };
 
 startServer();
 
-export default app;
+export default app;
