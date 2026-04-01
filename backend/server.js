@@ -105,10 +105,19 @@ const startServer = async () => {
         fs.mkdirSync(uploadsPath, { recursive: true });
     }
     
-    app.use('/uploads', express.static(uploadsPath));
+    // Diagnostic: List files found in uploads directory on startup
     console.log(`📁 Static uploads folder mounted from: ${uploadsPath}`);
+    try {
+        const files = fs.readdirSync(uploadsPath);
+        console.log(`🖼️  Files found in uploads (${files.length}):`, files.join(', '));
+    } catch (err) {
+        console.error('❌ Failed to read uploads directory:', err);
+    }
+
+    app.use('/uploads', express.static(uploadsPath));
 
     if (process.env.NODE_ENV === 'production') {
+
         // Build path resolution for Docker
         let buildPath = path.resolve(__dirname, '..', 'frontend', 'dist');
 

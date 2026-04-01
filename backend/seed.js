@@ -12,39 +12,25 @@ const seedDatabase = async () => {
             throw new Error('MONGODB_URI is not defined in .env');
         }
 
-        // Only connect if not already connected (prevents error when called from server.js)
         if (mongoose.connection.readyState !== 1) {
             await mongoose.connect(uri);
             console.log('✅ Connected to MongoDB for seeding');
-        } else {
-            console.log('ℹ️ Using existing database connection for seeding');
         }
 
-        // ... existing admin logic ...
+        // 1. Ensure Admin User
         const adminEmail = process.env.ADMIN_EMAIL || 'admin@genaicourse.io';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
-
         let adminUser = await User.findOne({ email: adminEmail });
-
         if (!adminUser) {
             console.log('Creating admin user...');
             adminUser = await User.create({
                 name: 'System Admin',
                 email: adminEmail,
-                password: adminPassword,
-                role: 'admin',
-                profile: {
-                    bio: 'System Administrator',
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent('System Admin')}&background=random`
-                }
+                password: process.env.ADMIN_PASSWORD || 'Admin@123',
+                role: 'admin'
             });
-            console.log('✅ Admin user created');
-        } else {
-            console.log('ℹ️ Admin user already exists');
         }
 
-        // 2. Update existing course thumbnails
-        // Matches exact filenames in backend/uploads
+        // 2. Updated Course Thumbnails Map
         const newThumbnails = {
             "Prompt-Based AI for Marketing and Content Strategy": "/uploads/prompt-based-ai-marketing-content-strategy.png",
             "AI Prompt Engineering for Research and Competitive Intelligence": "/uploads/ai-prompt-engineering-research-competitive-intelligence.png",
@@ -54,26 +40,30 @@ const seedDatabase = async () => {
             "Prompt-Based AI for Personal Productivity and Knowledge Work": "/uploads/productivity.jpg"
         };
 
+        console.log('🔄 Syncing thumbnails with fuzzy matching...');
+        let updated = 0;
+        let missed = 0;
 
-        console.log('🔄 Updating course thumbnails in database...');
-        let updatedCount = 0;
         for (const [title, path] of Object.entries(newThumbnails)) {
-            const result = await Course.updateOne(
-                { title: title },
+            // Use Regex to match title ignoring case and surrounding whitespace
+            const fuzzyTitle = new RegExp(`^\\s*${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'i');
+            
+            const result = await Course.updateMany(
+                { title: fuzzyTitle },
                 { $set: { thumbnail: path } }
             );
+
             if (result.matchedCount > 0) {
-                updatedCount++;
-                console.log(`  ✓ Updated: ${title} -> ${path}`);
+                updated += result.matchedCount;
+                console.log(`  ✓ Updated: "${title}" -> ${path} (${result.matchedCount} records)`);
             } else {
-                console.log(`  × Not Found in DB: ${title}`);
+                missed++;
+                console.log(`  × Match Failed: "${title}" (Check if this title exists exactly in your DB)`);
             }
         }
-        console.log(`✅ ${updatedCount} course(s) updated in database`);
 
-        console.log('🎉 Seeding completed successfully!');
+        console.log(`📊 Thumbnail Sync Summary: ${updated} courses updated, ${missed} course titles not found.`);
         
-        // Only exit process if running as a standalone script
         if (import.meta.url === `file://${process.argv[1]}`) {
             process.exit(0);
         }
@@ -85,9 +75,9 @@ const seedDatabase = async () => {
     }
 };
 
-// Automatic execution when run directly
 if (import.meta.url.includes(process.argv[1]) || process.env.RUN_SEED === 'true') {
-     seedDatabase();
+    seedDatabase();
 }
 
-export default seedDatabase;
+export default seedDatabase;
+
