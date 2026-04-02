@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GENAICOURSE.IO - Promotional Video</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --indigo: #6366f1;
+      --indigo-light: #818cf8;
+      --indigo-lighter: #a5b4fc;
+      --indigo-pale: #c7d2fe;
+      --indigo-dark: #4f46e5;
+      --indigo-deeper: #4338ca;
+      --violet: #7c3aed;
+      --white: #ffffff;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-600: #475569;
+      --dark: #030014;
+      --darker: #01000a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--darker);
+      overflow: hidden;
+    }
+
+    .video-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #0a0520 0%, var(--dark) 40%, var(--darker) 100%);
+      overflow: hidden;
+    }
+
+    .bg-ambient {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 30% 25%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 45% at 75% 70%, rgba(124, 58, 237, 0.1) 0%, transparent 55%);
+      animation: ambientShift 10s ease-in-out infinite;
+    }
+
+    @keyframes ambientShift {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(1.15) rotate(1deg);
+      }
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      will-change: transform;
+      transition: transform 0.4s ease-out;
+    }
+
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.35) 0%, transparent 70%);
+      top: -15%;
+      left: -10%;
+      animation: orbFloat1 14s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, transparent 70%);
+      bottom: -20%;
+      right: -8%;
+      animation: orbFloat2 12s ease-in-out infinite;
+    }
+
+    .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbFloat3 16s ease-in-out infinite;
+    }
+
+    @keyframes orbFloat1 {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      33% {
+        transform: translate(40px, 30px);
+      }
+
+      66% {
+        transform: translate(-20px, -15px);
+      }
+    }
+
+    @keyframes orbFloat2 {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      33% {
+        transform: translate(-30px, -25px);
+      }
+
+      66% {
+        transform: translate(25px, 15px);
+      }
+    }
+
+    @keyframes orbFloat3 {
+
+      0%,
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      50% {
+        transform: translate(-50%, -50%) scale(1.3);
+      }
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(1, 0, 10, 0.8) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    #particleCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #confettiCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      pointer-events: none;
+    }
+
+    .light-flare {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.2) 0%, transparent 55%);
+      opacity: 0;
+      z-index: 55;
+      pointer-events: none;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      filter: blur(8px);
+      transform: scale(0.96);
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .scene.active {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    /* ── Scene 1: Logo ── */
+    .logo {
+      font-size: clamp(2.2rem, 7vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 20%, var(--indigo-lighter) 60%, #fff 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoShimmer 4s ease-in-out infinite;
+      min-height: 1.2em;
+    }
+
+    @keyframes logoShimmer {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .logo-underline {
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--indigo), var(--violet), var(--indigo), transparent);
+      border-radius: 2px;
+      margin-top: 12px;
+    }
+
+    .logo-underline.animate {
+      animation: lineGrow 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes lineGrow {
+      to {
+        width: 100%;
+      }
+    }
+
+    .tagline {
+      font-size: clamp(0.9rem, 2vw, 1.3rem);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0);
+      margin-top: 1.2rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.8s ease;
+    }
+
+    .tagline.visible {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* ── Scene 2: Certification workflow ── */
+    .workflow-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .workflow-main-heading {
+      font-size: clamp(1.5rem, 4vw, 2.6rem);
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.7s ease;
+    }
+
+    .workflow-main-heading.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .workflow-sub-heading {
+      font-size: clamp(0.85rem, 2vw, 1.1rem);
+      font-weight: 400;
+      color: var(--gray-400);
+      text-align: center;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.7s ease 0.15s;
+    }
+
+    .workflow-sub-heading.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .workflow-timeline {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-left: 60px;
+      margin-top: 1.8rem;
+    }
+
+    .workflow-track {
+      position: absolute;
+      left: 14px;
+      top: 8px;
+      width: 2px;
+      height: 0;
+      background: linear-gradient(to bottom, var(--indigo), var(--violet));
+      border-radius: 1px;
+      transition: height 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .workflow-track.grown {
+      height: calc(100% - 16px);
+    }
+
+    .workflow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.2rem;
+      padding: 0.6rem 0;
+      opacity: 0;
+      transform: translateX(-25px);
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+    }
+
+    .workflow-step.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .wf-node {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--indigo);
+      background: rgba(99, 102, 241, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--indigo-light);
+      position: absolute;
+      left: -60px;
+      top: 4px;
+      transition: all 0.5s ease;
+    }
+
+    .workflow-step.show .wf-node {
+      background: var(--indigo);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+    }
+
+    .wf-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .wf-title {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .wf-desc {
+      font-size: clamp(0.78rem, 1.6vw, 0.92rem);
+      font-weight: 300;
+      color: var(--gray-400);
+      line-height: 1.5;
+      max-width: min(420px, 70vw);
+    }
+
+    /* ── Scene 3: Blurred certificate ── */
+    .celebration-text {
+      font-size: clamp(1.6rem, 4.5vw, 3rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: scale(0.3);
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .celebration-text.show {
+      opacity: 1;
+      transform: scale(1);
+      text-shadow: 0 0 40px rgba(99, 102, 241, 0.8), 0 0 80px rgba(99, 102, 241, 0.4), 0 0 120px rgba(124, 58, 237, 0.3);
+      animation: celebPulse 1.5s ease-in-out 0.7s infinite;
+    }
+
+    @keyframes celebPulse {
+
+      0%,
+      100% {
+        text-shadow: 0 0 40px rgba(99, 102, 241, 0.8), 0 0 80px rgba(99, 102, 241, 0.4);
+      }
+
+      50% {
+        text-shadow: 0 0 60px rgba(99, 102, 241, 1), 0 0 120px rgba(99, 102, 241, 0.6), 0 0 180px rgba(124, 58, 237, 0.3);
+      }
+    }
+
+    .cert-hint {
+      font-size: clamp(0.9rem, 2vw, 1.15rem);
+      color: var(--indigo-lighter);
+      font-weight: 400;
+      margin-top: 1.2rem;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.7s ease;
+    }
+
+    .cert-hint.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cert-3d-wrap {
+      perspective: 1200px;
+    }
+
+    .cert-border {
+      padding: 3px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--indigo-dark), var(--violet), var(--indigo-light), var(--indigo-dark));
+      background-size: 300% 300%;
+      animation: certBorderShift 4s ease-in-out infinite;
+      display: inline-block;
+      box-shadow: 0 0 60px rgba(99, 102, 241, 0.3), 0 30px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes certBorderShift {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .cert-paper {
+      width: min(460px, 85vw);
+      background: linear-gradient(160deg, #fefefe 0%, #f8fafc 40%, #eef2ff 100%);
+      border-radius: 14px;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      /* Blurs all text inside */
+      filter: blur(7px) saturate(0.6);
+      user-select: none;
+    }
+
+    .cert-paper::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: 10px;
+      pointer-events: none;
+      filter: none;
+    }
+
+    .cert-paper::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+      filter: none;
+    }
+
+    .cert-label {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--indigo-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .cert-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+      font-weight: 700;
+      color: var(--indigo-deeper);
+      margin-bottom: 0.3rem;
+    }
+
+    .cert-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--indigo), transparent);
+      margin: 0.8rem auto;
+    }
+
+    .cert-body {
+      font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .cert-course {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      font-weight: 600;
+      color: var(--indigo-dark);
+      line-height: 1.4;
+      margin-bottom: 0.8rem;
+    }
+
+    .cert-seal {
+      width: 65px;
+      height: 65px;
+      margin: 0.8rem auto 0.6rem;
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+      position: relative;
+    }
+
+    .cert-seal::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px dashed rgba(99, 102, 241, 0.3);
+    }
+
+    .cert-footer {
+      font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+      font-weight: 600;
+      color: var(--indigo-dark);
+      letter-spacing: 0.1em;
+    }
+
+    .cert-date {
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      margin-top: 0.3rem;
+    }
+
+    .certificate-entrance {
+      opacity: 0;
+      transform: rotateY(-20deg) rotateX(8deg) scale(0.7);
+      transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .certificate-entrance.show {
+      opacity: 1;
+      transform: rotateY(0) rotateX(0) scale(1);
+    }
+
+    /* ── Scene 4: CTA ── */
+    .cta-headline {
+      font-size: clamp(1.8rem, 5vw, 3.5rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, var(--indigo-lighter) 50%, #fff 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      line-height: 1.2;
+      animation: ctaShimmer 3s ease-in-out infinite;
+      min-height: 1.2em;
+    }
+
+    @keyframes ctaShimmer {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .cta-sub {
+      margin-top: 1.8rem;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0);
+      letter-spacing: 0.05em;
+      transition: color 0.8s ease;
+    }
+
+    .cta-sub.show {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .cta-button {
+      margin-top: 2.5rem;
+      padding: 1rem 3rem;
+      background: linear-gradient(135deg, var(--indigo-dark), var(--indigo));
+      border: none;
+      border-radius: 50px;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s, box-shadow 0.3s ease;
+    }
+
+    .cta-button.show {
+      opacity: 1;
+      transform: translateY(0);
+      animation: ctaBtnGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes ctaBtnGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.4), 0 8px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 50px rgba(99, 102, 241, 0.6), 0 8px 30px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: btnShimmer 2.5s infinite;
+    }
+
+    @keyframes btnShimmer {
+      to {
+        left: 100%;
+      }
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 0 60px rgba(99, 102, 241, 0.7), 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .progress-indicator {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.4s ease;
+    }
+
+    .indicator-dot.active {
+      background: var(--indigo);
+      box-shadow: 0 0 10px var(--indigo);
+      transform: scale(1.4);
+    }
+
+    .indicator-dot.done {
+      background: rgba(99, 102, 241, 0.5);
+    }
+
+    .timer-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--indigo-dark), var(--indigo), var(--violet));
+      width: 0;
+      z-index: 100;
+    }
+
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(1, 0, 10, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      cursor: pointer;
+      transition: opacity 0.6s ease;
+    }
+
+    .play-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .play-btn {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--indigo-dark), var(--indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.12);
+      box-shadow: 0 0 60px rgba(99, 102, 241, 0.5);
+    }
+
+    .play-label {
+      margin-top: 1.5rem;
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .play-hint {
+      margin-top: 0.4rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .replay-btn {
+      position: absolute;
+      bottom: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.55rem 1.4rem;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50px;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .replay-btn.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .replay-btn:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #fff;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .workflow-timeline {
+        padding-left: 50px;
+      }
+
+      .wf-node {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        font-size: 0.65rem;
+        left: -50px;
+      }
+
+      .workflow-track {
+        left: 11px;
+      }
+
+      .wf-desc {
+        max-width: 65vw;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="video-container">
+    <div class="bg-ambient"></div>
+    <div class="orb orb-1" id="orb1"></div>
+    <div class="orb orb-2" id="orb2"></div>
+    <div class="orb orb-3" id="orb3"></div>
+    <canvas id="particleCanvas"></canvas>
+    <div class="vignette"></div>
+    <div class="light-flare" id="lightFlare"></div>
+    <canvas id="confettiCanvas"></canvas>
+
+    <div class="play-overlay" id="playOverlay" role="button" aria-label="Play video" tabindex="0">
+      <div class="play-btn">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </div>
+      <p class="play-label">Click to play</p>
+      <p class="play-hint">or press Space</p>
+    </div>
+
+    <!-- Scene 1: Logo -->
+    <section class="scene active" id="scene1" aria-label="Intro">
+      <h1 class="logo"><span id="logoText"></span></h1>
+      <div class="logo-underline" id="logoUnderline"></div>
+      <p class="tagline" id="tagline">Where AI Meets Creativity</p>
+    </section>
+
+    <!-- Scene 2: How You Get Certified -->
+    <section class="scene" id="scene2" aria-label="Certification workflow">
+      <div class="workflow-wrapper">
+        <h2 class="workflow-main-heading" id="wfMainHead">How You Get Certified</h2>
+        <p class="workflow-sub-heading" id="wfSubHead">From beginner to pro in 4 simple steps</p>
+        <div class="workflow-timeline" id="wfTimeline">
+          <div class="workflow-track" id="wfTrack"></div>
+
+          <div class="workflow-step" data-delay="0">
+            <div class="wf-node">1</div>
+            <div class="wf-content">
+              <span class="wf-title">Purchase Course</span>
+              <span class="wf-desc">Invest in your future by purchasing a specialized AI learning path designed to
+                fast-track your career.</span>
+            </div>
+          </div>
+
+          <div class="workflow-step" data-delay="500">
+            <div class="wf-node">2</div>
+            <div class="wf-content">
+              <span class="wf-title">Learn</span>
+              <span class="wf-desc">Master complex topics through interactive slides and hands-on labs.</span>
+            </div>
+          </div>
+
+          <div class="workflow-step" data-delay="1000">
+            <div class="wf-node">3</div>
+            <div class="wf-content">
+              <span class="wf-title">Assess</span>
+              <span class="wf-desc">Validate your knowledge with challenging quizzes and projects.</span>
+            </div>
+          </div>
+
+          <div class="workflow-step" data-delay="1500">
+            <div class="wf-node">4</div>
+            <div class="wf-content">
+              <span class="wf-title">Certify</span>
+              <span class="wf-desc">Earn your verified certificate and showcase your expertise.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 3: Blurred Certificate + Celebration -->
+    <section class="scene" id="scene3" aria-label="Certificate preview">
+      <p class="celebration-text" id="celebText">Congratulations!</p>
+      <div class="cert-3d-wrap">
+        <div class="certificate-entrance" id="certEntrance">
+          <div class="cert-border">
+            <div class="cert-paper">
+              <p class="cert-label">Certificate of Completion</p>
+              <p class="cert-title">GENAICOURSE.IO</p>
+              <div class="cert-divider"></div>
+              <p class="cert-body">This is to certify successful completion of</p>
+              <p class="cert-course">Prompt-Based AI for Marketing<br>and Content Strategy</p>
+              <div class="cert-seal">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </div>
+              <p class="cert-footer">GENAICOURSE.IO</p>
+              <p class="cert-date">2025</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="cert-hint" id="certHint">Complete the course to unlock your certificate</p>
+    </section>
+
+    <!-- Scene 4: CTA -->
+    <section class="scene" id="scene4" aria-label="Call to action">
+      <p class="cta-headline" id="ctaHeadline"></p>
+      <p class="cta-sub" id="ctaSub">Enroll Now at GENAICOURSE.IO</p>
+      <button class="cta-button" id="ctaButton">Start Learning Today</button>
+    </section>
+
+    <nav class="progress-indicator" aria-label="Video progress">
+      <div class="indicator-dot" data-scene="0"></div>
+      <div class="indicator-dot" data-scene="1"></div>
+      <div class="indicator-dot" data-scene="2"></div>
+      <div class="indicator-dot" data-scene="3"></div>
+    </nav>
+
+    <button class="replay-btn" id="replayBtn" aria-label="Replay">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M1 4v6h6M23 20v-6h-6" />
+        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
+      </svg>
+      Replay
+    </button>
+
+    <div class="timer-bar" id="timerBar" role="progressbar"></div>
+  </div>
+
+  <script>
+    const sceneTimings = [
+      { id: 'scene1', duration: 3500 },
+      { id: 'scene2', duration: 7000 },
+      { id: 'scene3', duration: 6000 },
+      { id: 'scene4', duration: 5500 }
+    ];
+    const totalDuration = sceneTimings.reduce((s, sc) => s + sc.duration, 0);
+
+    const playOverlay = document.getElementById('playOverlay');
+    const timerBar = document.getElementById('timerBar');
+    const lightFlare = document.getElementById('lightFlare');
+    const replayBtn = document.getElementById('replayBtn');
+    const logoText = document.getElementById('logoText');
+    const logoUnderline = document.getElementById('logoUnderline');
+    const tagline = document.getElementById('tagline');
+    const wfMainHead = document.getElementById('wfMainHead');
+    const wfSubHead = document.getElementById('wfSubHead');
+    const wfTrack = document.getElementById('wfTrack');
+    const celebText = document.getElementById('celebText');
+    const certEntrance = document.getElementById('certEntrance');
+    const certHint = document.getElementById('certHint');
+    const ctaHeadline = document.getElementById('ctaHeadline');
+    const ctaSub = document.getElementById('ctaSub');
+    const ctaButton = document.getElementById('ctaButton');
+    const dots = document.querySelectorAll('.indicator-dot');
+    const allScenes = document.querySelectorAll('.scene');
+
+    let currentIndex = -1;
+    let isPlaying = false;
+    let startTime = 0;
+    let raf = null;
+    let sceneTimeouts = [];
+
+    /* ── Particles ── */
+    const pCanvas = document.getElementById('particleCanvas');
+    const pCtx = pCanvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas(c) { c.width = c.offsetWidth; c.height = c.offsetHeight; }
+    resizeCanvas(pCanvas);
+    window.addEventListener('resize', () => { resizeCanvas(pCanvas); resizeCanvas(cCanvas); });
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * pCanvas.width;
+        this.y = Math.random() * pCanvas.height;
+        this.r = Math.random() * 1.5 + 0.4;
+        this.dx = (Math.random() - 0.5) * 0.25;
+        this.dy = (Math.random() - 0.5) * 0.25;
+        this.baseO = Math.random() * 0.4 + 0.05;
+        this.o = this.baseO;
+        this.ts = Math.random() * 0.02 + 0.005;
+        this.tp = Math.random() * Math.PI * 2;
+      }
+      update(t) {
+        this.x += this.dx; this.y += this.dy;
+        if (this.x < -10 || this.x > pCanvas.width + 10) this.dx *= -1;
+        if (this.y < -10 || this.y > pCanvas.height + 10) this.dy *= -1;
+        this.o = Math.max(0, Math.min(1, this.baseO + Math.sin(t * this.ts + this.tp) * 0.15));
+      }
+      draw() {
+        pCtx.beginPath();
+        pCtx.arc(this.x, this.y, Math.max(0.1, this.r), 0, Math.PI * 2);
+        pCtx.fillStyle = `rgba(165, 180, 252, ${this.o})`;
+        pCtx.fill();
+      }
+    }
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+    let pTime = 0;
+    function drawParticles() {
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+      pTime++;
+      particles.forEach(p => { p.update(pTime); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            pCtx.beginPath();
+            pCtx.moveTo(particles[i].x, particles[i].y);
+            pCtx.lineTo(particles[j].x, particles[j].y);
+            pCtx.strokeStyle = `rgba(99,102,241,${0.04 * (1 - dist / 100)})`;
+            pCtx.lineWidth = 0.5;
+            pCtx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+
+    /* ── Confetti ── */
+    const cCanvas = document.getElementById('confettiCanvas');
+    const cCtx = cCanvas.getContext('2d');
+    resizeCanvas(cCanvas);
+
+    let confetti = [];
+    let confettiActive = false;
+    let confettiRaining = false;
+    const confettiColors = ['#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#e0e7ff', '#ffffff', '#4f46e5', '#7c3aed', '#8b5cf6', '#a78bfa'];
+
+    function spawnPiece(x, y, burst) {
+      const angle = burst ? Math.random() * Math.PI * 2 : -Math.PI / 2 + (Math.random() - 0.5) * 0.8;
+      const speed = burst ? (Math.random() * 16 + 6) : (Math.random() * 3 + 1);
+      confetti.push({
+        x, y,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+        w: Math.random() * 10 + 4, h: Math.random() * 6 + 2,
+        rot: Math.random() * 360, rs: (Math.random() - 0.5) * 14,
+        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+        g: 0.18 + Math.random() * 0.12, drag: burst ? 0.985 : 0.995,
+        wb: Math.random() * 10, ws: Math.random() * 0.1 + 0.03, opacity: 1
+      });
+    }
+
+    function confettiBurst() {
+      confettiActive = true;
+      const cx = cCanvas.width / 2, cy = cCanvas.height * 0.45;
+      for (let i = 0; i < 200; i++) spawnPiece(cx + (Math.random() - 0.5) * 100, cy + (Math.random() - 0.5) * 60, true);
+      setTimeout(() => { confettiRaining = true; }, 800);
+    }
+
+    function updateConfetti() {
+      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+      if (!confettiActive && confetti.length === 0) return;
+      if (confettiRaining) { for (let i = 0; i < 3; i++) spawnPiece(Math.random() * cCanvas.width, -20, false); }
+      confetti = confetti.filter(p => {
+        p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag;
+        p.wb += p.ws; p.x += p.vx + Math.sin(p.wb) * 0.5; p.y += p.vy; p.rot += p.rs;
+        if (p.y > cCanvas.height + 60) p.opacity -= 0.08;
+        if (p.opacity <= 0) return false;
+        cCtx.save(); cCtx.translate(p.x, p.y); cCtx.rotate(p.rot * Math.PI / 180);
+        cCtx.globalAlpha = Math.max(0, p.opacity); cCtx.fillStyle = p.color;
+        cCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); cCtx.restore();
+        return true;
+      });
+      if (confettiActive || confetti.length > 0) requestAnimationFrame(updateConfetti);
+    }
+
+    function stopConfetti() {
+      confettiRaining = false; confettiActive = false; confetti = [];
+      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+    }
+
+    /* ── Mouse parallax ── */
+    let mx = 0, my = 0;
+    document.addEventListener('mousemove', e => {
+      mx = (e.clientX / window.innerWidth - 0.5) * 2;
+      my = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+    function updateParallax() {
+      const o1 = document.getElementById('orb1');
+      const o2 = document.getElementById('orb2');
+      const o3 = document.getElementById('orb3');
+      if (o1) o1.style.transform = `translate(${mx * 25}px, ${my * 18}px)`;
+      if (o2) o2.style.transform = `translate(${mx * -18}px, ${my * -22}px)`;
+      if (o3) o3.style.transform = `translate(calc(-50% + ${mx * 12}px), calc(-50% + ${my * -12}px))`;
+      requestAnimationFrame(updateParallax);
+    }
+    updateParallax();
+
+    /* ── Light flare ── */
+    function flashFlare() {
+      lightFlare.style.transition = 'none';
+      lightFlare.style.opacity = '1';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          lightFlare.style.transition = 'opacity 0.6s ease';
+          lightFlare.style.opacity = '0';
+        });
+      });
+    }
+
+    /* ── Typing effect ── */
+    function typeText(el, text, speed = 65) {
+      return new Promise(resolve => {
+        el.textContent = ''; let i = 0;
+        function tick() { if (i < text.length) { el.textContent += text[i]; i++; setTimeout(tick, speed); } else resolve(); }
+        tick();
+      });
+    }
+
+    /* ── Scene management ── */
+    function clearTO() { sceneTimeouts.forEach(t => clearTimeout(t)); sceneTimeouts = []; }
+
+    function showScene(index) {
+      if (index === currentIndex) return;
+      const prev = currentIndex;
+      currentIndex = index;
+      allScenes.forEach(s => s.classList.remove('active'));
+      const scene = document.getElementById(sceneTimings[index].id);
+      if (scene) scene.classList.add('active');
+      if (prev >= 0) flashFlare();
+      dots.forEach((d, i) => {
+        d.classList.remove('active', 'done');
+        if (i < index) d.classList.add('done');
+        if (i === index) d.classList.add('active');
+      });
+      clearTO();
+      triggerScene(index);
+    }
+
+    function triggerScene(i) {
+      switch (i) {
+        case 0:
+          typeText(logoText, 'GENAICOURSE.IO', 65).then(() => {
+            logoUnderline.classList.add('animate');
+            sceneTimeouts.push(setTimeout(() => tagline.classList.add('visible'), 400));
+          });
+          break;
+        case 1:
+          sceneTimeouts.push(setTimeout(() => wfMainHead.classList.add('show'), 150));
+          sceneTimeouts.push(setTimeout(() => wfSubHead.classList.add('show'), 400));
+          sceneTimeouts.push(setTimeout(() => wfTrack.classList.add('grown'), 600));
+          document.querySelectorAll('.workflow-step').forEach(step => {
+            sceneTimeouts.push(setTimeout(() => step.classList.add('show'), 800 + (parseInt(step.dataset.delay) || 0)));
+          });
+          break;
+        case 2:
+          sceneTimeouts.push(setTimeout(() => celebText.classList.add('show'), 300));
+          sceneTimeouts.push(setTimeout(() => {
+            certEntrance.classList.add('show');
+            confettiBurst();
+            updateConfetti();
+          }, 900));
+          sceneTimeouts.push(setTimeout(() => certHint.classList.add('show'), 1600));
+          break;
+        case 3:
+          typeText(ctaHeadline, 'Ready to start your journey?', 50);
+          sceneTimeouts.push(setTimeout(() => { ctaSub.classList.add('show'); ctaButton.classList.add('show'); }, 1800));
+          break;
+      }
+    }
+
+    /* ── Playback ── */
+    function runVideo() {
+      const elapsed = Date.now() - startTime;
+      const pct = Math.min(elapsed / totalDuration, 1);
+      timerBar.style.width = (pct * 100) + '%';
+      let acc = 0;
+      for (let i = 0; i < sceneTimings.length; i++) {
+        acc += sceneTimings[i].duration;
+        if (elapsed < acc) { if (currentIndex !== i) showScene(i); break; }
+      }
+      if (elapsed < totalDuration) raf = requestAnimationFrame(runVideo);
+      else sceneTimeouts.push(setTimeout(() => replayBtn.classList.add('show'), 1000));
+    }
+
+    function startVideo() { isPlaying = true; startTime = Date.now(); currentIndex = -1; showScene(0); runVideo(); }
+
+    function resetVideo() {
+      isPlaying = false;
+      if (raf) cancelAnimationFrame(raf);
+      clearTO(); stopConfetti();
+      currentIndex = -1;
+      allScenes.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active', 'done'));
+      timerBar.style.width = '0';
+      replayBtn.classList.remove('show');
+      logoText.textContent = '';
+      logoUnderline.classList.remove('animate');
+      tagline.classList.remove('visible');
+      wfMainHead.classList.remove('show');
+      wfSubHead.classList.remove('show');
+      wfTrack.classList.remove('grown');
+      document.querySelectorAll('.workflow-step').forEach(s => s.classList.remove('show'));
+      celebText.classList.remove('show');
+      certEntrance.classList.remove('show');
+      certHint.classList.remove('show');
+      ctaHeadline.textContent = '';
+      ctaSub.classList.remove('show');
+      ctaButton.classList.remove('show');
+    }
+
+    function handlePlay() { playOverlay.classList.add('hidden'); startVideo(); }
+    playOverlay.addEventListener('click', handlePlay);
+    playOverlay.addEventListener('keydown', e => { if (e.code === 'Enter' || e.code === 'Space') { e.preventDefault(); handlePlay(); } });
+    document.addEventListener('keydown', e => { if (e.code === 'Space' && !isPlaying && !playOverlay.classList.contains('hidden')) { e.preventDefault(); handlePlay(); } });
+    replayBtn.addEventListener('click', () => { resetVideo(); startVideo(); });
+  </script>
+</body>
+
+</html>

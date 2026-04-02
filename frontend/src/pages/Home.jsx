@@ -93,46 +93,15 @@ const Home = () => {
                             <div className="w-3 h-3 rounded-full bg-slate-300" />
                         </div>
 
-                        {/* Fake UI grid layout mimicking an Apple-style clean dashboard */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="col-span-2 space-y-4">
-                                <div className="h-48 rounded-2xl bg-gradient-to-br from-indigo-50 to-white border border-slate-100 flex items-center justify-center shadow-sm">
-                                    <div className="text-center">
-                                        <div className="w-16 h-16 mx-auto bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-3">
-                                            <FaPlay className="text-indigo-500 text-xl" />
-                                        </div>
-                                        <div className="h-4 w-32 bg-slate-200/60 rounded-full mx-auto mb-2" />
-                                        <div className="h-3 w-20 bg-slate-100 rounded-full mx-auto" />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="h-32 rounded-2xl bg-white border border-slate-100 shadow-sm p-4">
-                                        <div className="w-8 h-8 rounded-full bg-indigo-50 mb-3" />
-                                        <div className="h-3 w-3/4 bg-slate-100 rounded-full mb-2" />
-                                        <div className="h-2 w-1/2 bg-slate-50 rounded-full" />
-                                    </div>
-                                    <div className="h-32 rounded-2xl bg-white border border-slate-100 shadow-sm p-4">
-                                        <div className="w-8 h-8 rounded-full bg-violet-50 mb-3" />
-                                        <div className="h-3 w-3/4 bg-slate-100 rounded-full mb-2" />
-                                        <div className="h-2 w-1/2 bg-slate-50 rounded-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                {[...Array(4)].map((_, i) => (
-                                    <div key={i} className="h-20 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center p-3 gap-4">
-                                        <div className="h-12 w-16 bg-slate-50 rounded-xl" />
-                                        <div className="space-y-2 flex-1">
-                                            <div className="h-2 w-full bg-slate-100 rounded-full" />
-                                            <div className="h-2 w-2/3 bg-slate-50 rounded-full" />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="w-full h-[450px] md:h-[550px] rounded-2xl overflow-hidden shadow-inner bg-black border border-slate-800">
+                            <iframe
+                                src="/genai-video.html"
+                                title="GenAI Course Promotional Video"
+                                className="w-full h-full border-0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            />
                         </div>
-
-                        {/* Bottom fade out gradient */}
-                        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
                     </div>
                 </motion.div>
 
