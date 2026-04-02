@@ -85,15 +85,15 @@ const Home = () => {
                     transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
                     className="container mx-auto px-4 mt-20 relative z-10"
                 >
-                    <div className="max-w-5xl mx-auto rounded-t-3xl border-t border-x border-slate-200/60 bg-white/40 backdrop-blur-2xl shadow-2xl p-4 sm:p-6 overflow-hidden relative">
+                    <div className="max-w-[750px] mx-auto rounded-3xl border border-slate-200/60 bg-white/40 backdrop-blur-2xl shadow-2xl p-4 sm:p-6 overflow-hidden relative">
                         {/* macOS style window header */}
-                        <div className="flex items-center gap-2 mb-6 ml-2">
+                        <div className="flex items-center gap-2 mb-4 ml-2">
                             <div className="w-3 h-3 rounded-full bg-slate-300" />
                             <div className="w-3 h-3 rounded-full bg-slate-300" />
                             <div className="w-3 h-3 rounded-full bg-slate-300" />
                         </div>
 
-                        <div className="w-full h-[450px] md:h-[550px] rounded-2xl overflow-hidden shadow-inner bg-black border border-slate-800">
+                        <div className="w-full h-[550px] rounded-2xl overflow-hidden shadow-inner bg-black border border-slate-800">
                             <iframe
                                 src="/genai-video.html"
                                 title="GenAI Course Promotional Video"

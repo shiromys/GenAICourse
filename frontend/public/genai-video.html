@@ -23,6 +23,8 @@
       --gray-600: #475569;
       --dark: #030014;
       --darker: #01000a;
+      --green: #22c55e;
+      --green-dark: #16a34a;
     }
 
     * {
@@ -71,7 +73,7 @@
     .orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(30px);
+      filter: blur(50px);
       will-change: transform;
       transition: transform 0.4s ease-out;
     }
@@ -160,13 +162,6 @@
       position: absolute;
       inset: 0;
       z-index: 1;
-      pointer-events: none;
-    }
-
-    #confettiCanvas {
-      position: absolute;
-      inset: 0;
-      z-index: 60;
       pointer-events: none;
     }
 
@@ -384,7 +379,374 @@
       max-width: min(420px, 70vw);
     }
 
-    /* ── Scene 3: Blurred certificate ── */
+    /* ── Scene 3: Learning ── */
+    .learning-card {
+      width: min(500px, 88vw);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .learning-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--indigo-dark), var(--indigo), var(--violet));
+    }
+
+    .learn-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.6s ease;
+    }
+
+    .learn-header.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .learn-playing-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--indigo-dark), var(--indigo));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .learn-playing-icon::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 12px;
+      background: rgba(99, 102, 241, 0.3);
+      animation: playingPulse 1.5s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes playingPulse {
+
+      0%,
+      100% {
+        opacity: 0.4;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0;
+        transform: scale(1.5);
+      }
+    }
+
+    .learn-label {
+      font-size: 0.85rem;
+      color: var(--gray-400);
+      letter-spacing: 0.08em;
+    }
+
+    .learn-module-title {
+      font-size: clamp(1.05rem, 3vw, 1.4rem);
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.6s ease 0.2s;
+    }
+
+    .learn-module-title.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .learn-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .learn-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      opacity: 0;
+      transform: translateX(-15px);
+      transition: all 0.5s ease;
+    }
+
+    .learn-item.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .learn-item-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--indigo);
+      min-width: 8px;
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+    }
+
+    .learn-item-text {
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .learn-progress-wrap {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.6s ease;
+    }
+
+    .learn-progress-wrap.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .learn-progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .learn-progress-text {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+    }
+
+    .learn-progress-pct {
+      font-size: 0.8rem;
+      color: var(--indigo-light);
+      font-weight: 600;
+    }
+
+    .learn-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .learn-progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--indigo-dark), var(--indigo), var(--violet));
+      border-radius: 3px;
+      transition: width 2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .learn-progress-fill.animate {
+      width: 75%;
+    }
+
+    .learn-lesson-info {
+      text-align: center;
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--gray-400);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    .learn-lesson-info.show {
+      opacity: 1;
+    }
+
+    /* ── Scene 4: Assessment ── */
+    .assess-card {
+      width: min(500px, 88vw);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .assess-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--indigo-dark), var(--violet), var(--indigo));
+    }
+
+    .assess-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.6s ease;
+    }
+
+    .assess-header.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .assess-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(124, 58, 237, 0.15);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .assess-label {
+      font-size: 0.85rem;
+      color: var(--gray-400);
+      letter-spacing: 0.08em;
+    }
+
+    .assess-question {
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 1.2rem;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.6s ease 0.15s;
+    }
+
+    .assess-question.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .assess-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .assess-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      opacity: 0;
+      transform: translateX(-15px);
+      transition: all 0.5s ease;
+    }
+
+    .assess-option.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .assess-option.correct {
+      border-color: rgba(34, 197, 94, 0.4);
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .assess-option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-400);
+      min-width: 28px;
+      transition: all 0.4s ease;
+    }
+
+    .assess-option.correct .assess-option-letter {
+      border-color: rgba(34, 197, 94, 0.6);
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+    }
+
+    .assess-option-text {
+      font-size: clamp(0.82rem, 1.8vw, 0.95rem);
+      color: rgba(255, 255, 255, 0.6);
+      transition: color 0.4s ease;
+    }
+
+    .assess-option.correct .assess-option-text {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .assess-result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 1rem;
+      background: rgba(34, 197, 94, 0.06);
+      border: 1px solid rgba(34, 197, 94, 0.15);
+      border-radius: 12px;
+      opacity: 0;
+      transform: translateY(15px) scale(0.95);
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .assess-result.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .assess-score {
+      text-align: center;
+    }
+
+    .assess-score-value {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .assess-score-label {
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      margin-top: 0.15rem;
+    }
+
+    .assess-badge {
+      padding: 0.5rem 1.5rem;
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.15em;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+    }
+
+    /* ── Scene 5: Certificate (blurred tease) ── */
     .celebration-text {
       font-size: clamp(1.6rem, 4.5vw, 3rem);
       font-weight: 700;
@@ -464,9 +826,8 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      /* Blurs all text inside */
-      filter: blur(1px) saturate(0);
       user-select: none;
+      filter: blur(5px) saturate(0.2);
     }
 
     .cert-paper::before {
@@ -476,7 +837,6 @@
       border: 1px solid rgba(99, 102, 241, 0.15);
       border-radius: 10px;
       pointer-events: none;
-      filter: none;
     }
 
     .cert-paper::after {
@@ -488,7 +848,29 @@
       height: 200%;
       background: radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
       pointer-events: none;
-      filter: none;
+    }
+
+    .cert-blur-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      backdrop-filter: blur(10px) saturate(0.3);
+      -webkit-backdrop-filter: blur(10px) saturate(0.3);
+      -webkit-mask-image: radial-gradient(ellipse 50% 45% at 50% 48%, transparent 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0.95) 100%);
+      mask-image: radial-gradient(ellipse 50% 45% at 50% 48%, transparent 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0.95) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .cert-blur-gradient {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      background:
+        radial-gradient(ellipse 40% 35% at 50% 48%, transparent 0%, rgba(99, 102, 241, 0.04) 50%, rgba(99, 102, 241, 0.12) 100%),
+        linear-gradient(180deg, transparent 0%, rgba(3, 0, 20, 0.25) 100%);
+      pointer-events: none;
+      z-index: 3;
     }
 
     .cert-label {
@@ -520,7 +902,16 @@
       font-size: clamp(0.8rem, 1.8vw, 0.95rem);
       color: var(--gray-600);
       line-height: 1.6;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .cert-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+      font-weight: 700;
+      color: var(--indigo-deeper);
+      margin: 0.3rem 0;
+      font-style: italic;
     }
 
     .cert-course {
@@ -577,7 +968,7 @@
       transform: rotateY(0) rotateX(0) scale(1);
     }
 
-    /* ── Scene 4: CTA ── */
+    /* ── Scene 6: CTA ── */
     .cta-headline {
       font-size: clamp(1.8rem, 5vw, 3.5rem);
       font-weight: 700;
@@ -675,6 +1066,7 @@
       box-shadow: 0 0 60px rgba(99, 102, 241, 0.7), 0 12px 40px rgba(0, 0, 0, 0.4) !important;
     }
 
+    /* ── Progress indicator ── */
     .progress-indicator {
       position: absolute;
       bottom: 28px;
@@ -711,86 +1103,7 @@
       background: linear-gradient(90deg, var(--indigo-dark), var(--indigo), var(--violet));
       width: 0;
       z-index: 100;
-    }
-
-    .play-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(1, 0, 10, 0.9);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      cursor: pointer;
-      transition: opacity 0.6s ease;
-    }
-
-    .play-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .play-btn {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--indigo-dark), var(--indigo));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .play-btn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 0 60px rgba(99, 102, 241, 0.5);
-    }
-
-    .play-label {
-      margin-top: 1.5rem;
-      font-size: 1.15rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .play-hint {
-      margin-top: 0.4rem;
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.25);
-    }
-
-    .replay-btn {
-      position: absolute;
-      bottom: 55px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 0.55rem 1.4rem;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 50px;
-      color: rgba(255, 255, 255, 0.6);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.85rem;
-      cursor: pointer;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.4s ease;
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .replay-btn.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .replay-btn:hover {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: rgba(99, 102, 241, 0.4);
-      color: #fff;
+      transition: width 0.3s linear;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -824,6 +1137,11 @@
       .wf-desc {
         max-width: 65vw;
       }
+
+      .assess-result {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
     }
   </style>
 </head>
@@ -837,17 +1155,6 @@
     <canvas id="particleCanvas"></canvas>
     <div class="vignette"></div>
     <div class="light-flare" id="lightFlare"></div>
-    <canvas id="confettiCanvas"></canvas>
-
-    <div class="play-overlay" id="playOverlay" role="button" aria-label="Play video" tabindex="0">
-      <div class="play-btn">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </div>
-      <p class="play-label">Click to play</p>
-      <p class="play-hint">or press Space</p>
-    </div>
 
     <!-- Scene 1: Logo -->
     <section class="scene active" id="scene1" aria-label="Intro">
@@ -863,7 +1170,6 @@
         <p class="workflow-sub-heading" id="wfSubHead">From beginner to pro in 4 simple steps</p>
         <div class="workflow-timeline" id="wfTimeline">
           <div class="workflow-track" id="wfTrack"></div>
-
           <div class="workflow-step" data-delay="0">
             <div class="wf-node">1</div>
             <div class="wf-content">
@@ -872,7 +1178,6 @@
                 fast-track your career.</span>
             </div>
           </div>
-
           <div class="workflow-step" data-delay="500">
             <div class="wf-node">2</div>
             <div class="wf-content">
@@ -880,7 +1185,6 @@
               <span class="wf-desc">Master complex topics through interactive slides and hands-on labs.</span>
             </div>
           </div>
-
           <div class="workflow-step" data-delay="1000">
             <div class="wf-node">3</div>
             <div class="wf-content">
@@ -888,7 +1192,6 @@
               <span class="wf-desc">Validate your knowledge with challenging quizzes and projects.</span>
             </div>
           </div>
-
           <div class="workflow-step" data-delay="1500">
             <div class="wf-node">4</div>
             <div class="wf-content">
@@ -900,9 +1203,93 @@
       </div>
     </section>
 
-    <!-- Scene 3: Blurred Certificate + Celebration -->
-    <section class="scene" id="scene3" aria-label="Certificate preview">
-      <p class="celebration-text" id="celebText">Congratulations!</p>
+    <!-- Scene 3: Learning -->
+    <section class="scene" id="scene3" aria-label="Course learning">
+      <div class="learning-card">
+        <div class="learn-header" id="learnHeader">
+          <div class="learn-playing-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+          <span class="learn-label">Now Learning</span>
+        </div>
+        <h3 class="learn-module-title" id="learnTitle">Module 3: Prompt Engineering Fundamentals</h3>
+        <div class="learn-items">
+          <div class="learn-item" data-delay="0">
+            <div class="learn-item-dot"></div>
+            <span class="learn-item-text">Crafting effective prompts for real-world tasks</span>
+          </div>
+          <div class="learn-item" data-delay="200">
+            <div class="learn-item-dot"></div>
+            <span class="learn-item-text">Chain-of-thought reasoning techniques</span>
+          </div>
+          <div class="learn-item" data-delay="400">
+            <div class="learn-item-dot"></div>
+            <span class="learn-item-text">Few-shot prompting and in-context learning</span>
+          </div>
+          <div class="learn-item" data-delay="600">
+            <div class="learn-item-dot"></div>
+            <span class="learn-item-text">Advanced optimization and prompt chaining</span>
+          </div>
+        </div>
+        <div class="learn-progress-wrap" id="learnProgress">
+          <div class="learn-progress-label">
+            <span class="learn-progress-text">Course Progress</span>
+            <span class="learn-progress-pct" id="learnPct">0%</span>
+          </div>
+          <div class="learn-progress-bar">
+            <div class="learn-progress-fill" id="learnFill"></div>
+          </div>
+        </div>
+        <p class="learn-lesson-info" id="learnLesson">Lesson 6 of 8</p>
+      </div>
+    </section>
+
+    <!-- Scene 4: Assessment -->
+    <section class="scene" id="scene4" aria-label="Assessment">
+      <div class="assess-card">
+        <div class="assess-header" id="assessHeader">
+          <div class="assess-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2">
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </div>
+          <span class="assess-label">Assessment</span>
+        </div>
+        <p class="assess-question" id="assessQuestion">What is the primary purpose of chain-of-thought prompting?</p>
+        <div class="assess-options">
+          <div class="assess-option" data-delay="0">
+            <div class="assess-option-letter">A</div>
+            <span class="assess-option-text">To reduce the model's parameter count</span>
+          </div>
+          <div class="assess-option" data-delay="150">
+            <div class="assess-option-letter">B</div>
+            <span class="assess-option-text">To guide the model through step-by-step reasoning</span>
+          </div>
+          <div class="assess-option" data-delay="300">
+            <div class="assess-option-letter">C</div>
+            <span class="assess-option-text">To increase the training dataset size</span>
+          </div>
+          <div class="assess-option" data-delay="450">
+            <div class="assess-option-letter">D</div>
+            <span class="assess-option-text">To fine-tune the model's internal weights</span>
+          </div>
+        </div>
+        <div class="assess-result" id="assessResult">
+          <div class="assess-score">
+            <div class="assess-score-value" id="assessScoreVal">0%</div>
+            <div class="assess-score-label">Final Score</div>
+          </div>
+          <div class="assess-badge">PASSED</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 5: Certificate (blurred tease) -->
+    <section class="scene" id="scene5" aria-label="Certificate preview">
+      <p class="celebration-text" id="celebText">You've Earned It!</p>
       <div class="cert-3d-wrap">
         <div class="certificate-entrance" id="certEntrance">
           <div class="cert-border">
@@ -910,7 +1297,9 @@
               <p class="cert-label">Certificate of Completion</p>
               <p class="cert-title">GENAICOURSE.IO</p>
               <div class="cert-divider"></div>
-              <p class="cert-body">This is to certify successful completion of</p>
+              <p class="cert-body">This is to certify that</p>
+              <p class="cert-name">Alex Thompson</p>
+              <p class="cert-body">has successfully completed</p>
               <p class="cert-course">Prompt-Based AI for Marketing<br>and Content Strategy</p>
               <div class="cert-seal">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
@@ -920,6 +1309,8 @@
               </div>
               <p class="cert-footer">GENAICOURSE.IO</p>
               <p class="cert-date">2025</p>
+              <div class="cert-blur-overlay"></div>
+              <div class="cert-blur-gradient"></div>
             </div>
           </div>
         </div>
@@ -927,8 +1318,8 @@
       <p class="cert-hint" id="certHint">Complete the course to unlock your certificate</p>
     </section>
 
-    <!-- Scene 4: CTA -->
-    <section class="scene" id="scene4" aria-label="Call to action">
+    <!-- Scene 6: CTA -->
+    <section class="scene" id="scene6" aria-label="Call to action">
       <p class="cta-headline" id="ctaHeadline"></p>
       <p class="cta-sub" id="ctaSub">Enroll Now at GENAICOURSE.IO</p>
       <button class="cta-button" id="ctaButton">Start Learning Today</button>
@@ -939,15 +1330,9 @@
       <div class="indicator-dot" data-scene="1"></div>
       <div class="indicator-dot" data-scene="2"></div>
       <div class="indicator-dot" data-scene="3"></div>
+      <div class="indicator-dot" data-scene="4"></div>
+      <div class="indicator-dot" data-scene="5"></div>
     </nav>
-
-    <button class="replay-btn" id="replayBtn" aria-label="Replay">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M1 4v6h6M23 20v-6h-6" />
-        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
-      </svg>
-      Replay
-    </button>
 
     <div class="timer-bar" id="timerBar" role="progressbar"></div>
   </div>
@@ -956,15 +1341,15 @@
     const sceneTimings = [
       { id: 'scene1', duration: 3500 },
       { id: 'scene2', duration: 7000 },
-      { id: 'scene3', duration: 6000 },
-      { id: 'scene4', duration: 5500 }
+      { id: 'scene3', duration: 6500 },
+      { id: 'scene4', duration: 6500 },
+      { id: 'scene5', duration: 6500 },
+      { id: 'scene6', duration: 5500 }
     ];
     const totalDuration = sceneTimings.reduce((s, sc) => s + sc.duration, 0);
 
-    const playOverlay = document.getElementById('playOverlay');
     const timerBar = document.getElementById('timerBar');
     const lightFlare = document.getElementById('lightFlare');
-    const replayBtn = document.getElementById('replayBtn');
     const logoText = document.getElementById('logoText');
     const logoUnderline = document.getElementById('logoUnderline');
     const tagline = document.getElementById('tagline');
@@ -981,7 +1366,6 @@
     const allScenes = document.querySelectorAll('.scene');
 
     let currentIndex = -1;
-    let isPlaying = false;
     let startTime = 0;
     let raf = null;
     let sceneTimeouts = [];
@@ -993,7 +1377,7 @@
 
     function resizeCanvas(c) { c.width = c.offsetWidth; c.height = c.offsetHeight; }
     resizeCanvas(pCanvas);
-    window.addEventListener('resize', () => { resizeCanvas(pCanvas); resizeCanvas(cCanvas); });
+    window.addEventListener('resize', () => { resizeCanvas(pCanvas); });
 
     class Particle {
       constructor() { this.reset(); }
@@ -1047,59 +1431,6 @@
     }
     drawParticles();
 
-    /* ── Confetti ── */
-    const cCanvas = document.getElementById('confettiCanvas');
-    const cCtx = cCanvas.getContext('2d');
-    resizeCanvas(cCanvas);
-
-    let confetti = [];
-    let confettiActive = false;
-    let confettiRaining = false;
-    const confettiColors = ['#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#e0e7ff', '#ffffff', '#4f46e5', '#7c3aed', '#8b5cf6', '#a78bfa'];
-
-    function spawnPiece(x, y, burst) {
-      const angle = burst ? Math.random() * Math.PI * 2 : -Math.PI / 2 + (Math.random() - 0.5) * 0.8;
-      const speed = burst ? (Math.random() * 16 + 6) : (Math.random() * 3 + 1);
-      confetti.push({
-        x, y,
-        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-        w: Math.random() * 10 + 4, h: Math.random() * 6 + 2,
-        rot: Math.random() * 360, rs: (Math.random() - 0.5) * 14,
-        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-        g: 0.18 + Math.random() * 0.12, drag: burst ? 0.985 : 0.995,
-        wb: Math.random() * 10, ws: Math.random() * 0.1 + 0.03, opacity: 1
-      });
-    }
-
-    function confettiBurst() {
-      confettiActive = true;
-      const cx = cCanvas.width / 2, cy = cCanvas.height * 0.45;
-      for (let i = 0; i < 200; i++) spawnPiece(cx + (Math.random() - 0.5) * 100, cy + (Math.random() - 0.5) * 60, true);
-      setTimeout(() => { confettiRaining = true; }, 800);
-    }
-
-    function updateConfetti() {
-      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
-      if (!confettiActive && confetti.length === 0) return;
-      if (confettiRaining) { for (let i = 0; i < 3; i++) spawnPiece(Math.random() * cCanvas.width, -20, false); }
-      confetti = confetti.filter(p => {
-        p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag;
-        p.wb += p.ws; p.x += p.vx + Math.sin(p.wb) * 0.5; p.y += p.vy; p.rot += p.rs;
-        if (p.y > cCanvas.height + 60) p.opacity -= 0.08;
-        if (p.opacity <= 0) return false;
-        cCtx.save(); cCtx.translate(p.x, p.y); cCtx.rotate(p.rot * Math.PI / 180);
-        cCtx.globalAlpha = Math.max(0, p.opacity); cCtx.fillStyle = p.color;
-        cCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); cCtx.restore();
-        return true;
-      });
-      if (confettiActive || confetti.length > 0) requestAnimationFrame(updateConfetti);
-    }
-
-    function stopConfetti() {
-      confettiRaining = false; confettiActive = false; confetti = [];
-      cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
-    }
-
     /* ── Mouse parallax ── */
     let mx = 0, my = 0;
     document.addEventListener('mousemove', e => {
@@ -1138,6 +1469,70 @@
       });
     }
 
+    /* ── Counter animation ── */
+    function animateCounter(el, from, to, duration, suffix = '%') {
+      const start = performance.now();
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(from + (to - from) * eased) + suffix;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    /* ── Reset all scene animations for seamless looping ── */
+    function resetAllAnimations() {
+      clearTO();
+
+      /* Scene 1 */
+      logoText.textContent = '';
+      logoUnderline.classList.remove('animate');
+      logoUnderline.style.width = '0';
+      tagline.classList.remove('visible');
+
+      /* Scene 2 */
+      wfMainHead.classList.remove('show');
+      wfSubHead.classList.remove('show');
+      wfTrack.classList.remove('grown');
+      wfTrack.style.height = '0';
+      document.querySelectorAll('.workflow-step').forEach(s => s.classList.remove('show'));
+
+      /* Scene 3 */
+      document.getElementById('learnHeader').classList.remove('show');
+      document.getElementById('learnTitle').classList.remove('show');
+      document.querySelectorAll('.learn-item').forEach(i => i.classList.remove('show'));
+      document.getElementById('learnProgress').classList.remove('show');
+      document.getElementById('learnFill').classList.remove('animate');
+      document.getElementById('learnFill').style.width = '0';
+      document.getElementById('learnPct').textContent = '0%';
+      document.getElementById('learnLesson').classList.remove('show');
+
+      /* Scene 4 */
+      document.getElementById('assessHeader').classList.remove('show');
+      document.getElementById('assessQuestion').classList.remove('show');
+      document.querySelectorAll('.assess-option').forEach(o => o.classList.remove('show', 'correct'));
+      document.getElementById('assessResult').classList.remove('show');
+      document.getElementById('assessScoreVal').textContent = '0%';
+
+      /* Scene 5 */
+      celebText.classList.remove('show');
+      certEntrance.classList.remove('show');
+      certHint.classList.remove('show');
+
+      /* Scene 6 */
+      ctaHeadline.textContent = '';
+      ctaSub.classList.remove('show');
+      ctaButton.classList.remove('show');
+
+      /* Remove all active scenes */
+      allScenes.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active', 'done'));
+
+      currentIndex = -1;
+    }
+
     /* ── Scene management ── */
     function clearTO() { sceneTimeouts.forEach(t => clearTimeout(t)); sceneTimeouts = []; }
 
@@ -1166,6 +1561,7 @@
             sceneTimeouts.push(setTimeout(() => tagline.classList.add('visible'), 400));
           });
           break;
+
         case 1:
           sceneTimeouts.push(setTimeout(() => wfMainHead.classList.add('show'), 150));
           sceneTimeouts.push(setTimeout(() => wfSubHead.classList.add('show'), 400));
@@ -1174,23 +1570,50 @@
             sceneTimeouts.push(setTimeout(() => step.classList.add('show'), 800 + (parseInt(step.dataset.delay) || 0)));
           });
           break;
+
         case 2:
-          sceneTimeouts.push(setTimeout(() => celebText.classList.add('show'), 300));
+          sceneTimeouts.push(setTimeout(() => document.getElementById('learnHeader').classList.add('show'), 200));
+          sceneTimeouts.push(setTimeout(() => document.getElementById('learnTitle').classList.add('show'), 500));
+          document.querySelectorAll('.learn-item').forEach(item => {
+            sceneTimeouts.push(setTimeout(() => item.classList.add('show'), 800 + (parseInt(item.dataset.delay) || 0)));
+          });
           sceneTimeouts.push(setTimeout(() => {
-            certEntrance.classList.add('show');
-            confettiBurst();
-            updateConfetti();
-          }, 900));
+            document.getElementById('learnProgress').classList.add('show');
+            document.getElementById('learnFill').classList.add('animate');
+            animateCounter(document.getElementById('learnPct'), 0, 75, 2000);
+          }, 1800));
+          sceneTimeouts.push(setTimeout(() => document.getElementById('learnLesson').classList.add('show'), 2400));
+          break;
+
+        case 3:
+          sceneTimeouts.push(setTimeout(() => document.getElementById('assessHeader').classList.add('show'), 200));
+          sceneTimeouts.push(setTimeout(() => document.getElementById('assessQuestion').classList.add('show'), 500));
+          document.querySelectorAll('.assess-option').forEach(opt => {
+            sceneTimeouts.push(setTimeout(() => opt.classList.add('show'), 800 + (parseInt(opt.dataset.delay) || 0)));
+          });
+          sceneTimeouts.push(setTimeout(() => {
+            document.querySelectorAll('.assess-option')[1].classList.add('correct');
+          }, 2200));
+          sceneTimeouts.push(setTimeout(() => {
+            document.getElementById('assessResult').classList.add('show');
+            animateCounter(document.getElementById('assessScoreVal'), 0, 92, 1200);
+          }, 3400));
+          break;
+
+        case 4:
+          sceneTimeouts.push(setTimeout(() => celebText.classList.add('show'), 300));
+          sceneTimeouts.push(setTimeout(() => certEntrance.classList.add('show'), 900));
           sceneTimeouts.push(setTimeout(() => certHint.classList.add('show'), 1600));
           break;
-        case 3:
+
+        case 5:
           typeText(ctaHeadline, 'Ready to start your journey?', 50);
           sceneTimeouts.push(setTimeout(() => { ctaSub.classList.add('show'); ctaButton.classList.add('show'); }, 1800));
           break;
       }
     }
 
-    /* ── Playback ── */
+    /* ── Playback — infinite loop ── */
     function runVideo() {
       const elapsed = Date.now() - startTime;
       const pct = Math.min(elapsed / totalDuration, 1);
@@ -1200,41 +1623,29 @@
         acc += sceneTimings[i].duration;
         if (elapsed < acc) { if (currentIndex !== i) showScene(i); break; }
       }
-      if (elapsed < totalDuration) raf = requestAnimationFrame(runVideo);
-      else sceneTimeouts.push(setTimeout(() => replayBtn.classList.add('show'), 1000));
+      if (elapsed < totalDuration) {
+        raf = requestAnimationFrame(runVideo);
+      } else {
+        /* Loop: reset everything and restart seamlessly */
+        resetAllAnimations();
+        startTime = Date.now();
+        timerBar.style.width = '0';
+        raf = requestAnimationFrame(runVideo);
+      }
     }
 
-    function startVideo() { isPlaying = true; startTime = Date.now(); currentIndex = -1; showScene(0); runVideo(); }
+    function startVideo() { startTime = Date.now(); currentIndex = -1; showScene(0); runVideo(); }
 
-    function resetVideo() {
-      isPlaying = false;
-      if (raf) cancelAnimationFrame(raf);
-      clearTO(); stopConfetti();
-      currentIndex = -1;
-      allScenes.forEach(s => s.classList.remove('active'));
-      dots.forEach(d => d.classList.remove('active', 'done'));
-      timerBar.style.width = '0';
-      replayBtn.classList.remove('show');
-      logoText.textContent = '';
-      logoUnderline.classList.remove('animate');
-      tagline.classList.remove('visible');
-      wfMainHead.classList.remove('show');
-      wfSubHead.classList.remove('show');
-      wfTrack.classList.remove('grown');
-      document.querySelectorAll('.workflow-step').forEach(s => s.classList.remove('show'));
-      celebText.classList.remove('show');
-      certEntrance.classList.remove('show');
-      certHint.classList.remove('show');
-      ctaHeadline.textContent = '';
-      ctaSub.classList.remove('show');
-      ctaButton.classList.remove('show');
-    }
+    document.getElementById('ctaButton').addEventListener('click', () => {
+      if (window.parent && window.parent !== window) {
+        window.parent.location.href = '/register';
+      } else {
+        window.location.href = '/register';
+      }
+    });
 
-    function handlePlay() { playOverlay.classList.add('hidden'); startVideo(); }
-    playOverlay.addEventListener('click', handlePlay);
-    playOverlay.addEventListener('keydown', e => { if (e.code === 'Enter' || e.code === 'Space') { e.preventDefault(); handlePlay(); } });
-    document.addEventListener('keydown', e => { if (e.code === 'Space' && !isPlaying && !playOverlay.classList.contains('hidden')) { e.preventDefault(); handlePlay(); } });
-    replayBtn.addEventListener('click', () => { resetVideo(); startVideo(); });
+    /* Auto-play on load */
+    startVideo();
   </script>
 </body>
 

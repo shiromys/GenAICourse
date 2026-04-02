@@ -21,7 +21,7 @@ const steps = [
     {
         icon: <Award className="w-6 h-6 text-white" />,
         title: "Certify",
-        description: "Earn your verified certificate and showcase your expertise."
+        description: "Earn your certificate and showcase your expertise."
     }
 ];
 
