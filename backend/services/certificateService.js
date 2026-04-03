@@ -43,134 +43,63 @@ export const generateCertificatePDF = async (certificateData) => {
                 year: 'numeric', month: 'long', day: 'numeric'
             });
 
-            // ── 1. Page Background & Frame ──────────────────────────────
-            doc.rect(0, 0, width, height).fill('#ffffff');
+            // ── 1. Background Template Image ──────────────────────────────
+            const bgPath = path.resolve(__dirname, '../../frontend/public/images/courses/Certificate template.png');
+            try {
+                await fs.access(bgPath);
+                doc.image(bgPath, 0, 0, { width, height });
+            } catch (e) {
+                console.error("Certificate template image not found, falling back to white background from:", bgPath);
+                doc.rect(0, 0, width, height).fill('#ffffff');
+            }
 
-            const margin = 20;
-            const borderThickness = 8;
-
-            // Top gradient line (matches HTML top-line)
-            const grad = doc.linearGradient(margin, margin, width - margin, margin);
-            grad.stop(0, '#1e293b').stop(1, '#8b5cf6');
-            doc.rect(margin, margin, width - margin * 2, borderThickness).fill(grad);
-
-            // Bottom, Left, Right solid navy lines
-            doc.rect(margin, height - margin - borderThickness, width - margin * 2, borderThickness).fill('#1e293b');
-            doc.rect(margin, margin, borderThickness, height - margin * 2).fill('#1e293b');
-            doc.rect(width - margin - borderThickness, margin, borderThickness, height - margin * 2).fill('#1e293b');
-
-            // ── 2. Corner Gold Ornaments ─────────────────────────────────────
-            const gold = '#d4af37';
-            const cornerSize = 40;
-            const cornerMargin = margin + borderThickness + 6;
-
-            const drawCorner = (x, y, xDir, yDir) => {
-                doc.save()
-                    .moveTo(x, y + (yDir * cornerSize))
-                    .lineTo(x, y)
-                    .lineTo(x + (xDir * cornerSize), y)
-                    .lineWidth(2)
-                    .stroke(gold)
-                    .restore();
-            };
-
-            drawCorner(cornerMargin, cornerMargin, 1, 1);       // Top Left
-            drawCorner(width - cornerMargin, cornerMargin, -1, 1);  // Top Right
-            drawCorner(cornerMargin, height - cornerMargin, 1, -1); // Bottom Left
-            drawCorner(width - cornerMargin, height - cornerMargin, -1, -1); // Bottom Right
-
-
-
-            // ── 3. Application Logo ───────────────────────────────────────────
+            // ── 2. Top Logo ──────────────────────────────────────────────────
             const mainLogoPath = path.resolve(__dirname, '../../frontend/public/logo.png');
             try {
                 await fs.access(mainLogoPath);
-                doc.image(mainLogoPath, width / 2 - 50, 25, { width: 100 });
+                doc.image(mainLogoPath, (width / 2) - 40, 20, { width: 80 });
             } catch (e) {
-                console.log("Main logo not found for certificate, skipping...");
+                console.error("Main logo not found for certificate, skipping...");
             }
 
-            // ── 4. Main Titles ───────────────────────────────────────────────
-            doc.fontSize(46).fillColor('#1e293b').font('Times-Bold')
-                .text('CERTIFICATE', 0, 115, { align: 'center', characterSpacing: 8 });
+            // ── 3. Recipient Name ────────────────────────────────────────────
+            doc.fontSize(40).fillColor('#1e293b').font('Times-BoldItalic')
+                .text(userName, 0, 270, { align: 'center', width: width });
 
-            doc.fontSize(12).fillColor('#64748b').font('Times-Roman')
-                .text('OF ACHIEVEMENT', 0, 160, { align: 'center', characterSpacing: 6 });
+            // ── 4. Completion Text ───────────────────────────────────────────
+            doc.fontSize(14).fillColor('#64748b').font('Times-Roman')
+                .text('has successfully completed the course', 0, 325, { align: 'center', width: width });
 
-            // ── 5. This is to Certify... ─────────────────────────────────────
-            doc.fontSize(14).fillColor('#94a3b8').font('Times-Italic')
-                .text('This is to officially certify that', 0, 215, { align: 'center' });
-
-            // ── 6. Recipient Name ────────────────────────────────────────────
-            // Divider lines above and below
-            doc.lineWidth(0.5).strokeColor('#e2e8f0');
-            doc.moveTo(width / 2 - 200, 250).lineTo(width / 2 + 200, 250).stroke();
-
-            // Purple elegant name
-            doc.fontSize(40).fillColor('#8b5cf6').font('Times-Roman')
-                .text(userName.toUpperCase(), 0, 265, { align: 'center' });
-
-            doc.lineWidth(0.5).strokeColor('#e2e8f0');
-            doc.moveTo(width / 2 - 200, 320).lineTo(width / 2 + 200, 320).stroke();
-
-            // ── 7. Course Completion Text ────────────────────────────────────
-            doc.fontSize(11).fillColor('#64748b').font('Times-Roman')
-                .text('has successfully completed the course', 0, 350, { align: 'center' });
+            // ── 5. Course Title ──────────────────────────────────────────────
+            doc.fontSize(24).fillColor('#1e293b').font('Times-Bold')
+                .text(courseTitle, 150, 360, { align: 'center', width: width - 300 });
 
 
-            doc.fontSize(22).fillColor('#1e293b').font('Times-Bold')
-                .text(courseTitle, 60, 410, { align: 'center', width: width - 120 });
+            // ── 6. Certificate Verify Link (Below Course Name) ─────────────
+            // Pushed down to 440 to ensure gap even if course name takes 2 lines
+            const verifyUrl = `${process.env.CLIENT_URL || 'https://genaicourse.io'}/verify-certificate/${certificateId}`;
+            doc.fontSize(10).fillColor('#64748b').font('Helvetica')
+                .text(`Verify at: ${verifyUrl}`, 0, 440, { align: 'center', width: width, link: verifyUrl });
 
-
-            // ── 9. Footer Signatures ─────────────────────────────────────────
-            const footerY = height - 70;
+            // ── 7. Footer (Signatures and Date) ─────────────────────────────
+            const footerY = 510;
             const lineLength = 180;
 
-            // LEFT: Date of Issue
-            doc.fontSize(14).fillColor('#1e293b').font('Times-Italic')
-                .text(formattedDate, 80, footerY - 25, { width: lineLength, align: 'center' });
+            // Date (Bottom Left, pushed further to the left edge)
+            doc.fontSize(12).fillColor('#1e293b').font('Times-Roman')
+                .text(formattedDate, 60, footerY - 5, { width: lineLength, align: 'center' });
+            doc.fontSize(9).fillColor('#64748b').font('Helvetica-Bold')
+                .text('DATE OF ISSUE', 60, footerY + 15, { width: lineLength, align: 'center', characterSpacing: 1 });
 
-            doc.lineWidth(1).strokeColor('#cbd5e1').moveTo(80, footerY).lineTo(80 + lineLength, footerY).stroke();
-
-            doc.fontSize(9).font('Helvetica-Bold').fillColor('#64748b')
-                .text('DATE OF ISSUE', 80, footerY + 10, { width: lineLength, align: 'center', characterSpacing: 2 });
-
-            // RIGHT: Certifying Authority Signature
-            doc.fontSize(14).fillColor('#1e293b').font('Times-Italic')
-                .text('Certifying Authority', width - 80 - lineLength, footerY - 25, { width: lineLength, align: 'center' });
-
-            doc.lineWidth(1).strokeColor('#cbd5e1').moveTo(width - 80 - lineLength, footerY).lineTo(width - 80, footerY).stroke();
-
-            doc.fontSize(9).font('Helvetica-Bold').fillColor('#64748b')
-                .text('GenAiCourse.io', width - 80 - lineLength, footerY + 10, { width: lineLength, align: 'center', characterSpacing: 2 });
-
-            // ── 10. Central Digital Seal ─────────────────────────────────────
-            const sealX = width / 2 - 35;
-            const sealY = height - 120; // Nestled neatly between text and bottom
-
-            try {
-                const certifiedLogoPath = path.resolve(__dirname, '../../frontend/public/certified logo.png');
-                if (await fs.access(certifiedLogoPath).then(() => true).catch(() => false)) {
-                    doc.image(certifiedLogoPath, sealX, sealY, { width: 70 });
-                } else {
-                    doc.save()
-                        .translate(width / 2, sealY + 35)
-                        .rotate(-15)
-                        .circle(0, 0, 30).lineWidth(2).strokeColor('#ef4444').stroke();
-                    doc.fontSize(8).fillColor('#ef4444').font('Helvetica-Bold')
-                        .text('CERTIFIED', -25, -3, { width: 50, align: 'center' });
-                    doc.restore();
-                }
-            } catch (e) {
-                console.error("Certified logo failed:", e.message);
-            }
-
-            // Kept ID subtle out of the way to maintain clear canvas
-            doc.fontSize(6).fillColor('#cbd5e1').font('Helvetica')
-                .text(`ID: ${certificateId}`, 0, height - 20, { align: 'center' });
+            // Signature Label (Center, avoiding the right-side badge completely)
+            doc.fontSize(12).fillColor('#1e293b').font('Times-Roman')
+                .text('GenAiCourse.io', (width / 2) - (lineLength / 2), footerY - 5, { width: lineLength, align: 'center' });
+            doc.fontSize(9).fillColor('#64748b').font('Helvetica-Bold')
+                .text('CERTIFYING AUTHORITY', (width / 2) - (lineLength / 2), footerY + 15, { width: lineLength, align: 'center', characterSpacing: 1 });
 
             doc.end();
         } catch (err) {
+            console.error("PDF generation critical error:", err);
             reject(err);
         }
     });
@@ -187,17 +116,16 @@ export function generateCertificateHTML(data) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificate of Completion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #1e293b;
-            --accent: #8b5cf6;
-            --gold: #d4af37;
+            --accent: #1e293b;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Montserrat', sans-serif;
-            background: #fff;
+            background: #f8fafc;
             width: 297mm;
             height: 210mm;
             display: flex;
@@ -205,80 +133,125 @@ export function generateCertificateHTML(data) {
             justify-content: center;
             overflow: hidden;
         }
-        .certificate-wrapper {
+        .certificate-container {
             width: 285mm;
-            height: 198mm;
-            background: white;
+            height: 195mm;
+            background-color: #fff;
+            background-image: url('${process.env.FRONTEND_URL}/images/courses/Certificate%20template.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
             position: relative;
-            padding: 10px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
-        .border-line { position: absolute; background: var(--primary); z-index: 10; }
-        .top-line { height: 8px; top: 0; left: 0; right: 0; background: linear-gradient(90deg, var(--primary), var(--accent)); }
-        .bottom-line { height: 8px; bottom: 0; left: 0; right: 0; }
-        .left-line { width: 8px; top: 0; bottom: 0; left: 0; }
-        .right-line { width: 8px; top: 0; bottom: 0; right: 0; }
-        .corner { position: absolute; width: 50px; height: 50px; border: 3px solid var(--gold); z-index: 11; }
-        .tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
-        .tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
-        .bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
-        .br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
-        .content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; z-index: 5; padding: 15px 70px; }
-        .logo { font-family: 'Cinzel', serif; font-size: 24px; color: var(--primary); letter-spacing: 2px; margin-bottom: 25px; }
-        .main-title { font-family: 'Cinzel', serif; font-size: 44px; color: var(--primary); margin-bottom: 2px; letter-spacing: 4px; }
-        .sub-header { font-size: 14px; color: #64748b; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 35px; }
-        .certify-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; color: #94a3b8; margin-bottom: 15px; }
-        .name { font-family: 'Cinzel', serif; font-size: 40px; color: var(--accent); margin-bottom: 20px; padding-bottom: 5px; border-bottom: 1px solid #e2e8f0; min-width: 400px; }
-        .achievement-text { font-size: 14px; color: #64748b; margin-bottom: 15px; max-width: 600px; }
-        .course-name { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--primary); font-weight: 700; margin-bottom: 30px; }
-        .score-box { margin-bottom: 40px; text-align: center; }
-        .score-val { font-size: 14px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-        .footer-sigs { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-bottom: 20px; }
-        .sig { width: 220px; text-align: center; }
-        .sig-font { font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; margin-bottom: 5px; color: var(--primary); }
-        .sig-line { height: 1px; background: #cbd5e1; margin-bottom: 8px; }
-        .sig-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
-        .certified-logo-box { display: flex; align-items: center; justify-content: center; }
-        .certified-logo { height: 110px; width: auto; object-fit: contain; }
+        .content {
+            margin-top: 250px;
+            text-align: center;
+            color: var(--primary);
+            padding: 0 100px;
+        }
+        .name {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-style: italic;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #1e293b;
+        }
+        .certify-text {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        .course-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #1e293b;
+            max-width: 75%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cert-id {
+            font-size: 13px;
+            color: #64748b;
+            font-family: monospace;
+            margin-top: 40px; /* Increased gap */
+        }
+        .logo-top {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: auto;
+        }
+        .footer-date {
+            position: absolute;
+            bottom: 95px;
+            left: 80px; /* Pushed further left */
+            text-align: left;
+            min-width: 200px;
+        }
+        .footer-sig {
+            position: absolute;
+            bottom: 95px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            min-width: 200px;
+        }
+        .sig-block {
+            text-align: center;
+            min-width: 180px;
+        }
+        .sig-val {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #1e293b;
+            font-family: 'Playfair Display', serif;
+        }
+        .sig-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 8px;
+        }
+        .cert-id {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #94a3b8;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
-    <div class="certificate-wrapper">
-        <div class="border-line top-line"></div>
-        <div class="border-line bottom-line"></div>
-        <div class="border-line left-line"></div>
-        <div class="border-line right-line"></div>
-        <div class="corner tl"></div><div class="corner tr"></div>
-        <div class="corner bl"></div><div class="corner br"></div>
+    <div class="certificate-container">
+        <img src="${process.env.FRONTEND_URL}/logo.png" alt="Logo" class="logo-top" onerror="this.style.display='none'" />
         <div class="content">
-            <div class="logo">
-                <img src="${process.env.FRONTEND_URL}/logo.png" style="height: 60px; width: auto;" alt="GenAI" />
+            <h1 class="name">${data.userName}</h1>
+            <p class="certify-text">has successfully completed the course</p>
+            <h2 class="course-title">${data.courseTitle}</h2>
+            <div class="cert-id">
+                <a href="${process.env.FRONTEND_URL}/verify-certificate/${data.certificateId}" target="_blank" style="color: inherit; text-decoration: none;">
+                    Verify at: ${process.env.FRONTEND_URL}/verify-certificate/${data.certificateId}
+                </a>
             </div>
-            <h1 class="main-title">CERTIFICATE</h1>
-            <p class="sub-header">OF ACHIEVEMENT</p>
-            <p class="certify-text">This is to officially certify that</p>
-            <h2 class="name">${data.userName}</h2>
-            <p class="achievement-text">has successfully completed the course</p>
-            <h3 class="course-name">${data.courseTitle}</h3>
-            <div class="score-box">
-                <span class="score-val">ACHIEVEMENT: ${data.score}% Score &nbsp;|&nbsp; Grade: ${data.grade}</span>
-            </div>
-            <div class="footer-sigs">
-                <div class="sig">
-                    <div class="sig-font">${new Date(data.completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                    <div class="sig-line"></div>
-                    <div class="sig-label">Date of Issue</div>
-                </div>
-                <div class="certified-logo-box">
-                    ${data.certifiedLogo ? `<img src="${data.certifiedLogo}" class="certified-logo" alt="Certified" />` : ''}
-                </div>
-                <div class="sig">
-                    <div class="sig-font">Certifying Authority</div>
-                    <div class="sig-line"></div>
-                    <div class="sig-label">GenAiCourse.io</div>
-                </div>
-            </div>
+        </div>
+        
+        <div class="footer-date">
+            <div class="sig-val">${new Date(data.completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+            <div class="sig-label">Date of Issue</div>
+        </div>
+        <div class="footer-sig">
+            <div class="sig-val">GenAiCourse.io</div>
+            <div class="sig-label">Certifying Authority</div>
         </div>
     </div>
 </body>

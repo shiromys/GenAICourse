@@ -38,6 +38,7 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import RefundPolicy from './pages/RefundPolicy';
+import VerifyCertificate from './pages/VerifyCertificate';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -102,6 +103,7 @@ const AppContent = () => {
                         <Route path="/privacy" element={<PageContainer><PrivacyPolicy /></PageContainer>} />
                         <Route path="/terms" element={<PageContainer><TermsOfUse /></PageContainer>} />
                         <Route path="/refund" element={<PageContainer><RefundPolicy /></PageContainer>} />
+                        <Route path="/verify-certificate/:certificateId" element={<PageContainer><VerifyCertificate /></PageContainer>} />
 
                         <Route element={<PrivateRoute />}>
                             <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />
