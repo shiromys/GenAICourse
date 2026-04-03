@@ -4,7 +4,7 @@ import { format, parseISO } from 'date-fns';
 import adminService from '../../services/adminService.js';
 import Loader from '../../components/common/Loader.jsx';
 import AdminAssessmentManager from './AdminAssessmentManager.jsx';
-import { FaUser, FaBook, FaPlus, FaTrash, FaEdit, FaChartLine, FaGraduationCap, FaClipboardList, FaUsers, FaEye } from 'react-icons/fa';
+import { FaUser, FaBook, FaPlus, FaTrash, FaEdit, FaChartLine, FaGraduationCap, FaClipboardList, FaUsers, FaEye, FaCalendarAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { AuroraBackground } from '../../components/ui/aurora-background';
 
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: <FaChartLine /> },
-        { id: 'revenue', label: 'Revenue & Intelligence', icon: <FaChartLine /> },
+        { id: 'revenue', label: 'Revenue ', icon: <FaChartLine /> },
         { id: 'courses', label: 'Courses', icon: <FaBook /> },
         { id: 'assessments', label: 'Assessments', icon: <FaClipboardList /> },
         { id: 'users', label: 'Users', icon: <FaUser /> },
@@ -107,7 +107,7 @@ const AdminDashboard = () => {
                         <h1 className="text-4xl font-black text-white tracking-tight flex items-center gap-3">
                             <span className="text-amber-400">⚡</span> Admin console
                         </h1>
-                        <p className="text-slate-400 mt-2 font-medium">Manage your platform, analyze intelligence, and control revenue.</p>
+                        <p className="text-slate-400 mt-2 font-medium">Manage your platform, analyze you revenue, and control users.</p>
                     </div>
                     <Link to="/dashboard" className="btn bg-[#0F172A] hover:bg-[#1E293B] text-slate-300 border border-slate-800 px-6 py-2.5 rounded-xl transition-all shadow-sm font-bold">
                         ← Back to My Dashboard
@@ -363,6 +363,11 @@ const AdminDashboard = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            <RevenueCalendar
+                                monthlyRevenue={paymentAnalytics?.monthlyRevenue}
+                                currentYear={new Date().getFullYear()}
+                            />
                         </div>
                     )}
 
@@ -371,7 +376,7 @@ const AdminDashboard = () => {
                         <div className="space-y-6">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm gap-4">
                                 <div>
-                                    <h2 className="text-3xl font-black text-slate-900">Course Matrix</h2>
+                                    <h2 className="text-3xl font-black text-slate-900">Course Cards</h2>
                                     <p className="text-slate-500 mt-1 font-medium">Architect your learning experiences</p>
                                 </div>
                                 <div className="flex gap-3">
@@ -397,7 +402,7 @@ const AdminDashboard = () => {
                                             <tr>
                                                 <th className="px-8 py-5">Course Structure</th>
                                                 <th className="px-8 py-5">Category</th>
-                                                <th className="px-8 py-5">Cohort Size</th>
+                                                <th className="px-8 py-5">Enrollement Count</th>
                                                 <th className="px-8 py-5">Clearance</th>
                                                 <th className="px-8 py-5 text-right">Directives</th>
                                             </tr>
@@ -601,6 +606,108 @@ const AdminActionButton = ({ onClick, icon, color, title }) => {
         >
             {React.cloneElement(icon, { size: 18 })}
         </button>
+    );
+};
+
+const RevenueCalendar = ({ monthlyRevenue }) => {
+    const defaultYear = new Date().getFullYear();
+    const availableYears = monthlyRevenue && monthlyRevenue.length > 0
+        ? [...new Set(monthlyRevenue.map(m => m.year))].sort((a, b) => b - a)
+        : [defaultYear];
+
+    const [selectedYear, setSelectedYear] = useState(availableYears[0] || defaultYear);
+    const [selectedMonth, setSelectedMonth] = useState(null); // null means year
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Filter data by selected year
+    const yearData = (monthlyRevenue || []).filter(item => item.year === selectedYear);
+    const yearTotal = yearData.reduce((sum, item) => sum + item.revenue, 0);
+
+    let displayRevenue = 0;
+    let displayTitle = '';
+
+    if (selectedMonth === null) {
+        displayRevenue = yearTotal;
+        displayTitle = `${selectedYear} Total Revenue`;
+    } else {
+        const monthData = yearData.find(m => m.month === selectedMonth + 1);
+        displayRevenue = monthData ? monthData.revenue : 0;
+        displayTitle = `${months[selectedMonth]} ${selectedYear} Revenue`;
+    }
+
+    return (
+        <div className="bg-[#0F172A]/80 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] mt-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div className="flex flex-col">
+                    <h3 className="text-2xl font-black text-white flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400">
+                            <FaCalendarAlt />
+                        </div>
+                        Revenue Calendar
+                    </h3>
+
+                    {/* YEAR SELECTOR */}
+                    <div className="mt-4 flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                        {availableYears.map(year => (
+                            <button
+                                key={year}
+                                onClick={() => {
+                                    setSelectedYear(year);
+                                    setSelectedMonth(null);
+                                }}
+                                className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all border ${selectedYear === year
+                                    ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
+                                    : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-white'
+                                    }`}
+                            >
+                                {year}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="text-left md:text-right">
+                    <p className="text-slate-400 text-sm font-bold uppercase tracking-wider">{displayTitle}</p>
+                    <p className="text-3xl font-black text-amber-500">${displayRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                </div>
+            </div>
+
+            <div className="flex flex-col lg:flex-row gap-2 mt-2">
+                <button
+                    onClick={() => setSelectedMonth(null)}
+                    className={`w-full lg:w-32 py-3 overflow-hidden rounded-xl font-bold transition-all border shrink-0 ${selectedMonth === null
+                        ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                        : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-white'
+                        }`}
+                >
+                    {selectedYear}
+                </button>
+                <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2 flex-grow">
+                    {months.map((month, idx) => {
+                        const hasRevenue = yearData.find(m => m.month === idx + 1);
+                        return (
+                            <button
+                                key={month}
+                                onClick={() => setSelectedMonth(idx)}
+                                className={`py-3 rounded-xl font-bold text-sm transition-all border relative overflow-hidden ${selectedMonth === idx
+                                    ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                                    : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-white'
+                                    }`}
+                            >
+                                <span className="relative z-10">{month}</span>
+                                {hasRevenue && selectedMonth !== idx && (
+                                    <div className="absolute inset-0 bg-amber-500/10 z-0"></div>
+                                )}
+                                {hasRevenue && (
+                                    <div className={`absolute top-1 right-1 w-1.5 h-1.5 rounded-full ${selectedMonth === idx ? 'bg-black' : 'bg-amber-500'}`}></div>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
     );
 };
 

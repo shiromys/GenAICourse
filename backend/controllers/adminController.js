@@ -564,21 +564,23 @@ export const getPaymentAnalytics = async (req, res, next) => {
             transactions: item.transactions
         }));
 
-        // 5. Monthly Revenue (Current Year)
-        const currentYear = new Date().getFullYear();
-        const startOfYear = new Date(currentYear, 0, 1);
+        // 5. Monthly Revenue (All Time)
         const monthlyAgg = await Payment.aggregate([
-            { $match: { status: 'completed', createdAt: { $gte: startOfYear } } },
+            { $match: { status: 'completed' } },
             {
                 $group: {
-                    _id: { $month: "$createdAt" },
+                    _id: { 
+                        month: { $month: "$createdAt" },
+                        year: { $year: "$createdAt" }
+                    },
                     revenue: { $sum: "$amountPaid" }
                 }
             },
-            { $sort: { _id: 1 } }
+            { $sort: { "_id.year": 1, "_id.month": 1 } }
         ]);
         const monthlyRevenue = monthlyAgg.map(item => ({
-            month: item._id,
+            month: item._id.month,
+            year: item._id.year,
             revenue: item.revenue / 100
         }));
 
