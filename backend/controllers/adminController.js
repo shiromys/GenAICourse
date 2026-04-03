@@ -150,12 +150,26 @@ export const getAllCourses = async (req, res, next) => {
     try {
         const courses = await Course.find()
             .populate('createdBy', 'name email')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const enrollmentStats = await User.aggregate([
+            { $unwind: "$enrolledCourses" },
+            { $group: { _id: "$enrolledCourses.courseId", count: { $sum: 1 } } }
+        ]);
+        
+        const countMap = {};
+        enrollmentStats.forEach(stat => countMap[stat._id.toString()] = stat.count);
+
+        const augmentedCourses = courses.map(course => ({
+            ...course,
+            enrollmentCount: countMap[course._id.toString()] || 0
+        }));
 
         res.status(200).json({
             success: true,
-            count: courses.length,
-            data: courses
+            count: augmentedCourses.length,
+            data: augmentedCourses
         });
     } catch (error) {
         next(error);
@@ -288,7 +302,13 @@ export const getDashboardStats = async (req, res, next) => {
         const totalUsers = await User.countDocuments();
         const totalCourses = await Course.countDocuments();
         const publishedCourses = await Course.countDocuments({ isPublished: true });
-        const totalEnrollments = await UserProgress.countDocuments();
+        
+        // Count total enrollments from users dynamically
+        const totalEnrollmentsAgg = await User.aggregate([
+            { $unwind: "$enrolledCourses" },
+            { $count: "total" }
+        ]);
+        const totalEnrollments = totalEnrollmentsAgg[0] ? totalEnrollmentsAgg[0].total : 0;
 
         // Get recent users
         const recentUsers = await User.find()
@@ -296,11 +316,46 @@ export const getDashboardStats = async (req, res, next) => {
             .sort({ createdAt: -1 })
             .limit(5);
 
-        // Get popular courses
-        const popularCourses = await Course.find({ isPublished: true })
-            .sort({ enrollmentCount: -1 })
-            .limit(5)
-            .select('title enrollmentCount');
+        // Get popular courses based on actual user enrollments
+        const popularCourseStats = await User.aggregate([
+            { $unwind: "$enrolledCourses" },
+            { $group: { _id: "$enrolledCourses.courseId", enrollmentCount: { $sum: 1 } } },
+            { $sort: { enrollmentCount: -1 } },
+            { $limit: 10 }
+        ]);
+
+        let popularCourses = [];
+        if (popularCourseStats.length > 0) {
+            const courseIds = popularCourseStats.map(s => s._id);
+            const coursesData = await Course.find({ _id: { $in: courseIds }, isPublished: true }).select('title category');
+            
+            for (const stat of popularCourseStats) {
+                const cData = coursesData.find(c => c._id.toString() === stat._id.toString());
+                if (cData && popularCourses.length < 5) {
+                    popularCourses.push({
+                        _id: cData._id,
+                        title: cData.title,
+                        category: cData.category,
+                        enrollmentCount: stat.enrollmentCount
+                    });
+                }
+            }
+        }
+        
+        // Fallback for courses with no enrollments
+        if (popularCourses.length < 5) {
+            const remaining = 5 - popularCourses.length;
+            const existingIds = popularCourses.map(c => c._id);
+            const backupCourses = await Course.find({ isPublished: true, _id: { $nin: existingIds } })
+                .limit(remaining)
+                .select('title category');
+            popularCourses.push(...backupCourses.map(c => ({
+                _id: c._id,
+                title: c.title,
+                category: c.category,
+                enrollmentCount: 0
+            })));
+        }
 
         // Get category distribution
         const categoryStats = await Course.aggregate([
