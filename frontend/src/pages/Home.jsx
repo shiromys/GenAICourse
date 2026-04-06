@@ -26,7 +26,7 @@ const Home = () => {
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
                         </span>
                         <span className="text-sm font-semibold text-slate-600 tracking-wide">
-                            Introducing AI Mastery Paths
+                            Introducing AI Course
                         </span>
                     </motion.div>
 
@@ -37,7 +37,7 @@ const Home = () => {
                         transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                         className="text-6xl sm:text-7xl lg:text-[5.5rem] font-black tracking-tight text-slate-900 leading-[1.05] mb-8"
                     >
-                        Master the future.{' '}
+                        Skills that get you hired.{' '}
                         <br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">
                             Beautifully.
