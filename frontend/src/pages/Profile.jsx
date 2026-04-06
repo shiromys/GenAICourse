@@ -149,22 +149,29 @@ const Profile = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-red-50 selection:text-red-600">
-            <div className="container max-w-6xl mx-auto px-4">
+        <div className="relative min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-indigo-50 selection:text-indigo-600 overflow-hidden">
+            {/* Background Blobs */}
+            <div className="absolute top-0 left-0 w-full h-[1000px] pointer-events-none z-0">
+                <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-indigo-200/30 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute top-[40%] right-[10%] w-[500px] h-[500px] bg-violet-200/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '2s' }} />
+                <div className="absolute bottom-[10%] left-[20%] w-[350px] h-[350px] bg-pink-100/30 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '4s' }} />
+            </div>
+
+            <div className="container relative z-10 max-w-6xl mx-auto px-4">
                 <div className="flex flex-col lg:flex-row gap-8">
 
                     {/* Sidebar */}
                     <div className="w-full lg:w-80 flex-shrink-0">
-                        <div className="glass-card bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden sticky top-32">
+                        <div className="glass-card bg-white/95 backdrop-blur-2xl rounded-[2.5rem] border border-white shadow-[0_32px_64px_-15px_rgba(0,0,0,0.08)] overflow-hidden sticky top-32">
                             {/* Avatar Section */}
-                            <div className="p-8 text-center bg-gradient-to-b from-red-50/50 to-white border-b border-gray-50">
+                            <div className="p-8 text-center bg-gradient-to-b from-indigo-50/50 to-white border-b border-gray-50">
                                 <div className="relative inline-block group mb-4">
                                     <div className="w-32 h-32 rounded-3xl bg-red-100 flex items-center justify-center text-red-600 text-4xl font-black border-4 border-white shadow-2xl transition-transform duration-500 group-hover:scale-105">
                                         {user?.name?.[0].toUpperCase()}
                                     </div>
                                 </div>
                                 <h2 className="text-xl font-black text-slate-900 mb-1">{user?.name}</h2>
-                                <p className="text-sm font-bold text-red-600 uppercase tracking-widest">{user?.role === 'student' ? 'User' : user?.role || 'User'}</p>
+                                <p className="text-xs font-bold text-indigo-600 uppercase tracking-[0.2em]">{user?.role === 'student' ? 'User' : user?.role || 'User'}</p>
                             </div>
 
                             {/* Navigation List */}
@@ -173,12 +180,19 @@ const Profile = () => {
                                     <button
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
-                                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm transition-all duration-300 ${activeTab === tab.id
-                                            ? 'bg-red-50 text-red-600 shadow-sm'
+                                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm transition-all duration-300 relative group ${activeTab === tab.id
+                                            ? 'bg-indigo-50/80 text-indigo-600 shadow-sm'
                                             : 'text-slate-500 hover:bg-gray-50'
                                             }`}
                                     >
-                                        <span className={activeTab === tab.id ? 'text-red-500' : 'text-slate-400'}>
+                                        {activeTab === tab.id && (
+                                            <motion.div
+                                                layoutId="activeTabIndicator"
+                                                className="absolute left-2 w-1.5 h-6 bg-indigo-600 rounded-full"
+                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                            />
+                                        )}
+                                        <span className={`transition-colors duration-300 ${activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'}`}>
                                             {tab.icon}
                                         </span>
                                         {tab.label}
@@ -189,7 +203,7 @@ const Profile = () => {
 
                                 <button
                                     onClick={logout}
-                                    className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                                    className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-gray-400 hover:text-indigo-600 hover:bg-indigo-50/50 transition-all"
                                 >
                                     <FaSignOutAlt />
                                     Sign Out
@@ -203,40 +217,39 @@ const Profile = () => {
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeTab}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                transition={{ duration: 0.3 }}
-                                className="glass-card bg-white rounded-[2rem] border border-gray-100 shadow-xl p-8 lg:p-12 min-h-[600px]"
+                                initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                                className="glass-card bg-white/90 backdrop-blur-2xl rounded-[2.5rem] border border-white shadow-[0_32px_64px_-15px_rgba(0,0,0,0.08)] p-8 lg:p-12 min-h-[600px]"
                             >
                                 {activeTab === 'profile' && (
                                     <div>
                                         <div className="mb-10">
-                                            <h3 className="text-2xl font-black text-slate-900 mb-2">Edit genaicourse Profile</h3>
-                                            <p className="text-slate-500 font-medium font-sans">Update your personal information and biography.</p>
+                                            <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Edit genaicourse Profile</h3>
                                         </div>
 
                                         <form onSubmit={handleProfileUpdate} className="space-y-8">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                                <div className="space-y-2">
-                                                    <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Full Identity</label>
+                                                <div className="space-y-2 group">
+                                                    <label className="text-[11px] font-black text-indigo-600/70 group-focus-within:text-indigo-600 uppercase tracking-[0.2em] ml-1 transition-colors">Full Identity</label>
                                                     <input
                                                         type="text"
                                                         value={profileData.name}
                                                         onChange={e => setProfileData({ ...profileData, name: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-red-500 outline-none transition-all shadow-inner"
+                                                        className="w-full px-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
                                                         placeholder="Your Full Name"
                                                     />
                                                 </div>
                                             </div>
 
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Bio Protocol</label>
+                                            <div className="space-y-2 group">
+                                                <label className="text-[11px] font-black text-indigo-600/70 group-focus-within:text-indigo-600 uppercase tracking-[0.2em] ml-1 transition-colors">Bio Protocol</label>
                                                 <textarea
                                                     rows="4"
                                                     value={profileData.bio}
                                                     onChange={e => setProfileData({ ...profileData, bio: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-red-500 outline-none transition-all shadow-inner resize-none"
+                                                    className="w-full px-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner resize-none"
                                                     placeholder="Tell us about yourself..."
                                                 ></textarea>
                                             </div>
@@ -262,30 +275,30 @@ const Profile = () => {
                                 {activeTab === 'security' && (
                                     <div>
                                         <div className="mb-10">
-                                            <h3 className="text-2xl font-black text-slate-900 mb-2">Security Vault</h3>
-                                            <p className="text-slate-500 font-medium font-sans">Update your password to keep your account secure.</p>
+                                            <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Security Vault</h3>
+                                            <p className="text-slate-500 font-medium text-lg">Update your password to keep your account secure.</p>
                                         </div>
 
                                         <form onSubmit={handlePasswordChange} className="space-y-8 max-w-xl">
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">New Password</label>
+                                                <label className="text-[11px] font-black text-indigo-600 uppercase tracking-widest ml-1">New Password</label>
                                                 <input
                                                     type="password"
                                                     required
                                                     value={passwordData.newPassword}
                                                     onChange={e => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-red-500 outline-none transition-all shadow-inner"
+                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Confirm New Password</label>
+                                                <label className="text-[11px] font-black text-indigo-600 uppercase tracking-widest ml-1">Confirm New Password</label>
                                                 <input
                                                     type="password"
                                                     required
                                                     value={passwordData.confirmPassword}
                                                     onChange={e => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-red-500 outline-none transition-all shadow-inner"
+                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
                                                 />
                                             </div>
 
@@ -305,8 +318,8 @@ const Profile = () => {
                                 {activeTab === 'courses' && (
                                     <div>
                                         <div className="mb-10">
-                                            <h3 className="text-2xl font-black text-slate-900 mb-2">Module Archive</h3>
-                                            <p className="text-slate-500 font-medium font-sans">Tracking your active enrollments and progress.</p>
+                                            <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">Module Archive</h3>
+                                            <p className="text-slate-500 font-medium text-lg">Tracking your active enrollments and progress.</p>
                                         </div>
 
                                         <div className="space-y-6">
@@ -321,11 +334,11 @@ const Profile = () => {
                                                         <div className="flex-1">
                                                             <h4 className="font-black text-lg text-slate-900 mb-1">{enrollment.courseId?.title || 'Unknown Course'}</h4>
                                                             <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">
-                                                                <span className="flex items-center gap-1"><FaHistory className="text-red-500" /> Joined {new Date(enrollment.enrolledAt).toLocaleDateString()}</span>
-                                                                <span className="flex items-center gap-1"><FaCertificate className="text-red-500" /> {enrollment.progressPercentage || 0}% Finished</span>
+                                                                <span className="flex items-center gap-1"><FaHistory className="text-indigo-500" /> Joined {new Date(enrollment.enrolledAt).toLocaleDateString()}</span>
+                                                                <span className="flex items-center gap-1"><FaCertificate className="text-indigo-500" /> {enrollment.progressPercentage || 0}% Finished</span>
                                                             </div>
                                                             <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                                                <div className="h-full bg-red-600 rounded-full" style={{ width: `${enrollment.progressPercentage || 0}%` }}></div>
+                                                                <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${enrollment.progressPercentage || 0}%` }}></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -347,9 +360,9 @@ const Profile = () => {
                                                 <p className="text-slate-500 font-medium font-sans">View your payment invoices and transactions.</p>
                                             </div>
                                             {/* RECTIFIED: Manual Sync Trigger */}
-                                            <button 
+                                            <button
                                                 onClick={fetchPayments}
-                                                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl font-bold text-xs hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                                className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold text-xs hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
                                             >
                                                 <FaBolt className={paymentsLoading ? "animate-pulse" : ""} /> Sync Records
                                             </button>
@@ -369,8 +382,8 @@ const Profile = () => {
                                                                 <h4 className="font-black text-lg text-slate-900">
                                                                     {/* ── RECTIFIED: Bundle Fallback Logic ── */}
                                                                     {payment.purchaseType === 'all' ? (
-                                                                        <span className="flex items-center gap-2 text-red-600">
-                                                                            <FaBolt className="text-red-500" /> All-Access Pass (GENAICOURSE.IO)
+                                                                        <span className="flex items-center gap-2 text-indigo-600">
+                                                                            <FaBolt className="text-indigo-500" /> All-Access Pass (GENAICOURSE.IO)
                                                                         </span>
                                                                     ) : (
                                                                         payment.courseId?.title || 'Course Enrollment'
@@ -437,7 +450,7 @@ const Profile = () => {
                                                         </div>
                                                         <button
                                                             onClick={() => handleDownloadCertificate(cert._id)}
-                                                            className="mt-4 md:mt-0 px-6 py-3 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl font-bold transition-colors flex items-center gap-2"
+                                                            className="mt-4 md:mt-0 px-6 py-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl font-bold transition-colors flex items-center gap-2"
                                                         >
                                                             <FaDownload /> Download
                                                         </button>

@@ -40,7 +40,7 @@ const Home = () => {
                         Skills that get you hired.{' '}
                         <br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">
-                            Beautifully.
+                            Smartly.
                         </span>
                     </motion.h1>
 
@@ -65,7 +65,7 @@ const Home = () => {
                             to="/register"
                             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-indigo-600 transition-all duration-300 shadow-xl shadow-slate-900/10 hover:shadow-indigo-500/25 hover:-translate-y-0.5"
                         >
-                            Start Learning Free <FaArrowRight className="text-sm opacity-80" />
+                            Start Learning <FaArrowRight className="text-sm opacity-80" />
                         </Link>
                         <Link
                             to="/courses"
