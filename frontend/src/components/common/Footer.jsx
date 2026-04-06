@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaTwitter, FaLinkedin, FaInstagram, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
+import { FaLinkedin, FaInstagram, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
 
 const Footer = () => {
     return (
@@ -10,12 +11,17 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-1">
                         <Link to="/" className="flex items-center gap-3 mb-6 group">
-                            <img src="/logo-large.png" alt="GenAI" className="h-14 w-auto object-contain" />
+                            <img src="/logo-large.png" alt="GenAI" className="h-20 w-auto object-contain" />
                             <span className="text-2xl font-black tracking-tight text-white">GenAiCourse.io</span>
                         </Link>
                         <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-xs">
                             Empowering professionals with practical, prompt-based AI skills for the modern workplace.
                         </p>
+                        <div className="flex gap-4">
+                            <SocialLink icon={<FaXTwitter />} href="#" />
+                            <SocialLink icon={<FaLinkedin />} href="#" />
+                            <SocialLink icon={<FaInstagram />} href="#" />
+                        </div>
 
                     </div>
 
