@@ -10,6 +10,7 @@ import Footer from './components/common/Footer';
 import Loader from './components/common/Loader';
 import AdminRoute from './components/routing/AdminRoute';
 import ScrollToTop from './components/common/ScrollToTop';
+import CookieConsent from './components/common/CookieConsent';
 
 // Page Imports
 import Home from './pages/Home';
@@ -125,6 +126,7 @@ const AppContent = () => {
                 </AnimatePresence>
             </main>
             <Footer />
+            <CookieConsent />
 
             <ToastContainer
                 position="bottom-right"
