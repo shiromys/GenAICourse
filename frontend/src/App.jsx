@@ -39,6 +39,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
 import RefundPolicy from './pages/RefundPolicy';
 import VerifyCertificate from './pages/VerifyCertificate';
+import PrivacyPolicycookie from './pages/PrivacyPolicycookie';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -118,6 +119,7 @@ const AppContent = () => {
                             <Route path="/admin/courses/json" element={<PageContainer><AdminJSONUpload /></PageContainer>} />
                             <Route path="/admin/courses/:id/edit" element={<PageContainer><CourseForm isEditing={true} /></PageContainer>} />
                             <Route path="/admin/courses/:id/enrollments" element={<PageContainer><AdminCourseEnrollments /></PageContainer>} />
+                            <Route path="/privacy-cookie" element={<PageContainer><PrivacyPolicycookie /></PageContainer>} />
                         </Route>
                     </Routes>
                 </AnimatePresence>
