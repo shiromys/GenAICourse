@@ -484,7 +484,7 @@ const AdminDashboard = () => {
                         <div className="space-y-6">
                             <div className="bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm">
                                 <h2 className="text-3xl font-black text-slate-900">Entity Registry</h2>
-                                <p className="text-slate-500 mt-1 font-medium">Monitor all synchronized bio-nodes</p>
+                                <p className="text-slate-500 mt-1 font-medium">All Users Information</p>
                             </div>
 
                             <div className="bg-white rounded-3xl border border-slate-200/60 overflow-hidden shadow-sm">
@@ -495,7 +495,7 @@ const AdminDashboard = () => {
                                                 <th className="px-8 py-5">Identify</th>
                                                 <th className="px-8 py-5">genaicourse ID</th>
                                                 <th className="px-8 py-5">Security Role</th>
-                                                <th className="px-8 py-5">Initial Sync</th>
+                                                <th className="px-8 py-5">Joined Date</th>
                                                 <th className="px-8 py-5 text-right">Directives</th>
                                             </tr>
                                         </thead>
