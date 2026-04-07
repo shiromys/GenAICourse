@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import adminService from '../../services/adminService.js';
 import { toast } from 'react-toastify';
 import { FaSave, FaArrowLeft } from 'react-icons/fa';
-import CourseAssessmentUpload from '../../components/admin/CourseAssessmentUpload.jsx';
 
 const CourseForm = ({ isEditing = false }) => {
     const navigate = useNavigate();
@@ -24,7 +23,6 @@ const CourseForm = ({ isEditing = false }) => {
 
     const [loading, setLoading] = useState(false);
     const [fetchLoading, setFetchLoading] = useState(isEditing);
-    const [courseQuiz, setCourseQuiz] = useState(null);
 
     useEffect(() => {
         if (isEditing && id) {
@@ -49,42 +47,12 @@ const CourseForm = ({ isEditing = false }) => {
                 tags: course.tags?.length > 0 ? course.tags : ['']
             });
 
-            if (course.quizId) {
-                try {
-                    const quizResponse = await adminService.getQuiz(course.quizId);
-                    const quizData = quizResponse.data;
-                    setCourseQuiz({
-                        id: quizData._id,
-                        title: quizData.title,
-                        description: quizData.description,
-                        questionCount: quizData.questions?.length || 0,
-                        timeLimit: quizData.timeLimit,
-                        maxAttempts: quizData.maxAttempts,
-                        passingScore: quizData.passingScore
-                    });
-                } catch (error) {
-                    console.log('No quiz found for this course');
-                }
-            }
         } catch (error) {
             toast.error('Failed to load course data');
             navigate('/admin/dashboard');
         } finally {
             setFetchLoading(false);
         }
-    };
-
-    const handleAssessmentUploaded = (quiz) => {
-        setCourseQuiz({
-            id: quiz._id,
-            title: quiz.title,
-            description: quiz.description,
-            questionCount: quiz.questions?.length || 0,
-            timeLimit: quiz.timeLimit,
-            maxAttempts: quiz.maxAttempts,
-            passingScore: quiz.passingScore
-        });
-        toast.success('Assessment successfully linked to course!');
     };
 
     const handleChange = (e) => {
@@ -146,36 +114,36 @@ const CourseForm = ({ isEditing = false }) => {
 
     if (fetchLoading) {
         return (
-            <div className="section min-h-screen flex items-center justify-center">
+            <div className="section min-h-screen flex items-center justify-center theme-beige bg-[var(--bg-main)] text-[var(--text-main)]">
                 <div className="loading w-12 h-12" />
             </div>
         );
     }
 
     return (
-        <div className="section min-h-screen bg-slate-900">
+        <div className="section min-h-screen theme-beige bg-[var(--bg-main)] text-[var(--text-main)]">
             <div className="container max-w-4xl">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate('/admin/dashboard')}
-                            className="btn btn-secondary flex items-center gap-2"
+                            className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm flex items-center gap-2 font-bold text-slate-700"
                         >
-                            <FaArrowLeft /> Back to Dashboard
+                            <FaArrowLeft className="text-slate-600" /> Back to Dashboard
                         </button>
-                        <h1 className="text-3xl font-bold text-white">
+                        <h1 className="text-3xl font-black text-slate-900 font-heading">
                             {isEditing ? 'Edit Course' : 'Create New Course'}
                         </h1>
                     </div>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="card p-8 bg-slate-800 border-none">
+                <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-xl rounded-2xl border border-[var(--card-border)] shadow-sm p-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Title */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Course Title *
                             </label>
                             <input
@@ -183,7 +151,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                 placeholder="Enter course title"
                                 required
                             />
@@ -191,7 +159,7 @@ const CourseForm = ({ isEditing = false }) => {
 
                         {/* Description */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Description *
                             </label>
                             <textarea
@@ -199,7 +167,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 value={formData.description}
                                 onChange={handleChange}
                                 rows="4"
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                 placeholder="Enter course description"
                                 required
                             />
@@ -207,14 +175,14 @@ const CourseForm = ({ isEditing = false }) => {
 
                         {/* Category */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Category *
                             </label>
                             <select
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                 required
                             >
                                 <option value="">Select Category</option>
@@ -228,14 +196,14 @@ const CourseForm = ({ isEditing = false }) => {
 
                         {/* Level */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Difficulty Level *
                             </label>
                             <select
                                 name="level"
                                 value={formData.level}
                                 onChange={handleChange}
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                 required
                             >
                                 <option value="Beginner">Beginner</option>
@@ -246,7 +214,7 @@ const CourseForm = ({ isEditing = false }) => {
 
                         {/* Thumbnail URL */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Thumbnail URL
                             </label>
                             <input
@@ -254,25 +222,25 @@ const CourseForm = ({ isEditing = false }) => {
                                 name="thumbnail"
                                 value={formData.thumbnail}
                                 onChange={handleChange}
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                 placeholder="/images/courses/my-course.jpg or https://example.com/image.jpg"
                             />
                             {formData.thumbnail && (
                                 <img
                                     src={formData.thumbnail}
                                     alt="Thumbnail preview"
-                                    className="mt-3 h-40 w-full object-cover rounded-lg border border-slate-700"
+                                    className="mt-3 h-40 w-full object-cover rounded-lg border border-slate-200"
                                     onError={(e) => { e.target.style.display = 'none'; }}
                                 />
                             )}
-                            <p className="mt-1 text-xs text-gray-500">
-                                Use a relative path like <code className="text-indigo-400">/images/courses/filename.jpg</code> for images stored in the app, or paste any public image URL.
+                            <p className="mt-1 text-xs text-slate-500">
+                                Use a relative path like <code className="text-amber-600 font-bold">/images/courses/filename.jpg</code> for images stored in the app, or paste any public image URL.
                             </p>
                         </div>
 
                         {/* Price */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Price (USD)
                             </label>
                             <input
@@ -282,14 +250,14 @@ const CourseForm = ({ isEditing = false }) => {
                                 onChange={handleChange}
                                 min="0"
                                 step="0.01"
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                 placeholder="0.00"
                             />
                         </div>
 
                         {/* What You'll Learn */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 What You'll Learn
                             </label>
                             {formData.whatYoullLearn.map((item, index) => (
@@ -298,13 +266,13 @@ const CourseForm = ({ isEditing = false }) => {
                                         type="text"
                                         value={item}
                                         onChange={(e) => handleArrayChange('whatYoullLearn', index, e.target.value)}
-                                        className="flex-1 bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                         placeholder="Learning objective"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => removeArrayItem('whatYoullLearn', index)}
-                                        className="text-red-400 hover:text-red-300 px-2"
+                                        className="text-red-500 hover:text-red-700 px-2 font-bold"
                                         disabled={formData.whatYoullLearn.length === 1}
                                     >
                                         ×
@@ -314,7 +282,7 @@ const CourseForm = ({ isEditing = false }) => {
                             <button
                                 type="button"
                                 onClick={() => addArrayItem('whatYoullLearn')}
-                                className="text-primary hover:text-primary-light text-sm"
+                                className="text-amber-600 hover:text-amber-700 font-bold text-sm transition-colors"
                             >
                                 + Add learning objective
                             </button>
@@ -322,7 +290,7 @@ const CourseForm = ({ isEditing = false }) => {
 
                         {/* Requirements */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Requirements
                             </label>
                             {formData.requirements.map((item, index) => (
@@ -331,13 +299,13 @@ const CourseForm = ({ isEditing = false }) => {
                                         type="text"
                                         value={item}
                                         onChange={(e) => handleArrayChange('requirements', index, e.target.value)}
-                                        className="flex-1 bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                         placeholder="Course requirement"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => removeArrayItem('requirements', index)}
-                                        className="text-red-400 hover:text-red-300 px-2"
+                                        className="text-red-500 hover:text-red-700 px-2 font-bold"
                                         disabled={formData.requirements.length === 1}
                                     >
                                         ×
@@ -347,7 +315,7 @@ const CourseForm = ({ isEditing = false }) => {
                             <button
                                 type="button"
                                 onClick={() => addArrayItem('requirements')}
-                                className="text-primary hover:text-primary-light text-sm"
+                                className="text-amber-600 hover:text-amber-700 font-bold text-sm transition-colors"
                             >
                                 + Add requirement
                             </button>
@@ -355,7 +323,7 @@ const CourseForm = ({ isEditing = false }) => {
 
                         {/* Tags */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                                 Tags
                             </label>
                             {formData.tags.map((tag, index) => (
@@ -364,13 +332,13 @@ const CourseForm = ({ isEditing = false }) => {
                                         type="text"
                                         value={tag}
                                         onChange={(e) => handleArrayChange('tags', index, e.target.value)}
-                                        className="flex-1 bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
                                         placeholder="course-tag"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => removeArrayItem('tags', index)}
-                                        className="text-red-400 hover:text-red-300 px-2"
+                                        className="text-red-500 hover:text-red-700 px-2 font-bold"
                                         disabled={formData.tags.length === 1}
                                     >
                                         ×
@@ -380,7 +348,7 @@ const CourseForm = ({ isEditing = false }) => {
                             <button
                                 type="button"
                                 onClick={() => addArrayItem('tags')}
-                                className="text-primary hover:text-primary-light text-sm"
+                                className="text-amber-600 hover:text-amber-700 font-bold text-sm transition-colors"
                             >
                                 + Add tag
                             </button>
@@ -394,22 +362,13 @@ const CourseForm = ({ isEditing = false }) => {
                                     name="isPublished"
                                     checked={formData.isPublished}
                                     onChange={handleChange}
-                                    className="w-4 h-4 text-primary bg-slate-900 border-slate-700 rounded focus:ring-primary focus:ring-2"
+                                    className="w-4 h-4 text-amber-600 bg-white border-slate-300 rounded focus:ring-amber-500 focus:ring-2 transition-colors cursor-pointer"
                                 />
-                                <span className="text-sm font-medium text-gray-300">
+                                <span className="text-sm font-bold text-slate-700">
                                     Publish course (make it visible to students)
                                 </span>
                             </label>
                         </div>
-                    </div>
-
-                    {/* Course Assessment Section */}
-                    <div className="mt-8 pt-8 border-t border-slate-700">
-                        <CourseAssessmentUpload
-                            courseId={id}
-                            onAssessmentUploaded={handleAssessmentUploaded}
-                            existingQuiz={courseQuiz}
-                        />
                     </div>
 
                     {/* Submit Button */}
@@ -417,13 +376,13 @@ const CourseForm = ({ isEditing = false }) => {
                         <button
                             type="button"
                             onClick={() => navigate('/admin/dashboard')}
-                            className="btn btn-secondary"
+                            className="btn bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold px-6 py-2.5 rounded-xl transition-all"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="btn btn-primary flex items-center gap-2"
+                            className="btn bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20"
                             disabled={loading}
                         >
                             {loading ? <div className="loading w-4 h-4" /> : <FaSave />}
