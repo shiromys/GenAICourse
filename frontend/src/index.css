@@ -17,11 +17,32 @@
   --success: #10B981;
   --error: #EF4444;
 
+  /* Premium Beige Palette */
+  --beige-50: #FDFCF8;
+  --beige-100: #F9F6EE;
+  --beige-200: #F2E9E4;
+  --beige-300: #E7D8C9;
+  --beige-600: #A5A58D;
+  --beige-700: #6B705C;
+  --beige-900: #2C2C2C;
+
   /* Aesthetic Details */
   --shadow-glow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
   --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
   --card-border: 1px solid #F1F5F9;
   --card-bg: rgba(255, 255, 255, 0.8);
+}
+
+.theme-beige {
+  --bg-main: var(--beige-50);
+  --bg-secondary: var(--beige-100);
+  --text-main: var(--beige-900);
+  --text-muted: #6C757D;
+  --brand: #4E342E;
+  --accent: #D4A373;
+  --accent-hover: #BB9457;
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --card-border: 1px solid rgba(212, 163, 115, 0.2);
 }
 
 * {

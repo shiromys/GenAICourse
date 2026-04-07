@@ -156,12 +156,12 @@ const AdminAssessmentManager = () => {
     };
 
     return (
-        <div className="bg-slate-900 text-slate-300">
+        <div className="bg-transparent text-[var(--text-main)]">
             {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Assessments</h2>
-                    <p className="text-slate-400">Manage and upload course assessments</p>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Assessments</h2>
+                    <p className="text-slate-500 font-medium">Manage and upload course assessments</p>
                 </div>
                 {activeTab === 'manage' && (
                     <button
@@ -204,14 +204,14 @@ const AdminAssessmentManager = () => {
                 <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
 
                     {/* Course Selection */}
-                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <div className="bg-white/80 backdrop-blur-md rounded-xl p-6 border border-[var(--card-border)] shadow-sm">
+                        <label className="block text-sm font-bold text-slate-700 mb-2 font-heading">
                             Select Course (Optional)
                         </label>
                         <select
                             value={selectedCourse}
                             onChange={(e) => setSelectedCourse(e.target.value)}
-                            className="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                            className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
                         >
                             <option value="">-- Don't link to a course yet --</option>
                             {courses.map(course => (
@@ -229,12 +229,12 @@ const AdminAssessmentManager = () => {
                         {/* Wrapper for two columns */}
 
                         {/* File Upload Column */}
-                        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-                            <h3 className="text-lg font-bold text-white mb-4 flex items-center">
-                                <Upload className="mr-2 h-5 w-5 text-indigo-400" />
+                        <div className="bg-white/80 backdrop-blur-md rounded-xl p-6 border border-[var(--card-border)] shadow-sm">
+                            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center font-heading">
+                                <Upload className="mr-2 h-5 w-5 text-amber-600" />
                                 File Upload
                             </h3>
-                            <div className="border-2 border-dashed border-slate-600 hover:border-indigo-500 rounded-lg p-8 text-center transition-colors bg-slate-800/50">
+                            <div className="border-2 border-dashed border-slate-200 hover:border-amber-500 rounded-lg p-8 text-center transition-colors bg-slate-50/50">
                                 <Upload className="h-12 w-12 text-slate-500 mx-auto mb-4" />
                                 <div className="mb-4">
                                     <label htmlFor="fileInput" className="cursor-pointer block">
@@ -252,12 +252,12 @@ const AdminAssessmentManager = () => {
                                 </div>
 
                                 {selectedFile && (
-                                    <div className="mb-4 p-3 bg-slate-700 rounded-lg flex items-center justify-between">
+                                    <div className="mb-4 p-3 bg-white border border-slate-200 rounded-lg flex items-center justify-between">
                                         <div className="flex items-center">
-                                            <FileText className="h-5 w-5 text-indigo-400 mr-2" />
-                                            <span className="text-sm text-white">{selectedFile.name}</span>
+                                            <FileText className="h-5 w-5 text-amber-600 mr-2" />
+                                            <span className="text-sm text-slate-700 font-medium">{selectedFile.name}</span>
                                         </div>
-                                        <button onClick={() => setSelectedFile(null)} className="text-slate-400 hover:text-white">×</button>
+                                        <button onClick={() => setSelectedFile(null)} className="text-slate-400 hover:text-slate-900 transition-colors">×</button>
                                     </div>
                                 )}
 
@@ -293,9 +293,9 @@ const AdminAssessmentManager = () => {
                         </div>
 
                         {/* JSON Input Column */}
-                        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-                            <h3 className="text-lg font-bold text-white mb-4 flex items-center">
-                                <FileText className="mr-2 h-5 w-5 text-emerald-400" />
+                        <div className="bg-white/80 backdrop-blur-md rounded-xl p-6 border border-[var(--card-border)] shadow-sm">
+                            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center font-heading">
+                                <FileText className="mr-2 h-5 w-5 text-amber-600" />
                                 Paste JSON
                             </h3>
                             <div className="relative">
@@ -306,7 +306,7 @@ const AdminAssessmentManager = () => {
   "title": "My Assessment",
   "questions": [...]
 }`}
-                                    className="w-full h-[320px] bg-slate-900 border border-slate-600 rounded-lg p-4 font-mono text-sm text-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none resize-none"
+                                    className="w-full h-[320px] bg-white border border-slate-200 rounded-lg p-4 font-mono text-sm text-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none resize-none transition-all"
                                 />
                                 <div className="absolute bottom-4 right-4">
                                     <button
@@ -327,19 +327,19 @@ const AdminAssessmentManager = () => {
             )}
 
             {activeTab === 'manage' && (
-                <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="bg-white/80 backdrop-blur-md rounded-xl border border-[var(--card-border)] overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-slate-400">
-                            <thead className="bg-slate-900/50 text-slate-200 uppercase text-xs font-semibold tracking-wider">
+                        <table className="w-full text-left text-slate-600">
+                            <thead className="bg-slate-50/80 text-slate-900 uppercase text-[10px] font-black tracking-widest">
                                 <tr>
-                                    <th className="px-6 py-4">Title</th>
+                                    <th className="px-6 py-5">Title</th>
                                     <th className="px-6 py-4">Course</th>
                                     <th className="px-6 py-4">Stats</th>
                                     <th className="px-6 py-4">Status</th>
                                     <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-700">
+                            <tbody className="divide-y divide-slate-100">
                                 {loading ? (
                                     <tr>
                                         <td colSpan="5" className="px-6 py-12 text-center">
@@ -362,16 +362,16 @@ const AdminAssessmentManager = () => {
                                     </tr>
                                 ) : (
                                     assessments.map((assessment) => (
-                                        <tr key={assessment.id} className="hover:bg-slate-700/50 transition-colors">
+                                        <tr key={assessment.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
-                                                <div className="font-medium text-white">{assessment.title}</div>
-                                                <div className="text-xs text-slate-500 mt-1 truncate max-w-[200px]">{assessment.description}</div>
+                                                <div className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{assessment.title}</div>
+                                                <div className="text-xs text-slate-500 mt-1 truncate max-w-[200px] font-medium">{assessment.description}</div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {assessment.courseTitle ? (
-                                                    <span className="text-indigo-400">{assessment.courseTitle}</span>
+                                                    <span className="text-amber-600 font-bold">{assessment.courseTitle}</span>
                                                 ) : (
-                                                    <span className="text-slate-600 italic">Not linked</span>
+                                                    <span className="text-slate-400 italic">Not linked</span>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-sm">

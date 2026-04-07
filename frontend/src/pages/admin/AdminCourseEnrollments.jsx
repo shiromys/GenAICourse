@@ -39,24 +39,24 @@ const AdminCourseEnrollments = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-slate-900 text-slate-200 font-sans p-6 pt-28">
+        <div className="min-h-screen theme-beige bg-[var(--bg-main)] text-[var(--text-main)] font-sans p-6 pt-28">
             <div className="container mx-auto max-w-6xl">
                 <div className="mb-8 flex items-center gap-4">
-                    <Link to="/admin/dashboard" className="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors">
-                        <FaArrowLeft />
+                    <Link to="/admin/dashboard" className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+                        <FaArrowLeft className="text-slate-600" />
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-bold text-white tracking-tight">Student Enrollments</h1>
-                        <p className="text-slate-400 mt-1">
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight font-heading">Student Enrollments</h1>
+                        <p className="text-slate-500 font-medium">
                             {courseTitle} • {enrollments.length} Students
                         </p>
                     </div>
                 </div>
 
-                <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
+                <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-[var(--card-border)] overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-slate-400">
-                            <thead className="bg-slate-900/50 text-slate-200 uppercase text-xs font-semibold">
+                        <table className="w-full text-left text-slate-600">
+                            <thead className="bg-slate-50/80 text-slate-900 uppercase text-[10px] font-black tracking-widest">
                                 <tr>
                                     <th className="px-6 py-4">Student</th>
                                     <th className="px-6 py-4">Email</th>
@@ -66,29 +66,29 @@ const AdminCourseEnrollments = () => {
                                     <th className="px-6 py-4">Last Active</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-700">
+                            <tbody className="divide-y divide-slate-100">
                                 {enrollments.length > 0 ? (
                                     enrollments.map((enrollment, index) => (
-                                        <tr key={index} className="hover:bg-slate-700/30 transition-colors">
-                                            <td className="px-6 py-4 font-medium text-white flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-400">
+                                        <tr key={index} className="hover:bg-slate-50/50 transition-colors group">
+                                            <td className="px-6 py-4 font-bold text-slate-900 flex items-center gap-3">
+                                                <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-xs font-black text-amber-600 border border-amber-100 group-hover:bg-amber-500 group-hover:text-white transition-all">
                                                     {enrollment.userId?.name ? enrollment.userId.name.charAt(0).toUpperCase() : <FaUser />}
                                                 </div>
                                                 {enrollment.userId?.name || 'Unknown User'}
                                             </td>
-                                            <td className="px-6 py-4">{enrollment.userId?.email || 'No email'}</td>
+                                            <td className="px-6 py-4 font-medium">{enrollment.userId?.email || 'No email'}</td>
                                             <td className="px-6 py-4 text-sm font-mono">
                                                 {new Date(enrollment.enrolledAt).toLocaleDateString()}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-24 bg-slate-700 rounded-full h-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-24 bg-slate-100 rounded-full h-2 overflow-hidden">
                                                         <div
-                                                            className="bg-indigo-500 h-2 rounded-full"
+                                                            className="bg-amber-500 h-2 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.3)]"
                                                             style={{ width: `${enrollment.progress || 0}%` }}
                                                         ></div>
                                                     </div>
-                                                    <span className="text-xs font-bold">{enrollment.progress || 0}%</span>
+                                                    <span className="text-xs font-black text-slate-900">{enrollment.progress || 0}%</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
