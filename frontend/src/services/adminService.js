@@ -24,6 +24,12 @@ const adminService = {
         return response.data;
     },
 
+    // Get deleted users (Principals)
+    getDeletedUsers: async () => {
+        const response = await api.get('/admin/deleted-users');
+        return response.data;
+    },
+
     // Get user by ID
     getUserById: async (id) => {
         const response = await api.get(`/admin/users/${id}`);

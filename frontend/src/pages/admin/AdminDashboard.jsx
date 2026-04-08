@@ -16,6 +16,7 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
     const [paymentAnalytics, setPaymentAnalytics] = useState(null);
+    const [deletedUsers, setDeletedUsers] = useState([]);
 
     useEffect(() => {
         let isMounted = true;
@@ -39,11 +40,16 @@ const AdminDashboard = () => {
 
                 const analyticsData = await adminService.getPaymentAnalytics().catch(() => null);
                 if (!isMounted) return;
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                const deletedData = await adminService.getDeletedUsers().catch(() => ({ data: [] }));
+                if (!isMounted) return;
 
                 setStats(statsData?.data || null);
                 setCourses(coursesData.data || []);
                 setUsers(usersData.data || []);
                 setPaymentAnalytics(analyticsData?.data || null);
+                setDeletedUsers(deletedData.data || []);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
                 if (error.response?.status === 429) {
@@ -97,6 +103,7 @@ const AdminDashboard = () => {
         { id: 'courses', label: 'Courses', icon: <FaBook /> },
         { id: 'assessments', label: 'Assessments', icon: <FaClipboardList /> },
         { id: 'users', label: 'Users', icon: <FaUser /> },
+        { id: 'principals', label: 'Principals', icon: <FaClipboardList /> },
     ];
 
     return (
@@ -495,7 +502,7 @@ const AdminDashboard = () => {
                                                 <th className="px-8 py-5">Identify</th>
                                                 <th className="px-8 py-5">genaicourse ID</th>
                                                 <th className="px-8 py-5">Security Role</th>
-                                                <th className="px-8 py-5">Joined Date</th>
+                                                <th className="px-8 py-5 text-amber-600 font-black italic underline decoration-amber-500/30">Sign up date</th>
                                                 <th className="px-8 py-5 text-right">Directives</th>
                                             </tr>
                                         </thead>
@@ -519,7 +526,10 @@ const AdminDashboard = () => {
                                                             </span>
                                                         </td>
                                                         <td className="px-8 py-6 text-xs font-black text-slate-400 font-mono">
-                                                            {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}
+                                                            <div className="flex flex-col">
+                                                                <span className="text-slate-900">{u.createdAt ? format(new Date(u.createdAt), 'MMM dd, yyyy') : '-'}</span>
+                                                                <span className="text-[9px] opacity-60 uppercase tracking-tighter">Verified Entry</span>
+                                                            </div>
                                                         </td>
                                                         <td className="px-8 py-6">
                                                             {u.role !== 'admin' && (
@@ -528,7 +538,7 @@ const AdminDashboard = () => {
                                                                         onClick={() => handleDeleteUser(u._id || u.id)}
                                                                         icon={<FaTrash />}
                                                                         color="red"
-                                                                        title="Purge"
+                                                                        title="Delete"
                                                                     />
                                                                 </div>
                                                             )}
@@ -540,6 +550,68 @@ const AdminDashboard = () => {
                                                     <td colSpan="5" className="px-8 py-16 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
                                                         <FaUser className="mx-auto h-16 w-16 opacity-10 mb-6" />
                                                         Registry Empty
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Principals Tab (Deleted Users Log) */}
+                    {activeTab === 'principals' && (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                            <div className="bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-slate-500/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                                <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+                                    <span className="text-slate-400">🛡️</span> Admin Principals
+                                </h2>
+                                <p className="text-slate-500 mt-1 font-medium italic">Audit log of deactivated identities and historical records.</p>
+                            </div>
+
+                            <div className="bg-white rounded-3xl border border-slate-200/60 overflow-hidden shadow-sm">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-[0.2em]">
+                                            <tr>
+                                                <th className="px-8 py-5">Historical Identity</th>
+                                                <th className="px-8 py-5">Origin (Sign up)</th>
+                                                <th className="px-8 py-5 text-red-600">Termination (Delete Date)</th>
+                                                <th className="px-8 py-5">Audit Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {deletedUsers && deletedUsers.length > 0 ? (
+                                                deletedUsers.map(du => (
+                                                    <tr key={du._id} className="hover:bg-slate-50 transition-colors">
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-slate-900">{du.name}</span>
+                                                                <span className="text-xs text-slate-500 font-mono">{du.email}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6 text-xs font-bold text-slate-600">
+                                                            {du.createdAt ? format(new Date(du.createdAt), 'MMM dd, yyyy') : '-'}
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-red-600 font-black text-sm">{du.deletedAt ? format(new Date(du.deletedAt), 'MMM dd, yyyy') : '-'}</span>
+                                                                <span className="text-[9px] text-red-400 uppercase font-black tracking-widest">Final deactivation</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-6">
+                                                            <span className="px-3 py-1 bg-slate-100 text-slate-400 rounded-full text-[9px] font-black uppercase tracking-tighter">
+                                                                Archived
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="4" className="px-8 py-16 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
+                                                        No deactivation records found.
                                                     </td>
                                                 </tr>
                                             )}

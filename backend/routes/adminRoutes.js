@@ -12,7 +12,8 @@ import {
     uploadCourseFromJSON,
     getDashboardStats,
     getCourseEnrollments,
-    getPaymentAnalytics
+    getPaymentAnalytics,
+    getDeletedUsers
 } from '../controllers/adminController.js';
 
 import { protect, authorize } from '../middleware/auth.js';
@@ -42,6 +43,7 @@ router.get('/users', getAllUsers);
 router.get('/users/:id', getUserById);
 router.put('/users/:id/role', updateUserRole);
 router.delete('/users/:id', deleteUser);
+router.get('/deleted-users', getDeletedUsers);
 
 // Course management
 router.get('/courses', getAllCourses);

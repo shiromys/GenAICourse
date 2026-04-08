@@ -15,7 +15,7 @@ import Payment from '../models/Payment.js';
  */
 export const getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find()
+        const users = await User.find({ isDeleted: { $ne: true } })
             .select('-password')
             .populate('enrolledCourses', 'title')
             .sort({ createdAt: -1 });
@@ -127,14 +127,35 @@ export const deleteUser = async (req, res, next) => {
             });
         }
 
-        await user.deleteOne();
-
-        // Delete user's progress
-        await UserProgress.deleteMany({ userId: req.params.id });
+        // Soft delete: Update isDeleted flag instead of removing record
+        user.isDeleted = true;
+        user.deletedAt = new Date();
+        await user.save();
 
         res.status(200).json({
             success: true,
-            message: 'User deleted successfully'
+            message: 'User removed from active registry and moved to Principals log'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Get deleted users (Admin only)
+ * @route   GET /api/admin/deleted-users
+ * @access  Private/Admin
+ */
+export const getDeletedUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({ isDeleted: true })
+            .select('name email deletedAt createdAt')
+            .sort({ deletedAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: users.length,
+            data: users
         });
     } catch (error) {
         next(error);
@@ -299,19 +320,20 @@ export const getCourse = async (req, res, next) => {
  */
 export const getDashboardStats = async (req, res, next) => {
     try {
-        const totalUsers = await User.countDocuments();
+        const totalUsers = await User.countDocuments({ isDeleted: { $ne: true } });
         const totalCourses = await Course.countDocuments();
         const publishedCourses = await Course.countDocuments({ isPublished: true });
         
         // Count total enrollments from users dynamically
         const totalEnrollmentsAgg = await User.aggregate([
+            { $match: { isDeleted: { $ne: true } } },
             { $unwind: "$enrolledCourses" },
             { $count: "total" }
         ]);
         const totalEnrollments = totalEnrollmentsAgg[0] ? totalEnrollmentsAgg[0].total : 0;
 
         // Get recent users
-        const recentUsers = await User.find()
+        const recentUsers = await User.find({ isDeleted: { $ne: true } })
             .select('-password')
             .sort({ createdAt: -1 })
             .limit(5);
@@ -612,6 +634,7 @@ export const getPaymentAnalytics = async (req, res, next) => {
 
 export default {
     getAllUsers,
+    getDeletedUsers,
     getUserById,
     updateUserRole,
     deleteUser,
