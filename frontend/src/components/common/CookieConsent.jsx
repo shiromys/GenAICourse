@@ -13,9 +13,26 @@ const CookieConsent = () => {
         }
     }, []);
 
+    // Helper to load Google Analytics only
+    const loadGAScript = (gaId) => {
+        if (document.getElementById('google-analytics-script')) return;
+        const script = document.createElement('script');
+        script.id = 'google-analytics-script';
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { window.dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', gaId);
+    };
+
     const handleAccept = () => {
         localStorage.setItem('cookie-consent', 'accepted');
         setIsVisible(false);
+        // Load Google Analytics upon consent
+        loadGAScript('G-XXXXXXXXXX');
     };
 
     const handleReject = () => {
@@ -34,9 +51,8 @@ const CookieConsent = () => {
                     className="fixed bottom-0 left-0 w-full z-[100]"
                 >
                     <div className="bg-[#0F172A] border-t border-white/10 rounded-t-[2rem] shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.5)] backdrop-blur-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
-                        {/* Subtle background glow */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[60px] rounded-full pointer-events-none" />
-                        
+
                         <div className="flex flex-col md:flex-row items-center gap-6">
                             <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
                                 <ShieldCheck className="text-indigo-400" size={24} />
@@ -44,7 +60,7 @@ const CookieConsent = () => {
                             <div className="text-center md:text-left">
                                 <h3 className="text-white font-black text-sm uppercase tracking-widest mb-1">GDPR & Privacy Compliance</h3>
                                 <p className="text-slate-400 text-xs md:text-sm leading-relaxed max-w-2xl">
-                                    We use strictly necessary cookies to make our site work (256-bit SSL secured). We also use optional analytics (Google) and marketing (Meta) cookies to improve your experience. We do not sell your data.
+                                    We use strictly necessary cookies to make our site work (256-bit SSL secured). We also use optional analytics (Google) to improve your experience. We do not sell your data.
                                 </p>
                             </div>
                         </div>
@@ -64,8 +80,7 @@ const CookieConsent = () => {
                             </button>
                         </div>
 
-                        {/* Top-right close button for accessibility */}
-                        <button 
+                        <button
                             onClick={handleReject}
                             className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
                         >
