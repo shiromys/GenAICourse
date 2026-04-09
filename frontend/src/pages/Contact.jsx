@@ -55,7 +55,7 @@ const Contact = () => {
                         <div className="relative z-10">
                             <p className="text-4xl font-white tracking-tight mb-4">Get in touch</p>
                             <p className="text-slate-400 text-lg mb-12 leading-relaxed">
-                                Have a question about our AI courses? Need help with a certificate? We're here to help.
+                                Have a question about our AI courses? We're here to help.
                             </p>
 
                             <div className="space-y-8">
