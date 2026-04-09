@@ -155,7 +155,7 @@ const CourseViewer = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-orange-100 selection:text-orange-600">
+        <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-indigo-500 selection:text-white">
             <div className="flex flex-col lg:flex-row min-h-screen">
 
                 {/* LEFT SIDEBAR: Redesigned for Screenshot matching */}
@@ -346,7 +346,7 @@ const CourseViewer = () => {
                                         )}
 
                                         <div className="prose prose-slate prose-lg max-w-none">
-                                            <div className="text-lg font-medium text-slate-500 leading-loose space-y-6">
+                                            <div className="text-lg font-medium text-slate-700 leading-loose space-y-6 text-justify tracking-wide">
                                                 {currentLesson?.content?.split('\n').map((p, i) => (
                                                     <p key={i}>{p}</p>
                                                 ))}
