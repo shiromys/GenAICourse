@@ -9,7 +9,7 @@
  */
 
 export const resetConfirmationTemplate = (name) => {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,7 +70,7 @@ export const resetConfirmationTemplate = (name) => {
       
       <p style="margin-top: 30px; padding: 15px; background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; font-size: 14px;">
         <strong>Didn't make this change?</strong><br>
-        If you did not authorize this change, please contact our security team immediately at <strong>security@genaicourse.io</strong>.
+        If you did not authorize this change, please contact our support team immediately.
       </p>
 
       <div style="text-align: center; margin-top: 30px;">
