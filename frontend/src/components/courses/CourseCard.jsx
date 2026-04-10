@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBookOpen, FaChevronRight, FaLock } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 const CourseCard = ({ course }) => {
     const { checkCourseAccess, isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const courseId = course?._id || course?.id;
     const hasAccess = checkCourseAccess(courseId);
@@ -78,7 +79,11 @@ const CourseCard = ({ course }) => {
                     {course?.title || 'Untitled'}
                 </h3>
 
-                <p className="text-gray-400 text-sm mb-6 line-clamp-2 font-medium leading-relaxed">
+                <p 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={`text-gray-400 text-sm mb-6 font-medium leading-relaxed cursor-pointer transition-all ${!isExpanded ? 'line-clamp-2' : ''}`}
+                    title={isExpanded ? "Show less" : "Read full description"}
+                >
                     {course?.description || 'No description available'}
                 </p>
 
