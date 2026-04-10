@@ -30,10 +30,10 @@ export const certificateTemplate = (name, courseTitle) => `
 
       <div style="background-color: #fdf2f8; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
         <p style="color: #9d174d; font-size: 16px; font-weight: 600; margin: 0;">
-          Your official certificate is attached to this email.
+          Your official certificate is ready you can Download it from your Profile or Dashboard.
         </p>
         <p style="color: #be185d; font-size: 14px; margin-top: 10px;">
-          Feel free to download, print, or share your accomplishment on LinkedIn!
+          Feel free to download, print, or share your accomplishment on Social Media!
         </p>
       </div>
 

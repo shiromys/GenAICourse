@@ -47,7 +47,7 @@ const CourseViewer = () => {
                         setCompletedLessons(completed);
                     }
 
-                    // Check if this student already has a certificate for this course
+                    // Check if this User already has a certificate for this course
                     try {
                         const certsData = await certificateService.getUserCertificates();
                         const certs = certsData?.data?.certificates || [];

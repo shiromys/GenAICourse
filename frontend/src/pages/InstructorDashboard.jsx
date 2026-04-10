@@ -50,7 +50,7 @@ const InstructorDashboard = () => {
     totalAssessments: assessments.length,
     activeAssessments: assessments.filter(a => a.isActive).length,
     totalQuestions: assessments.reduce((sum, a) => sum + a.questionCount, 0),
-    avgTimeLimit: assessments.length > 0 
+    avgTimeLimit: assessments.length > 0
       ? Math.round(assessments.reduce((sum, a) => sum + a.timeLimit, 0) / assessments.length)
       : 0
   };
@@ -65,7 +65,7 @@ const InstructorDashboard = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Instructor Dashboard</h1>
-          <p className="text-gray-600">Manage your assessments and track student progress</p>
+          <p className="text-gray-600">Manage your assessments and track User progress</p>
         </div>
 
         {/* Navigation */}
@@ -74,31 +74,28 @@ const InstructorDashboard = () => {
             <nav className="flex space-x-8 px-6">
               <button
                 onClick={() => setActiveView('dashboard')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeView === 'dashboard'
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeView === 'dashboard'
                     ? 'border-indigo-600 text-indigo-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                  }`}
               >
                 Dashboard
               </button>
               <button
                 onClick={() => setActiveView('manage')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeView === 'manage'
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeView === 'manage'
                     ? 'border-indigo-600 text-indigo-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                  }`}
               >
                 Manage Assessments
               </button>
               <button
                 onClick={() => setActiveView('upload')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeView === 'upload'
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeView === 'upload'
                     ? 'border-indigo-600 text-indigo-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+                  }`}
               >
                 Upload New
               </button>
@@ -187,7 +184,7 @@ const InstructorDashboard = () => {
                         <div className="flex-1">
                           <h3 className="font-medium text-gray-900">{assessment.title}</h3>
                           <p className="text-sm text-gray-600 mt-1">
-                            {assessment.questionCount} questions • {assessment.timeLimit}min • 
+                            {assessment.questionCount} questions • {assessment.timeLimit}min •
                             {assessment.maxAttempts} attempts
                           </p>
                           {assessment.courseTitle && (
@@ -197,11 +194,10 @@ const InstructorDashboard = () => {
                           )}
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-1 text-xs font-medium rounded ${
-                            assessment.isActive 
-                              ? 'bg-green-100 text-green-700' 
+                          <span className={`px-2 py-1 text-xs font-medium rounded ${assessment.isActive
+                              ? 'bg-green-100 text-green-700'
                               : 'bg-gray-100 text-gray-700'
-                          }`}>
+                            }`}>
                             {assessment.isActive ? 'Active' : 'Inactive'}
                           </span>
                           <button
@@ -275,17 +271,16 @@ const InstructorDashboard = () => {
                       <div className="flex-1">
                         <div className="flex items-center space-x-3">
                           <h3 className="text-lg font-medium text-gray-900">{assessment.title}</h3>
-                          <span className={`px-2 py-1 text-xs font-medium rounded ${
-                            assessment.isActive 
-                              ? 'bg-green-100 text-green-700' 
+                          <span className={`px-2 py-1 text-xs font-medium rounded ${assessment.isActive
+                              ? 'bg-green-100 text-green-700'
                               : 'bg-gray-100 text-gray-700'
-                          }`}>
+                            }`}>
                             {assessment.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </div>
-                        
+
                         <p className="text-gray-600 mt-1">{assessment.description}</p>
-                        
+
                         <div className="flex items-center space-x-6 mt-3 text-sm text-gray-500">
                           <span className="flex items-center space-x-1">
                             <Award className="h-4 w-4" />

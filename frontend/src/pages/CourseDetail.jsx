@@ -124,7 +124,7 @@ const CourseDetail = () => {
                                     <span className="font-bold text-brand mr-2">Lessons:</span> {course.totalLessons || 0}
                                 </div>
                                 <div className="flex items-center">
-                                    <span className="font-bold text-brand mr-2">Enrolled:</span> {course.enrollmentCount} students
+                                    <span className="font-bold text-brand mr-2">Enrolled:</span> {course.enrollmentCount} User
                                 </div>
                             </div>
 

@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     const register = useCallback(async (userData) => {
         const data = await authService.register(userData);
         // Intentionally NOT setting user/isAuthenticated here
-        // student must log in manually after registration
+        // User must log in manually after registration
         return data;
     }, []);
 

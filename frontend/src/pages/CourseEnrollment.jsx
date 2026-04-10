@@ -228,7 +228,7 @@ const CourseEnrollment = () => {
                 <div className="container text-center">
                     <h2 className="text-3xl font-black text-brand mb-6">Ready to Start Learning?</h2>
                     <p className="text-xl text-gray-500 mb-8 max-w-2xl mx-auto font-medium">
-                        Join thousands of students already advancing their careers with this comprehensive course.
+                        Join thousands of Users already advancing their careers with this comprehensive course.
                     </p>
 
                     <div className="max-w-md mx-auto">

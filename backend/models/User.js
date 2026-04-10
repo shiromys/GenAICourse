@@ -62,8 +62,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['student', 'instructor', 'admin'],
-        default: 'student'
+        enum: ['User', 'instructor', 'admin'],
+        default: 'User'
     },
     hasAllCoursesAccess: {
         type: Boolean,

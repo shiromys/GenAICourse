@@ -37,7 +37,7 @@ export const createQuiz = async (req, res, next) => {
 export const getAllQuizzes = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, courseId, isPublished } = req.query;
-        
+
         const query = {};
         if (courseId) query.courseId = courseId;
         if (isPublished !== undefined) query.isPublished = isPublished === 'true';
@@ -86,8 +86,8 @@ export const getQuizById = async (req, res, next) => {
             });
         }
 
-        // Don't show correct answers to students
-        if (req.user.role === 'student' && quiz.isPublished) {
+        // Don't show correct answers to User
+        if (req.user.role === 'User' && quiz.isPublished) {
             const quizForStudent = {
                 ...quiz.toObject(),
                 questions: quiz.questions.map(q => ({

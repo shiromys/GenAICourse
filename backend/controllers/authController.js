@@ -19,7 +19,7 @@ import { verificationTemplate } from '../utils/email/templates/verificationTempl
  */
 export const register = async (req, res, next) => {
     try {
-        const { name, email, password, role = 'student', profile = {} } = req.body;
+        const { name, email, password, role = 'User', profile = {} } = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -32,12 +32,12 @@ export const register = async (req, res, next) => {
 
         // Role validation (only admin can create instructor or admin roles)
         let userRole = role;
-        if (role !== 'student') {
+        if (role !== 'User') {
             const userCount = await User.countDocuments();
             if (userCount > 0) {
                 const currentUser = await User.findById(req.user?._id);
                 if (!currentUser || currentUser.role !== 'admin') {
-                    userRole = 'student';
+                    userRole = 'User';
                 }
             } else {
                 userRole = 'admin'; // First user becomes admin

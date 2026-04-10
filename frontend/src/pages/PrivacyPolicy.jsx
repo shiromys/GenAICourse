@@ -83,7 +83,7 @@ const PrivacyPolicy = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm text-center">
                                     <h4 className="font-black text-indigo-600 mb-2 uppercase text-sm">OpenAI</h4>
-                                    <p className="text-xs font-medium">Powering 24/7 student support chat</p>
+                                    <p className="text-xs font-medium">Powering 24/7 User support chat</p>
                                 </div>
                                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm text-center">
                                     <h4 className="font-black text-indigo-600 mb-2 uppercase text-sm">Stripe</h4>
