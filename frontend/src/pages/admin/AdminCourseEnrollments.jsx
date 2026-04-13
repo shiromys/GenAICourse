@@ -46,9 +46,9 @@ const AdminCourseEnrollments = () => {
                         <FaArrowLeft className="text-slate-600" />
                     </Link>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight font-heading">Student Enrollments</h1>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight font-heading">User Enrollments</h1>
                         <p className="text-slate-500 font-medium">
-                            {courseTitle} • {enrollments.length} Students
+                            {courseTitle} • {enrollments.length} Users
                         </p>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ const AdminCourseEnrollments = () => {
                         <table className="w-full text-left text-slate-600">
                             <thead className="bg-slate-50/80 text-slate-900 uppercase text-[10px] font-black tracking-widest">
                                 <tr>
-                                    <th className="px-6 py-4">Student</th>
+                                    <th className="px-6 py-4">User</th>
                                     <th className="px-6 py-4">Email</th>
                                     <th className="px-6 py-4">Enrolled Date</th>
                                     <th className="px-6 py-4">Progress</th>
@@ -111,7 +111,7 @@ const AdminCourseEnrollments = () => {
                                     <tr>
                                         <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
                                             <FaUser className="mx-auto h-12 w-12 opacity-20 mb-3" />
-                                            No students enrolled yet
+                                            No users enrolled yet
                                         </td>
                                     </tr>
                                 )}

@@ -365,7 +365,7 @@ const CourseForm = ({ isEditing = false }) => {
                                     className="w-4 h-4 text-amber-600 bg-white border-slate-300 rounded focus:ring-amber-500 focus:ring-2 transition-colors cursor-pointer"
                                 />
                                 <span className="text-sm font-bold text-slate-700">
-                                    Publish course (make it visible to students)
+                                    Publish course (make it visible to users)
                                 </span>
                             </label>
                         </div>

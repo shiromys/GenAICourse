@@ -109,7 +109,7 @@ const Profile = () => {
             const res = await authService.updateProfile(updatePayload);
             if (res.success) {
                 updateUser(res.data);
-                toast.success('Student profile synced!');
+                toast.success('Profile synced successfully!');
             }
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to update profile');
@@ -171,7 +171,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <h2 className="text-xl font-black text-slate-900 mb-1">{user?.name}</h2>
-                                <p className="text-xs font-bold text-indigo-600 uppercase tracking-[0.2em]">{user?.role === 'student' ? 'User' : user?.role || 'User'}</p>
+                                <p className="text-xs font-bold text-indigo-600 uppercase tracking-[0.2em]">{user?.role || 'User'}</p>
                             </div>
 
                             {/* Navigation List */}

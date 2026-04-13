@@ -294,7 +294,8 @@ export const stripeWebhook = async (req, res) => {
 
     try {
         if (!webhookSecret || webhookSecret === 'whsec_...') {
-            event = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+            const bodyStr = req.body instanceof Buffer ? req.body.toString('utf8') : req.body;
+            event = typeof bodyStr === 'string' ? JSON.parse(bodyStr) : bodyStr;
         } else {
             event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
         }

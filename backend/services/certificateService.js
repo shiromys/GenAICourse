@@ -80,8 +80,8 @@ export const generateCertificatePDF = async (certificateData) => {
             const fullVerifyUrl = `${process.env.CLIENT_URL || 'https://genaicourse.io'}/v/${certificateId}`;
             const displayUrl = (process.env.CLIENT_URL || 'genaicourse.io').replace(/^https?:\/\//, '') + `/v/${certificateId}`;
             
-            doc.fontSize(10).fillColor('#64748b').font('Helvetica')
-                .text(`Verify at: ${displayUrl}`, 0, 440, { align: 'center', width: width, link: fullVerifyUrl });
+            doc.fontSize(10).fillColor('#3b82f6').font('Helvetica')
+                .text(`Verify at: ${displayUrl}`, 0, 440, { align: 'center', width: width, link: fullVerifyUrl, underline: true });
 
             // ── 7. Footer (Signatures and Date) ─────────────────────────────
             const footerY = 510;
@@ -241,7 +241,7 @@ export function generateCertificateHTML(data) {
             <p class="certify-text">has successfully completed the course</p>
             <h2 class="course-title">${data.courseTitle}</h2>
             <div class="cert-id">
-                <a href="${process.env.FRONTEND_URL}/v/${data.certificateId}" target="_blank" style="color: inherit; text-decoration: none;">
+                <a href="${process.env.FRONTEND_URL}/v/${data.certificateId}" target="_blank" style="color: #3b82f6; text-decoration: underline;">
                     Verify at: ${process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/^https?:\/\//, '') : 'genaicourse.io'}/v/${data.certificateId}
                 </a>
             </div>
