@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaLock, FaCog, FaCamera, FaSave, FaSignOutAlt, FaBook, FaHistory, FaBell, FaCertificate, FaFileInvoiceDollar, FaDownload, FaBolt } from 'react-icons/fa';
+import { FaUser, FaLock, FaCog, FaCamera, FaSave, FaSignOutAlt, FaBook, FaHistory, FaBell, FaCertificate, FaFileInvoiceDollar, FaDownload, FaBolt, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import authService from '../services/authService.js';
 import paymentService from '../services/paymentService.js';
@@ -19,6 +19,8 @@ const Profile = () => {
     const [coursesLoading, setCoursesLoading] = useState(false);
     const [paymentsLoading, setPaymentsLoading] = useState(false);
     const [certificatesLoading, setCertificatesLoading] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     useEffect(() => {
         if (activeTab === 'courses') {
@@ -282,24 +284,42 @@ const Profile = () => {
                                         <form onSubmit={handlePasswordChange} className="space-y-8 max-w-xl">
                                             <div className="space-y-2">
                                                 <label className="text-[11px] font-black text-indigo-600 uppercase tracking-widest ml-1">New Password</label>
-                                                <input
-                                                    type="password"
-                                                    required
-                                                    value={passwordData.newPassword}
-                                                    onChange={e => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
-                                                />
+                                                <div className="relative">
+                                                    <input
+                                                        type={showNewPassword ? "text" : "password"}
+                                                        required
+                                                        value={passwordData.newPassword}
+                                                        onChange={e => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                                    >
+                                                        {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             <div className="space-y-2">
                                                 <label className="text-[11px] font-black text-indigo-600 uppercase tracking-widest ml-1">Confirm New Password</label>
-                                                <input
-                                                    type="password"
-                                                    required
-                                                    value={passwordData.confirmPassword}
-                                                    onChange={e => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
-                                                />
+                                                <div className="relative">
+                                                    <input
+                                                        type={showConfirmPassword ? "text" : "password"}
+                                                        required
+                                                        value={passwordData.confirmPassword}
+                                                        onChange={e => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                                    >
+                                                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             <div className="pt-4">
