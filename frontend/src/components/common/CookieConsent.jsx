@@ -2,26 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, X } from 'lucide-react';
 
+// ✅ STEP 1: PLACE YOUR ID HERE WHEN IT ARRIVES
+// For now, it stays as an empty string or placeholder
+const GA_MEASUREMENT_ID = "";
+
 const CookieConsent = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         const consent = localStorage.getItem('cookie-consent');
-        if (!consent) {
+
+        // If they already accepted in a past session, load the script immediately
+        if (consent === 'accepted' && GA_MEASUREMENT_ID) {
+            loadGAScript(GA_MEASUREMENT_ID);
+        }
+        // If no choice made yet, show the banner after 1.5s
+        else if (!consent) {
             const timer = setTimeout(() => setIsVisible(true), 1500);
             return () => clearTimeout(timer);
         }
     }, []);
 
-    // Helper to load Google Analytics only
     const loadGAScript = (gaId) => {
-        if (document.getElementById('google-analytics-script')) return;
+        // Safety check: Don't run if ID is missing or script already exists
+        if (!gaId || document.getElementById('google-analytics-script')) return;
+
+        // 1. Inject the Google Tag Manager Script
         const script = document.createElement('script');
         script.id = 'google-analytics-script';
         script.async = true;
         script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
         document.head.appendChild(script);
 
+        // 2. Initialize the Global Tracking Function
         window.dataLayer = window.dataLayer || [];
         function gtag() { window.dataLayer.push(arguments); }
         gtag('js', new Date());
@@ -31,8 +44,10 @@ const CookieConsent = () => {
     const handleAccept = () => {
         localStorage.setItem('cookie-consent', 'accepted');
         setIsVisible(false);
-        // Load Google Analytics upon consent
-        loadGAScript('G-XXXXXXXXXX');
+        // Only attempts to load if GA_MEASUREMENT_ID is defined
+        if (GA_MEASUREMENT_ID) {
+            loadGAScript(GA_MEASUREMENT_ID);
+        }
     };
 
     const handleReject = () => {

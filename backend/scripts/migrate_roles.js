@@ -12,7 +12,7 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const migrateRoles = async () => {
     try {
-        console.log('🚀 Starting role migration: student -> User...');
+        console.log('🚀 Starting role migration: Fix invalid roles...');
         
         const mongoUri = process.env.MONGODB_URI;
         if (!mongoUri) {
@@ -23,15 +23,12 @@ const migrateRoles = async () => {
         await mongoose.connect(mongoUri);
         console.log('✅ Connected to MongoDB');
 
-        // Update all users with role 'student' to 'User'
+        // Fix: Update any invalid roles to 'User'
         const result = await User.updateMany(
-            { role: 'student' },
+            { role: { $nin: ['User', 'student', 'instructor', 'admin'] } },
             { $set: { role: 'User' } }
         );
-
-        console.log(`✅ Migration complete!`);
-        console.log(`📊 Matched: ${result.matchedCount}`);
-        console.log(`📊 Modified: ${result.modifiedCount}`);
+        console.log(`✅ Migration: Invalid roles -> 'User': ${result.modifiedCount} users updated`);
 
         await mongoose.connection.close();
         console.log('👋 Database connection closed');
