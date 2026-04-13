@@ -106,6 +106,7 @@ const AppContent = () => {
                         <Route path="/terms" element={<PageContainer><TermsOfUse /></PageContainer>} />
                         <Route path="/refund" element={<PageContainer><RefundPolicy /></PageContainer>} />
                         <Route path="/verify-certificate/:certificateId" element={<PageContainer><VerifyCertificate /></PageContainer>} />
+                        <Route path="/v/:certificateId" element={<PageContainer><VerifyCertificate /></PageContainer>} />
 
                         <Route element={<PrivateRoute />}>
                             <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />
