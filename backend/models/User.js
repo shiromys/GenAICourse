@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 const UserSchema = new mongoose.Schema(
     {
@@ -84,11 +85,17 @@ const UserSchema = new mongoose.Schema(
             }
         ],
         createdCourses: [mongoose.Schema.Types.ObjectId],
+        hasAllCoursesAccess: { type: Boolean, default: false },
+        stats: {
+            coursesCompleted: { type: Number, default: 0 },
+            certificatesEarned: { type: Number, default: 0 },
+            averageScore: { type: Number, default: 0 }
+        },
         stripe_customer_id: String,
         isVerified: { type: Boolean, default: false },
         verificationToken: String,
         resetPasswordToken: String,
-        resetPasswordExpires: Date,
+        resetPasswordExpire: Date,
         lastLogin: Date,
         lastLoginAt: Date,
         loginAttempts: { type: Number, default: 0 },
@@ -140,6 +147,40 @@ UserSchema.methods.getPublicProfile = function () {
         createdAt: this.createdAt,
         updatedAt: this.updatedAt
     };
+};
+
+// ============ METHOD: Check Enrollment ============
+UserSchema.methods.isEnrolledInCourse = function(courseId) {
+    if (this.hasAllCoursesAccess) return true;
+    return this.enrolledCourses.some(
+        (enrollment) => enrollment.courseId && enrollment.courseId.toString() === courseId.toString()
+    );
+};
+
+// ============ METHOD: Enroll in Course ============
+UserSchema.methods.enrollInCourse = function(courseId) {
+    if (!this.isEnrolledInCourse(courseId)) {
+        this.enrolledCourses.push({
+            courseId,
+            enrolledAt: new Date(),
+            progressPercentage: 0
+        });
+    }
+};
+
+// ============ METHOD: Get Verification Token ============
+UserSchema.methods.getVerificationToken = function() {
+    const token = crypto.randomBytes(20).toString('hex');
+    this.verificationToken = token;
+    return token;
+};
+
+// ============ METHOD: Get Reset Password Token ============
+UserSchema.methods.getResetPasswordToken = function() {
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+    return resetToken;
 };
 
 // ============ INDEX: Email ============

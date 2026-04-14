@@ -231,10 +231,17 @@ export const takeAssessment = asyncHandler(async (req, res) => {
 
   // Update user stats
   const user = await User.findById(userId);
-  if (passed) {
-    user.stats.coursesCompleted += 1;
-    user.stats.certificatesEarned += 1;
-    user.stats.averageScore = ((user.stats.averageScore * (user.stats.coursesCompleted - 1)) + percentageScore) / user.stats.coursesCompleted;
+  if (passed && user) {
+    if (!user.stats) {
+    	user.stats = { coursesCompleted: 0, certificatesEarned: 0, averageScore: 0 };
+    }
+    user.stats.coursesCompleted = (user.stats.coursesCompleted || 0) + 1;
+    user.stats.certificatesEarned = (user.stats.certificatesEarned || 0) + 1;
+    
+    const prevScore = user.stats.averageScore || 0;
+    const completed = user.stats.coursesCompleted;
+    user.stats.averageScore = ((prevScore * (completed - 1)) + percentageScore) / completed;
+    
     await user.save();
   }
 
