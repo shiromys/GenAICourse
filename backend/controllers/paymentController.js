@@ -522,6 +522,128 @@ export const verifyPaymentSession = async (req, res, next) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// CONTROLLER 4b — Recover missed payments (tab-close / webhook-miss scenario)
+// POST /api/payments/recover
+// Queries Stripe for all recent paid sessions for this user's email that have
+// NOT yet been recorded in our DB, then processes them immediately.
+// ─────────────────────────────────────────────────────────────────────────────
+export const recoverPayments = async (req, res, next) => {
+    try {
+        const userId = req.user._id.toString();
+        const userEmail = (req.user.email || '').toLowerCase();
+
+        console.log(`🔎 [Recovery] Scanning Stripe for unprocessed payments for ${userEmail}`);
+
+        // Stripe list() does NOT support customer_email as a filter.
+        // We fetch the most recent 100 sessions and filter manually.
+        const sessions = await stripe.checkout.sessions.list({
+            limit: 100,
+        });
+
+        const recovered = [];
+        const alreadyProcessed = [];
+
+        for (const session of sessions.data) {
+            // Only handle fully paid sessions
+            if (session.payment_status !== 'paid') continue;
+
+            // Filter by email (case-insensitive)
+            const sessionEmail = (session.customer_details?.email || session.customer_email || '').toLowerCase();
+            if (sessionEmail !== userEmail) continue;
+
+            // Check if we already have a record for this session
+            const existing = await Payment.findOne({ stripeSessionId: session.id });
+            if (existing) {
+                alreadyProcessed.push(session.id);
+                continue;
+            }
+
+            // Verify the session was created for this user (metadata guard)
+            const { userId: sessionUserId, courseId, purchaseType } = session.metadata || {};
+            if (sessionUserId && sessionUserId !== userId) {
+                console.warn(`[Recovery] Session ${session.id} belongs to a different userId — skipping.`);
+                continue;
+            }
+
+            console.log(`🔄 [Recovery] Processing missed session: ${session.id} (type: ${purchaseType})`);
+
+            const user = await User.findById(userId);
+            if (!user) continue;
+
+            let courseTitle = 'Your Course';
+            const amountPaid = session.amount_total || 0;
+
+            // Build the payment record payload
+            const paymentData = {
+                userId: new mongoose.Types.ObjectId(userId),
+                email: userEmail,
+                purchaseType: purchaseType || 'single',
+                amountPaid,
+                currency: session.currency || 'usd',
+                status: 'completed',
+                enrollmentUpdated: true,
+                stripeSessionId: session.id,
+            };
+            if (session.payment_intent) paymentData.stripePaymentIntentId = session.payment_intent;
+
+            // Grant access based on purchase type
+            if (purchaseType === 'all') {
+                courseTitle = 'All-Access Pass (GENAICOURSE.IO)';
+                await grantAllAccess(userId, user);
+            } else if (courseId && courseId !== 'none' && courseId !== 'null' && courseId !== 'undefined') {
+                paymentData.courseId = new mongoose.Types.ObjectId(courseId);
+                user.enrollInCourse(courseId);
+                await user.save();
+                const course = await Course.findById(courseId);
+                courseTitle = course?.title || 'Your Course';
+                const exists = await UserProgress.findOne({ userId, courseId });
+                if (!exists) await UserProgress.create({ userId, courseId });
+            }
+
+            try {
+                const paymentRecord = await Payment.create(paymentData);
+                console.log(`✅ [Recovery] Saved payment record: ${paymentRecord._id}`);
+                recovered.push({
+                    sessionId: session.id,
+                    courseTitle,
+                    amount: amountPaid,
+                    purchaseType: purchaseType || 'single',
+                });
+
+                // Send confirmation email
+                try {
+                    await sendEmail(
+                        user.email,
+                        `Access Restored: ${courseTitle} — GENAICOURSE.IO`,
+                        buildPaymentEmail(user.name, courseTitle, amountPaid, process.env.FRONTEND_URL || 'https://genaicourse.io')
+                    );
+                } catch (emailErr) {
+                    console.warn('[Recovery] Email send failed:', emailErr.message);
+                }
+            } catch (createErr) {
+                console.error('[Recovery] Failed to save record:', createErr.message);
+            }
+        }
+
+        // Return fresh user profile so the frontend can update state immediately
+        const updatedUser = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
+
+        console.log(`✅ [Recovery] Done. Recovered: ${recovered.length}, Already processed: ${alreadyProcessed.length}`);
+
+        return res.status(200).json({
+            success: true,
+            recovered: recovered.length,
+            items: recovered,
+            user: updatedUser ? updatedUser.getPublicProfile() : null,
+        });
+
+    } catch (error) {
+        console.error('❌ recoverPayments error:', error.message);
+        next(error);
+    }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CONTROLLER 4 — Get all payments for the logged-in user
 // GET /api/payments/my-payments
 // ─────────────────────────────────────────────────────────────────────────────

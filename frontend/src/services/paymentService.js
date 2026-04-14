@@ -37,6 +37,16 @@ const paymentService = {
         const response = await api.get('/payments/my-payments');
         return response.data;
     },
+
+    /**
+     * Recovery: scan Stripe for any paid-but-unprocessed sessions for this user.
+     * Handles the "closed the tab" scenario where neither webhook nor success-page fired.
+     * Returns { recovered, items, user }
+     */
+    recoverPayments: async () => {
+        const response = await api.post('/payments/recover');
+        return response.data;
+    },
 };
 
 export default paymentService;

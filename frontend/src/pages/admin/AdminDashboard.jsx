@@ -91,6 +91,9 @@ const AdminDashboard = () => {
                 // Refresh deleted users as well
                 const deletedData = await adminService.getDeletedUsers().catch(() => ({ data: [] }));
                 setDeletedUsers(deletedData.data || []);
+                
+                // RECTIFIED: Automatically direct to Principals tab to show history
+                setActiveTab('principals');
                 toast.success('User moved to Principals log');
             } catch (error) {
                 toast.error('Failed to delete user');
@@ -574,24 +577,23 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     )}
-
-                    {/* Principals Tab (Deleted Users Log) */}
+ 
                     {activeTab === 'principals' && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             <div className="bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-slate-500/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
                                 <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-                                    <span className="text-slate-400">🛡️</span> Admin Principals
+                                    <span className="text-slate-400">🛡️</span> Historical Identity Trace
                                 </h2>
-                                <p className="text-slate-500 mt-1 font-medium italic">Audit log of deactivated identities and historical records.</p>
+                                <p className="text-slate-500 mt-1 font-medium italic font-sans text-lg">Registry of all historical connections and deactivated identities.</p>
                             </div>
-
+ 
                             <div className="bg-white rounded-3xl border border-slate-200/60 overflow-hidden shadow-sm">
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left">
-                                        <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-[0.2em]">
+                                        <thead className="bg-[#FAF9F6] text-slate-400 uppercase text-[10px] font-black tracking-[0.2em]">
                                             <tr>
-                                                <th className="px-8 py-5">Historical Identity</th>
+                                                <th className="px-8 py-5">History: Register Name</th>
                                                 <th className="px-8 py-5">Origin (Sign up)</th>
                                                 <th className="px-8 py-5 text-red-600">Termination (Delete Date)</th>
                                                 <th className="px-8 py-5">Audit Status</th>
@@ -604,8 +606,8 @@ const AdminDashboard = () => {
                                                     <tr key={du._id} className="hover:bg-slate-50 transition-colors">
                                                         <td className="px-8 py-6">
                                                             <div className="flex flex-col">
-                                                                <span className="font-bold text-slate-900">{du.name}</span>
-                                                                <span className="text-xs text-slate-500 font-mono">{du.email}</span>
+                                                                <span className="font-black text-slate-900 text-lg uppercase tracking-tight">{du.name}</span>
+                                                                <span className="text-xs text-slate-500 font-mono italic">{du.email}</span>
                                                             </div>
                                                         </td>
                                                         <td className="px-8 py-6 text-xs font-bold text-slate-600">
@@ -614,12 +616,12 @@ const AdminDashboard = () => {
                                                         <td className="px-8 py-6">
                                                             <div className="flex flex-col">
                                                                 <span className="text-red-600 font-black text-sm">{du.deletedAt ? format(new Date(du.deletedAt), 'MMM dd, yyyy') : '-'}</span>
-                                                                <span className="text-[9px] text-red-400 uppercase font-black tracking-widest">Final deactivation</span>
+                                                                <span className="text-[9px] text-red-400 uppercase font-black tracking-widest">Historical Cutoff</span>
                                                             </div>
                                                         </td>
                                                         <td className="px-8 py-6">
-                                                            <span className="px-3 py-1 bg-slate-100 text-slate-400 rounded-full text-[9px] font-black uppercase tracking-tighter">
-                                                                Archived
+                                                            <span className="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200">
+                                                                Deactivated
                                                             </span>
                                                         </td>
                                                         <td className="px-8 py-6 text-right">
@@ -627,15 +629,16 @@ const AdminDashboard = () => {
                                                                 onClick={() => handlePermanentlyDeleteUser(du._id)}
                                                                 icon={<FaTrash />}
                                                                 color="red"
-                                                                title="Purge Permanently"
+                                                                title="Purge Identity Trace"
                                                             />
                                                         </td>
                                                     </tr>
                                                 ))
                                             ) : (
                                                 <tr>
-                                                    <td colSpan="4" className="px-8 py-16 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
-                                                        No deactivation records found.
+                                                    <td colSpan="5" className="px-8 py-16 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
+                                                        <FaClipboardList className="mx-auto h-16 w-16 opacity-10 mb-6" />
+                                                        No historical traces detected.
                                                     </td>
                                                 </tr>
                                             )}
