@@ -13,7 +13,7 @@ export const loginAlertTemplate = (name) => `
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 12px; border-top: 6px solid #be185d; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     
     <div style="text-align: center; margin-bottom: 25px;">
-      <img src="${process.env.FRONTEND_URL}/logo.png" alt="GenAI Logo" style="height: 45px; width: auto;">
+      <img src="https://genaicourse.io/logo-large.png" onerror="this.src='https://placehold.co/400x100/4f46e5/ffffff?text=GenAICourse.io'" alt="GenAI Logo" style="height: 45px; width: auto;">
     </div>
 
     <div style="text-align: center; margin-bottom: 20px;">

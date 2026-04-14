@@ -56,10 +56,10 @@ router.get('/linkedin/callback',
 );
 
 // Public routes
-router.post('/register', register);
-router.post('/login', login);
-router.post('/forgot-password', forgotPassword);
-router.put('/reset-password/:resetToken', resetPassword);
+router.post('/register', registerValidation, validate, register);
+router.post('/login', loginValidation, validate, login);
+router.post('/forgot-password', forgotPasswordValidation, validate, forgotPassword);
+router.put('/reset-password/:resetToken', resetPasswordValidation, validate, resetPassword);
 router.post('/verify-email', verifyEmail);
 router.post('/resend-verification', resendVerification);
 

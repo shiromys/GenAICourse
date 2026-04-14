@@ -25,21 +25,30 @@ export const protect = async (req, res, next) => {
             // Verify token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+            if (!decoded || !decoded.id) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Token verification failed: No user ID in payload'
+                });
+            }
+
             // Get user from token
             req.user = await User.findById(decoded.id).select('-password');
 
             if (!req.user) {
+                console.error(`❌ User not found in DB for ID: ${decoded.id}`);
                 return res.status(401).json({
                     success: false,
-                    message: 'User not found. Token invalid.'
+                    message: `User identity (${decoded.id}) not found or account deactivated`
                 });
             }
 
             next();
         } catch (error) {
+            console.error('JWT Verification Error:', error.message);
             return res.status(401).json({
                 success: false,
-                message: 'Token is invalid or expired. Please login again.'
+                message: `Session invalid: ${error.message}`
             });
         }
     } catch (error) {

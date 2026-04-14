@@ -8,7 +8,9 @@ import compression from 'compression';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
+// Load .env from the backend directory explicitly
+// This fixes the issue when npm run dev is run from the repo root with --prefix backend
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 import cors from 'cors';
 import helmet from 'helmet';

@@ -88,9 +88,24 @@ const AdminDashboard = () => {
             try {
                 await adminService.deleteUser(id);
                 setUsers(users.filter(u => u._id !== id));
-                toast.success('User deleted');
+                // Refresh deleted users as well
+                const deletedData = await adminService.getDeletedUsers().catch(() => ({ data: [] }));
+                setDeletedUsers(deletedData.data || []);
+                toast.success('User moved to Principals log');
             } catch (error) {
                 toast.error('Failed to delete user');
+            }
+        }
+    };
+
+    const handlePermanentlyDeleteUser = async (id) => {
+        if (window.confirm('⚠️ ATTENTION: This action is IRREVERSIBLE. All identity records, course progress, and invoices will be purged. Proceed?')) {
+            try {
+                await adminService.permanentlyDeleteUser(id);
+                setDeletedUsers(deletedUsers.filter(u => u._id !== id));
+                toast.success('User identity permanently purged');
+            } catch (error) {
+                toast.error('System failure: Could not purge identity');
             }
         }
     };
@@ -580,6 +595,7 @@ const AdminDashboard = () => {
                                                 <th className="px-8 py-5">Origin (Sign up)</th>
                                                 <th className="px-8 py-5 text-red-600">Termination (Delete Date)</th>
                                                 <th className="px-8 py-5">Audit Status</th>
+                                                <th className="px-8 py-5 text-right">Records Directive</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
@@ -605,6 +621,14 @@ const AdminDashboard = () => {
                                                             <span className="px-3 py-1 bg-slate-100 text-slate-400 rounded-full text-[9px] font-black uppercase tracking-tighter">
                                                                 Archived
                                                             </span>
+                                                        </td>
+                                                        <td className="px-8 py-6 text-right">
+                                                            <AdminActionButton
+                                                                onClick={() => handlePermanentlyDeleteUser(du._id)}
+                                                                icon={<FaTrash />}
+                                                                color="red"
+                                                                title="Purge Permanently"
+                                                            />
                                                         </td>
                                                     </tr>
                                                 ))

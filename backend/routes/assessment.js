@@ -15,21 +15,21 @@ router.use(protect);
 // @route   GET /api/assessments/:courseId/quiz
 // @desc    Get assessment for taking
 // @access  Private (User, Instructor, Admin)
-router.get('/:courseId/quiz', authorize('User', 'instructor', 'admin'), getAssessmentForCourse);
+router.get('/:courseId/quiz', authorize('user', 'User', 'student', 'instructor', 'admin'), getAssessmentForCourse);
 
 // @route   POST /api/assessments/:courseId/take
 // @desc    Submit course assessment
 // @access  Private (User, Instructor, Admin)
-router.post('/:courseId/take', authorize('User', 'instructor', 'admin'), takeAssessment);
+router.post('/:courseId/take', authorize('user', 'User', 'student', 'instructor', 'admin'), takeAssessment);
 
 // @route   GET /api/assessments/:courseId/results/:attemptId
 // @desc    Get assessment results and feedback
 // @access  Private (User, Instructor, Admin)
-router.get('/:courseId/results/:attemptId', authorize('User', 'instructor', 'admin'), getAssessmentResults);
+router.get('/:courseId/results/:attemptId', authorize('user', 'User', 'student', 'instructor', 'admin'), getAssessmentResults);
 
 // @route   GET /api/assessments/:courseId/history
 // @desc    Get user's assessment history for a course
 // @access  Private (User, Instructor, Admin)
-router.get('/:courseId/history', authorize('User', 'instructor', 'admin'), getAssessmentHistory);
+router.get('/:courseId/history', authorize('user', 'User', 'student', 'instructor', 'admin'), getAssessmentHistory);
 
 export default router;

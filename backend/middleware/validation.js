@@ -9,9 +9,10 @@ import { body, validationResult } from 'express-validator';
 export const validate = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.error('Validation Errors:', errors.array());
         return res.status(400).json({
             success: false,
-            message: 'Validation failed',
+            message: errors.array()[0].msg, // Show the first specific error message
             errors: errors.array().map(err => ({
                 field: err.path,
                 message: err.msg
@@ -31,8 +32,7 @@ export const registerValidation = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please provide a valid email')
-        .normalizeEmail(),
+        .isEmail().withMessage('Please provide a valid email'),
 
     body('password')
         .notEmpty().withMessage('Password is required')
@@ -46,8 +46,7 @@ export const loginValidation = [
     body('email')
         .trim()
         .notEmpty().withMessage('Email is required')
-        .isEmail().withMessage('Please provide a valid email')
-        .normalizeEmail(),
+        .isEmail().withMessage('Please provide a valid email'),
 
     body('password')
         .notEmpty().withMessage('Password is required')
@@ -82,19 +81,13 @@ export const forgotPasswordValidation = [
         .trim()
         .notEmpty().withMessage('Email is required')
         .isEmail().withMessage('Please provide a valid email')
-        .normalizeEmail()
 ];
 
 // Reset password validation
 export const resetPasswordValidation = [
-    body('token')
-        .notEmpty().withMessage('Reset token is required'),
-    
-    body('newPassword')
-        .notEmpty().withMessage('New password is required')
+    body('password')
+        .notEmpty().withMessage('Password is required')
         .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number')
 ];
 
 // Email verification validation
@@ -108,8 +101,6 @@ export const changePasswordValidation = [
     body('newPassword')
         .notEmpty().withMessage('New password is required')
         .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number')
 ];
 
 // Profile update validation

@@ -4,6 +4,7 @@ import {
     getUserById,
     updateUserRole,
     deleteUser,
+    permanentlyDeleteUser,
     getAllCourses,
     getCourse,
     createCourse,
@@ -43,6 +44,7 @@ router.get('/users', getAllUsers);
 router.get('/users/:id', getUserById);
 router.put('/users/:id/role', updateUserRole);
 router.delete('/users/:id', deleteUser);
+router.delete('/users/:id/permanent', permanentlyDeleteUser);
 router.get('/deleted-users', getDeletedUsers);
 
 // Course management

@@ -142,6 +142,46 @@ export const deleteUser = async (req, res, next) => {
 };
 
 /**
+ * @desc    Permanently delete user (Admin only)
+ * @route   DELETE /api/admin/users/:id/permanent
+ * @access  Private/Admin
+ */
+export const permanentlyDeleteUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Don't allow deleting yourself
+        if (user._id.toString() === req.user._id.toString()) {
+            return res.status(400).json({
+                success: false,
+                message: 'You cannot delete your own account'
+            });
+        }
+
+        // Permanent delete
+        await user.deleteOne();
+
+        // Cleanup related data
+        await UserProgress.deleteMany({ userId: req.params.id });
+        await Payment.deleteMany({ userId: req.params.id });
+
+        res.status(200).json({
+            success: true,
+            message: 'User identity permanently purged from system memory'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
  * @desc    Get deleted users (Admin only)
  * @route   GET /api/admin/deleted-users
  * @access  Private/Admin
@@ -637,7 +677,7 @@ export default {
     getDeletedUsers,
     getUserById,
     updateUserRole,
-    deleteUser,
+    permanentlyDeleteUser,
     getAllCourses,
     getCourse,
     createCourse,

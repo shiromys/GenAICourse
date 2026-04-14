@@ -26,10 +26,10 @@ const UserSchema = new mongoose.Schema(
             minlength: 6,
             select: false
         },
-        // FIXED: Added all valid role values
+        // FIXED: Added all valid role values including lowercase 'user'
         role: {
             type: String,
-            enum: ['User', 'student', 'instructor', 'admin'],
+            enum: ['user', 'User', 'student', 'instructor', 'admin'],
             default: 'User'
         },
         avatar: {
@@ -141,6 +141,8 @@ UserSchema.methods.getPublicProfile = function () {
         socialLinks: this.socialLinks,
         preferences: this.preferences,
         enrolledCourses: this.enrolledCourses,
+        hasAllCoursesAccess: this.hasAllCoursesAccess,
+        stats: this.stats,
         isVerified: this.isVerified,
         lastLogin: this.lastLogin,
         lastLoginAt: this.lastLoginAt,

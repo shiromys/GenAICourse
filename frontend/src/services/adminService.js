@@ -42,9 +42,15 @@ const adminService = {
         return response.data;
     },
 
-    // Delete user
+    // Delete user (Soft)
     deleteUser: async (id) => {
         const response = await api.delete(`/admin/users/${id}`);
+        return response.data;
+    },
+    
+    // Delete user (Permanent)
+    permanentlyDeleteUser: async (id) => {
+        const response = await api.delete(`/admin/users/${id}/permanent`);
         return response.data;
     },
 
