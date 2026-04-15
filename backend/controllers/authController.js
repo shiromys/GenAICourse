@@ -115,6 +115,13 @@ export const login = async (req, res, next) => {
             });
         }
 
+        if (user.isDeleted) {
+            return res.status(401).json({
+                success: false,
+                message: 'Account not found or has been deleted.'
+            });
+        }
+
         if (!user.isActive) {
             return res.status(401).json({
                 success: false,

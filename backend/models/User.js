@@ -100,7 +100,9 @@ const UserSchema = new mongoose.Schema(
         lastLoginAt: Date,
         loginAttempts: { type: Number, default: 0 },
         lockUntil: Date,
-        isActive: { type: Boolean, default: true }
+        isActive: { type: Boolean, default: true },
+        isDeleted: { type: Boolean, default: false },
+        deletedAt: { type: Date, default: null }
     },
     { timestamps: true }
 );
