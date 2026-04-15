@@ -218,7 +218,7 @@ export const getAllCourses = async (req, res, next) => {
             { $unwind: "$enrolledCourses" },
             { $group: { _id: "$enrolledCourses.courseId", count: { $sum: 1 } } }
         ]);
-        
+
         const countMap = {};
         enrollmentStats.forEach(stat => countMap[stat._id.toString()] = stat.count);
 
@@ -363,7 +363,7 @@ export const getDashboardStats = async (req, res, next) => {
         const totalUsers = await User.countDocuments({ isDeleted: { $ne: true } });
         const totalCourses = await Course.countDocuments();
         const publishedCourses = await Course.countDocuments({ isPublished: true });
-        
+
         // Count total enrollments from users dynamically
         const totalEnrollmentsAgg = await User.aggregate([
             { $match: { isDeleted: { $ne: true } } },
@@ -390,7 +390,7 @@ export const getDashboardStats = async (req, res, next) => {
         if (popularCourseStats.length > 0) {
             const courseIds = popularCourseStats.map(s => s._id);
             const coursesData = await Course.find({ _id: { $in: courseIds }, isPublished: true }).select('title category');
-            
+
             for (const stat of popularCourseStats) {
                 const cData = coursesData.find(c => c._id.toString() === stat._id.toString());
                 if (cData && popularCourses.length < 5) {
@@ -403,7 +403,7 @@ export const getDashboardStats = async (req, res, next) => {
                 }
             }
         }
-        
+
         // Fallback for courses with no enrollments
         if (popularCourses.length < 5) {
             const remaining = 5 - popularCourses.length;
@@ -631,7 +631,7 @@ export const getPaymentAnalytics = async (req, res, next) => {
             { $match: { status: 'completed' } },
             {
                 $group: {
-                    _id: { 
+                    _id: {
                         month: { $month: "$createdAt" },
                         year: { $year: "$createdAt" }
                     },

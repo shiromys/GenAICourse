@@ -401,22 +401,21 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
             </motion.div>
 
             <h2 className="text-5xl md:text-6xl font-black text-brand mb-6 uppercase tracking-tighter">
-              {isPassed ? 'Mastery Achieved' : 'Oops... You failed!'}
+              {isPassed ? 'Achievement!' : 'Oops... You failed!'}
             </h2>
 
             <p className="text-xl text-gray-500 max-w-xl mx-auto font-medium leading-[1.6]">
               {isPassed
-                ? "You've successfully conquered the final challenge. Your professional certification is ready for validation."
+                ? "You have achieved your certificate of completion, congratulations!"
                 : "You didn't reach 50% this time. Please review the lessons and try the quiz again."
               }
             </p>
           </div>
 
           {/* Stats Dashboard */}
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100 bg-gray-50">
-            <ResultStat label="Sync Score" value={`${results.attempt?.score ?? results.score ?? 0}`} sub={`of ${results.attempt?.totalPoints ?? results.totalPoints ?? 0} pts`} />
-            <ResultStat label="Course Accuracy" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub="50% required" highlight={isPassed} />
-            <ResultStat label="Course Rank" value={results.attempt?.grade ?? results.grade ?? 'N/A'} sub="Standard Certified" />
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100 bg-gray-50">
+            <ResultStat label="Your Score" value={`${results.attempt?.score ?? results.score ?? 0}`} sub={`of ${results.attempt?.totalPoints ?? results.totalPoints ?? 0} pts`} />
+            <ResultStat label="Achievement Percentage" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub="50% required" highlight={isPassed} />
           </div>
 
           {/* Footer Actions */}

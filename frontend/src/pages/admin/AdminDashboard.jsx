@@ -91,7 +91,7 @@ const AdminDashboard = () => {
                 // Refresh deleted users as well
                 const deletedData = await adminService.getDeletedUsers().catch(() => ({ data: [] }));
                 setDeletedUsers(deletedData.data || []);
-                
+
                 // RECTIFIED: Automatically direct to Principals tab to show history
                 setActiveTab('principals');
                 toast.success('User moved to Principals log');
@@ -102,13 +102,13 @@ const AdminDashboard = () => {
     };
 
     const handlePermanentlyDeleteUser = async (id) => {
-        if (window.confirm('⚠️ ATTENTION: This action is IRREVERSIBLE. All identity records, course progress, and invoices will be purged. Proceed?')) {
+        if (window.confirm('⚠️ ATTENTION: This action is IRREVERSIBLE. All identity records, course progress, and invoices will be deleted. Proceed?')) {
             try {
                 await adminService.permanentlyDeleteUser(id);
                 setDeletedUsers(deletedUsers.filter(u => u._id !== id));
-                toast.success('User identity permanently purged');
+                toast.success('User identity permanently deleted');
             } catch (error) {
-                toast.error('System failure: Could not purge identity');
+                toast.error('System failure: Could not delete identity');
             }
         }
     };
@@ -577,7 +577,7 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     )}
- 
+
                     {activeTab === 'principals' && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             <div className="bg-white p-8 rounded-3xl border border-slate-200/60 shadow-sm relative overflow-hidden">
@@ -587,7 +587,7 @@ const AdminDashboard = () => {
                                 </h2>
                                 <p className="text-slate-500 mt-1 font-medium italic font-sans text-lg">Registry of all historical connections and deactivated identities.</p>
                             </div>
- 
+
                             <div className="bg-white rounded-3xl border border-slate-200/60 overflow-hidden shadow-sm">
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left">
