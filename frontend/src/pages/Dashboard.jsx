@@ -130,7 +130,7 @@ const Dashboard = () => {
                             className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all shadow-sm active:scale-95 disabled:opacity-50"
                         >
                             <FaRotateLeft className={recovering ? 'animate-spin' : ''} />
-                            {recovering ? 'Syncing...' : 'Purchase Restore'}
+                            {recovering ? 'Syncing...' : 'Restore Your Purchase'}
                         </button>
                         <Link to="/courses" className="px-6 py-3 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-lg active:scale-95">
                             Browse More
