@@ -408,6 +408,7 @@ export const verifyPaymentSession = async (req, res, next) => {
                 success: true,
                 message: 'Enrollment active.',
                 alreadyProcessed: true,
+                courseId: existingPayment.courseId,
                 user: user ? user.getPublicProfile() : null,
             });
         }
@@ -432,7 +433,7 @@ export const verifyPaymentSession = async (req, res, next) => {
         const paymentExists = await Payment.findOne({ stripeSessionId: sessionId });
         if (paymentExists) {
             const user = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
-            return res.status(200).json({ success: true, user: user ? user.getPublicProfile() : null });
+            return res.status(200).json({ success: true, courseId: paymentExists.courseId, user: user ? user.getPublicProfile() : null });
         }
 
         const user = await User.findById(userId);
@@ -498,7 +499,7 @@ export const verifyPaymentSession = async (req, res, next) => {
         }
 
         const updatedUser = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
-        return res.status(200).json({ success: true, user: updatedUser.getPublicProfile() });
+        return res.status(200).json({ success: true, courseId, user: updatedUser.getPublicProfile() });
 
     } catch (error) {
         // 🔴 LOG the full error so we can debug it properly — previously this was swallowing critical errors

@@ -48,7 +48,13 @@ const PaymentSuccess = () => {
                 setMessage('Payment confirmed! Your course access is now active.');
                 toast.success('Access Activated! Welcome to your course!');
 
-                setTimeout(() => navigate('/dashboard'), 3000);
+                setTimeout(() => {
+                    if (result.courseId && result.courseId !== 'none' && result.courseId !== 'null') {
+                        navigate(`/courses/${result.courseId}/learn`);
+                    } else {
+                        navigate('/dashboard');
+                    }
+                }, 3000);
 
             } catch (error) {
                 // Even if verification throws (e.g. webhook race condition, network issue),

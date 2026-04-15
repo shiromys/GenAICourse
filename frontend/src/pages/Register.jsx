@@ -39,7 +39,7 @@ const Register = () => {
             const { confirmPassword, ...registerData } = formData;
             await register(registerData);
             toast.success('Registration successful! Please log in with your credentials.');
-            navigate(redirectPath ? `/login?redirect=${redirectPath}` : '/login');
+            navigate(redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : '/login');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Registration failed');
         } finally {
@@ -154,7 +154,7 @@ const Register = () => {
 
                     <p className="mt-10 text-center text-[15px] text-slate-500 font-medium">
                         Already have an account?{' '}
-                        <Link to="/login" className="font-bold text-blue-600 hover:text-blue-700 transition-all underline underline-offset-4">
+                        <Link to={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`} className="font-bold text-blue-600 hover:text-blue-700 transition-all underline underline-offset-4">
                             Log In
                         </Link>
                     </p>

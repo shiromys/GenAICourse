@@ -121,7 +121,7 @@ const Login = () => {
 
                     <p className="mt-10 text-center text-[15px] text-slate-500 font-medium">
                         Don't have an account?{' '}
-                        <Link to="/register" className="font-bold text-blue-600 hover:text-blue-700 transition-all underline underline-offset-4">
+                        <Link to={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ''}`} className="font-bold text-blue-600 hover:text-blue-700 transition-all underline underline-offset-4">
                             Sign Up
                         </Link>
                     </p>

@@ -109,7 +109,7 @@ const Dashboard = () => {
 
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                     >
@@ -118,8 +118,8 @@ const Dashboard = () => {
                             Hey, <span className="text-indigo-600">{user?.name?.split(' ')[0] || 'User'}</span>! 👋
                         </h1>
                     </motion.div>
-                    
-                    <motion.div 
+
+                    <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="flex items-center gap-4"
@@ -130,7 +130,7 @@ const Dashboard = () => {
                             className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all shadow-sm active:scale-95 disabled:opacity-50"
                         >
                             <FaRotateLeft className={recovering ? 'animate-spin' : ''} />
-                            {recovering ? 'Syncing...' : 'Sync Purchase'}
+                            {recovering ? 'Syncing...' : 'Purchase Restore'}
                         </button>
                         <Link to="/courses" className="px-6 py-3 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-lg active:scale-95">
                             Browse More
@@ -153,7 +153,7 @@ const Dashboard = () => {
                             <div className="flex-1 text-center md:text-left">
                                 <h3 className="text-xl font-black text-amber-900 mb-2">Missing your course?</h3>
                                 <p className="text-amber-700/80 font-medium leading-relaxed max-w-2xl">
-                                    If you completed payment but closed the browser before being redirected, 
+                                    If you completed payment but closed the browser before being redirected,
                                     your access might still be processing. Click below to instantly restore your purchase.
                                 </p>
                             </div>
@@ -179,7 +179,7 @@ const Dashboard = () => {
                             <div>
                                 <h4 className="font-black text-emerald-900">Success! Purchase Restored</h4>
                                 <p className="text-emerald-700 text-sm font-medium">
-                                    Found {recoveryResult.recovered} missing payment{recoveryResult.recovered > 1 ? 's' : ''}: 
+                                    Found {recoveryResult.recovered} missing payment{recoveryResult.recovered > 1 ? 's' : ''}:
                                     <span className="font-bold ml-1">
                                         {recoveryResult.items?.map(i => i.courseTitle).join(', ')}
                                     </span>

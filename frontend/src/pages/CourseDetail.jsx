@@ -43,7 +43,9 @@ const CourseDetail = () => {
     const handleEnroll = async () => {
         if (!isAuthenticated) {
             toast.info('Please login to enroll');
-            navigate(`/login?redirect=checkout/${id}&type=single`);
+            // Route them back to where they were going (payment or course reading)
+            const targetPath = course?.isFree ? `courses/${id}/enroll` : `checkout/${id}?type=single`;
+            navigate(`/login?redirect=${encodeURIComponent(targetPath)}`);
             return;
         }
 
