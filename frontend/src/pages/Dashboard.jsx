@@ -113,9 +113,9 @@ const Dashboard = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                     >
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-3">Student Dashboard</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-3">User Dashboard</p>
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-                            Hey, <span className="text-indigo-600">{user?.name?.split(' ')[0] || 'User'}</span>! 👋
+                            hey,<span className="text-indigo-600">{user?.name || 'User'}</span>👋
                         </h1>
                     </motion.div>
 

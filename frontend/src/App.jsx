@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -55,6 +55,20 @@ const PrivateRoute = () => {
 };
 
 const App = () => {
+    // Professional Terminal Message for DevTools
+    useEffect(() => {
+        console.log(
+            "%c🚀 GENAICOURSE.IO — FRONTEND ACTIVE",
+            "background: #4f46e5; color: white; font-size: 16px; font-weight: bold; padding: 10px; border-radius: 8px; font-family: sans-serif;"
+        );
+        console.log(
+            "%c📡 Status: Operational\n%c🌍 Version: 1.2.0\n%c⚡ Environment: Production",
+            "color: #10b981; font-weight: bold;",
+            "color: #6366f1;",
+            "color: #f59e0b;"
+        );
+    }, []);
+
     return (
         <AuthProvider>
             <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
