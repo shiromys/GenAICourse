@@ -11,17 +11,17 @@ const steps = [
     {
         icon: <PlayCircle className="w-6 h-6 text-white" />,
         title: "Learn",
-        description: "Master complex topics through interactive slides and hands-on labs."
+        description: "Master complex topics through interactive slides."
     },
     {
         icon: <FileCheck className="w-6 h-6 text-white" />,
         title: "Assess",
-        description: "Validate your knowledge with challenging quizzes and projects."
+        description: "Validate your knowledge with our cutting-edge assessments."
     },
     {
         icon: <Award className="w-6 h-6 text-white" />,
         title: "Certify",
-        description: "Earn your certificate and verify your identity to showcase your expertise."
+        description: "Earn your verifiable certificate to showcase your achievements."
     }
 ];
 

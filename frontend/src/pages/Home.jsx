@@ -26,7 +26,7 @@ const Home = () => {
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
                         </span>
                         <span className="text-sm font-semibold text-slate-600 tracking-wide">
-                            Introducing AI Course
+                            Introducing our Courses
                         </span>
                     </motion.div>
 
@@ -37,10 +37,10 @@ const Home = () => {
                         transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                         className="text-6xl sm:text-7xl lg:text-[5.5rem] font-black tracking-tight text-slate-900 leading-[1.05] mb-8"
                     >
-                        Skills that get you hired.{' '}
+                        Build your AI knowledge,{' '}
                         <br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">
-                            Smartly.
+                            Become the Best!
                         </span>
                     </motion.h1>
 
@@ -127,8 +127,8 @@ const Home = () => {
                         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-8">
-                            Start building your future. <br className="hidden md:block" />
-                            <span className="text-slate-400">Today.</span>
+                            Start building your future, <br className="hidden md:block" />
+                            <span className="text-slate-400">today.</span>
                         </h2>
                         <Link
                             to="/register"
