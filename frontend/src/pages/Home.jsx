@@ -127,7 +127,7 @@ const Home = () => {
                         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                     >
                         <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-8">
-                            Start building your future, <br className="hidden md:block" />
+                            Start your AI journey, <br className="hidden md:block" />
                             <span className="text-slate-400">today.</span>
                         </h2>
                         <Link
