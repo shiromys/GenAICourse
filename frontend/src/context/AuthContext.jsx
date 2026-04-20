@@ -45,9 +45,12 @@ export const AuthProvider = ({ children }) => {
                 }
             } catch (err) {
                 // Token is invalid/expired — only clear if we're NOT on a payment page
+                // AND ONLY if the error is specifically a 401 Unauthorized.
+                // Do NOT log out users for 500 errors or network drops!
                 const path = window.location.pathname;
                 const isPaymentPage = ['/payment-success', '/dashboard', '/profile'].some(p => path.startsWith(p));
-                if (!isPaymentPage) {
+                
+                if (!isPaymentPage && err.response?.status === 401) {
                     authService.logout();
                     setUser(null);
                     setIsAuthenticated(false);
