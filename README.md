@@ -709,15 +709,11 @@ npm run dev:frontend
 - **Security Features**: Authentication, validation, headers
 
 ### Recent Improvements
-- **Rate Limiting Fix**: Increased limits for development
-- **Assessment Upload**: Resolved import path issues
-- **Course Progress**: Added completion tracking
-- **Certificate Flow**: Integrated with assessment results
-- **Student Journey**: Complete enrollment to certification flow
-- **Testing Infrastructure**: Complete test suite setup and fixes
-- **ES Module Testing**: Resolved Jest/Vitest configuration
-- **Test Separation**: Isolated unit, integration, and E2E tests
-- **Mock Implementation**: Proper mocking for external dependencies
+- **Payment API Re-architecture**: Fixed Stripe checkout racing bugs via improved background API hydration. Added `refreshUser` hook for instantaneous course access without reloading.
+- **Improved React Context Constraints**: Fixed overly sensitive session error handlers (`AuthContext`) that mistakenly purged active JWTs upon routine backend slowdowns/5xx Gateway errors during checkout padding.
+- **Admin Soft-Delete Framework**: Migrated raw database deletions to `isDeleted` architectural flags. Allows admins to preserve historical compliance traces cleanly within the "Principals" Admin log tab.
+- **Frontend Refinement**: Complete Apple-inspired beige overhaul across dashboards. Simplified confusing metrics ("Sync Score" / "Course Rank") inside the Assessment Results card.
+- **Deep Sync Verification**: Automatically checks missing UserProgress database records on dashboard requests to gracefully fix data synchronization for users with "All Courses" access.
 
 ## 📞 Support & Documentation
 
