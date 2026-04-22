@@ -103,12 +103,9 @@ const Contact = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full bg-white/40 backdrop-blur-md border border-white/60 shadow-sm"
                     >
-                        <span className="flex h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                            Contact Support
-                        </span>
+
+
                     </motion.div>
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
@@ -116,7 +113,7 @@ const Contact = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-6xl font-bold text-slate-900 mb-5 tracking-tight"
                     >
-                        Let's build <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">the future.</span>
+                        Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Touch</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0 }}
@@ -124,7 +121,7 @@ const Contact = () => {
                         transition={{ delay: 0.2 }}
                         className="text-slate-500 text-lg font-medium max-w-xl mx-auto leading-relaxed opacity-80"
                     >
-                        Expert guidance for the next generation of AI technology.
+                        We typically respond within 24 hours..
                     </motion.p>
                 </div>
 
