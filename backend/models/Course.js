@@ -136,6 +136,11 @@ const courseSchema = new mongoose.Schema({
         type: String,
         default: 'english'
     },
+    slug: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
     modules: [moduleSchema],
     quizzes: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -260,6 +265,17 @@ const courseSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true
+});
+
+// Pre-save hook for slug generation
+courseSchema.pre('save', function(next) {
+    if (this.isModified('title') || !this.slug) {
+        this.slug = this.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)+/g, '');
+    }
+    next();
 });
 
 // Index for better query performance

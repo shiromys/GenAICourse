@@ -6,6 +6,7 @@ import certificateService from '../services/certificateService.js';
 import Loader from '../components/common/Loader.jsx';
 import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck, FaPlayCircle, FaClock, FaSignal, FaBookOpen, FaMedal, FaDownload } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { Helmet } from 'react-helmet-async';
 import AssessmentCenter from '../components/assessment/AssessmentCenter.jsx';
 
 const CourseViewer = () => {
@@ -156,6 +157,9 @@ const CourseViewer = () => {
 
     return (
         <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-indigo-500 selection:text-white">
+            <Helmet>
+                <title>{course?.title ? `${course.title} | Learning | GenAI Course` : 'Course Viewer | GenAI Course'}</title>
+            </Helmet>
             <div className="flex flex-col lg:flex-row min-h-screen">
 
                 {/* LEFT SIDEBAR: Redesigned for Screenshot matching */}

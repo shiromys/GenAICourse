@@ -76,7 +76,11 @@ export const getCourses = async (req, res, next) => {
  */
 export const getCourse = async (req, res, next) => {
     try {
-        const course = await Course.findById(req.params.id)
+        const idOrSlug = req.params.id;
+        // Check if it's a valid MongoDB ObjectId
+        const query = idOrSlug.match(/^[0-9a-fA-F]{24}$/) ? { _id: idOrSlug } : { slug: idOrSlug };
+
+        const course = await Course.findOne(query)
             .populate('createdBy', 'name email')
             .populate('instructors.userId', 'name email profile')
             .populate('reviews.userId', 'name profile.avatar');
