@@ -5,6 +5,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import compression from 'compression';
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -34,6 +35,7 @@ import contactRoutes from './routes/contactRoutes.js';
 import passport from 'passport';
 import configurePassport from './config/passport.js';
 import { stripeWebhook } from './controllers/paymentController.js';
+import { generateSitemap } from './controllers/seoController.js';
 
 const app = express();
 
@@ -69,7 +71,8 @@ const startServer = async () => {
         if (process.env.NODE_ENV === 'development') {
             app.use(morgan('dev'));
         }
-
+        // Add this above your other routes
+        app.get('/sitemap.xml', generateSitemap);
         // Health check endpoint
         app.get('/health', (req, res) => {
             res.json({
