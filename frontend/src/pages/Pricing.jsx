@@ -193,6 +193,8 @@ const Pricing = () => {
                     </motion.div>
                 </div>
 
+
+
                 {/* FAQ Section */}
                 <div className="mt-32 max-w-4xl mx-auto relative z-10 px-4">
                     <div className="text-center mb-16">

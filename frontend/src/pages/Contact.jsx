@@ -7,6 +7,7 @@ import {
 import { toast } from 'react-toastify';
 import api from '../services/api';
 import { AuroraBackground } from '../components/ui/aurora-background';
+import { Helmet } from 'react-helmet-async';
 
 // ─── Sidebar Box Component (Apple-Style Glassmorphism) ─────────────
 const SidebarBox = ({ badge, title, subtitle, description, features, link, accentColor, textColor, bgColor }) => (
@@ -96,6 +97,35 @@ const Contact = () => {
 
     return (
         <AuroraBackground className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center min-h-screen selection:bg-indigo-100 selection:text-indigo-900">
+            <Helmet>
+                <title>Contact Us | GenAI Course</title>
+                <meta name="description" content="Contact Shiro Technologies LLC in Addison, TX for AI course inquiries." />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "EducationalOrganization",
+                        "name": "GenAI Course by Shiro Technologies LLC",
+                        "image": "https://genaicourse.io/logo.png",
+                        "url": "https://genaicourse.io",
+                        "telephone": "+18009718013",
+                        "email": "info@genaicourse.io",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "5080 Spectrum Drive, Suite 575E",
+                            "addressLocality": "Addison",
+                            "addressRegion": "TX",
+                            "postalCode": "75001",
+                            "addressCountry": "US"
+                        },
+                        "openingHoursSpecification": {
+                            "@type": "OpeningHoursSpecification",
+                            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                            "opens": "09:00",
+                            "closes": "18:00"
+                        }
+                    })}
+                </script>
+            </Helmet>
             <div className="max-w-[1200px] w-full relative z-10">
 
                 {/* Minimalist Header */}

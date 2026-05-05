@@ -4,7 +4,7 @@ import { ShieldCheck, X } from 'lucide-react';
 
 // ✅ STEP 1: PLACE YOUR ID HERE WHEN IT ARRIVES
 // For now, it stays as an empty string or placeholder
-const GA_MEASUREMENT_ID = "";
+const GA_MEASUREMENT_ID = "G-KNHB80L7GC";
 
 const CookieConsent = () => {
     const [isVisible, setIsVisible] = useState(false);

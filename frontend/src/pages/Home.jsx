@@ -51,8 +51,7 @@ const Home = () => {
                         transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                         className="text-xl sm:text-2xl text-slate-500 font-medium max-w-3xl mx-auto leading-relaxed mb-12"
                     >
-                        Professional-grade courses defining the standard for Artificial Intelligence education. Designed for clarity, built for impact.
-                    </motion.p>
+                        Professional-grade courses defining the standard for Artificial Intelligence education. Designed for clarity, built for impact.                    </motion.p>
 
                     {/* CTA Buttons */}
                     <motion.div

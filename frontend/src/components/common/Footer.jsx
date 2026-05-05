@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaLinkedin, FaInstagram, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
+import { FaLinkedin, FaMapMarkerAlt, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 
 const Footer = () => {
@@ -20,7 +20,7 @@ const Footer = () => {
                         <div className="flex gap-4">
                             <SocialLink icon={<FaXTwitter />} href="#" />
                             <SocialLink icon={<FaLinkedin />} href="#" />
-                            <SocialLink icon={<FaInstagram />} href="#" />
+
                         </div>
 
                     </div>
@@ -57,6 +57,10 @@ const Footer = () => {
                             <li className="flex gap-4 text-gray-400 text-sm">
                                 <FaEnvelope className="text-orange-500 mt-1 flex-shrink-0" />
                                 <a href="mailto:info@genaicourse.io" className="hover:text-orange-500 transition-colors">info@genaicourse.io</a>
+                            </li>
+                            <li className="flex gap-4 text-gray-400 text-sm">
+                                <FaPhoneAlt className="text-orange-500 mt-1 flex-shrink-0" />
+                                <a href="tel:+18009718013" className="hover:text-orange-500 transition-colors">(800) 971-8013</a>
                             </li>
                         </ul>
                     </div>

@@ -137,6 +137,9 @@ const VerifyCertificate = () => {
                                         <p className="text-[var(--text-main)] font-medium">
                                             {formatDate(verificationData.certificate.completionDate)}
                                         </p>
+                                        <p className="text-xs text-[var(--text-secondary)] mt-1">
+                                            <strong>Curriculum Last Updated:</strong> {formatDate(new Date())}
+                                        </p>
                                     </div>
                                     <div className="flex-1">
                                         <label className="flex items-center text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
