@@ -11,6 +11,7 @@ import Loader from './components/common/Loader';
 import AdminRoute from './components/routing/AdminRoute';
 import ScrollToTop from './components/common/ScrollToTop';
 import CookieConsent from './components/common/CookieConsent';
+import SEOHelmet from '@/components/common/SEOHelmet';
 
 // Page Imports
 import Home from './pages/Home';
@@ -34,6 +35,8 @@ import OAuthCallback from './pages/OAuthCallback';
 import Profile from './pages/Profile';
 import PaymentPage from './pages/PaymentPage';
 import PaymentSuccess from './pages/PaymentSuccess';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 
 // Legal Page Imports
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -114,6 +117,8 @@ const AppContent = () => {
                         <Route path="/how-it-works" element={<PageContainer><HowItWorks /></PageContainer>} />
                         <Route path="/oauth-callback" element={<PageContainer><OAuthCallback /></PageContainer>} />
                         <Route path="/payment-success" element={<PageContainer><PaymentSuccess /></PageContainer>} />
+                        <Route path="/blog" element={<PageContainer><Blog /></PageContainer>} />
+                        <Route path="/blog/:slug" element={<PageContainer><BlogPost /></PageContainer>} />
 
                         {/* Legal Routes */}
                         <Route path="/privacy" element={<PageContainer><PrivacyPolicy /></PageContainer>} />
@@ -162,5 +167,6 @@ const PageContainer = ({ children }) => (
         {children}
     </motion.div>
 );
+<SEOHelmet title="..." description="..." canonical="/..." noIndex={true} />
 
 export default App;

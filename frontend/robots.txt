@@ -1,6 +1,48 @@
-User-agent: *
-Allow: /
-Disallow: /admin
-Disallow: /dashboard
+# robots.txt — genaicourse.io
+# Generated for SEO compliance
 
+User-agent: *
+
+# Allow all important public pages
+Allow: /
+Allow: /courses
+Allow: /courses/
+Allow: /pricing
+Allow: /contact
+Allow: /how-it-works
+Allow: /blog
+Allow: /blog/
+Allow: /verify-certificate/
+Allow: /v/
+
+# Block auth & private pages (no SEO value)
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password/
+Disallow: /oauth-callback
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /checkout/
+Disallow: /payment-success
+Disallow: /privacy-cookie
+
+# Block all admin routes
+Disallow: /admin/
+Disallow: /admin
+
+# Block API routes
+Disallow: /api/
+
+# Block course-internal auth-gated routes
+Disallow: /courses/*/learn
+Disallow: /courses/*/enroll
+Disallow: /courses/*/access
+Disallow: /courses/*/assessment
+Disallow: /courses/*/lessons/
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Sitemap location
 Sitemap: https://genaicourse.io/sitemap.xml
