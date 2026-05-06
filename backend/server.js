@@ -183,5 +183,9 @@ const startServer = async () => {
 };
 
 startServer();
+// server.js
+app.get('*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html')); // always 200
+});
 
 export default app;
