@@ -166,8 +166,7 @@ const Home = () => {
                             <span className="text-slate-400">today.</span>
                         </h2>
                         <p className="text-slate-500 text-lg mb-10 max-w-xl mx-auto">
-                            Join thousands of learners who have earned their AI certification and
-                            transformed their careers with generative AI courses online.
+                            Join us to learn generative AI courses and earn your certificate to transform your career.
                         </p>
                         <Link
                             to="/register"
