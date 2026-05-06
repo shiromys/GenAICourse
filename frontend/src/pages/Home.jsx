@@ -147,76 +147,7 @@ const Home = () => {
                 <CertificationSteps />
             </div>
 
-            {/* ── WHY CHOOSE US — keyword-rich trust section ────────────────── */}
-            <section className="py-20 bg-slate-50" aria-labelledby="why-genaicourse">
-                <div className="container mx-auto px-6 max-w-6xl">
-                    <h2
-                        id="why-genaicourse"
-                        className="text-3xl md:text-4xl font-black text-center text-slate-900 mb-4 tracking-tight"
-                    >
-                        The Best Generative AI Course Platform for 2026
-                    </h2>
-                    <p className="text-center text-slate-500 max-w-2xl mx-auto mb-16 font-medium">
-                        Whether you're a beginner looking to learn AI online or a professional pursuing an
-                        AI certification course, GenAI Course has the right path for you.
-                    </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                title: 'AI Certification for Non-Programmers',
-                                body: 'Our courses are designed for all backgrounds. No coding experience required — learn Generative AI concepts, tools, and workflows from scratch.',
-                                keyword: 'AI course for non programmers',
-                            },
-                            {
-                                title: 'Job-Ready AI Skills',
-                                body: 'Build skills employers actually want. Every course is structured around real-world AI use cases to make you job-ready from day one.',
-                                keyword: 'job ready AI course',
-                            },
-                            {
-                                title: 'Verifiable AI Certificate',
-                                body: 'Earn a shareable, verifiable AI certification. Stand out on LinkedIn and in job applications with a recognised credential.',
-                                keyword: 'AI course with certificate',
-                            },
-                        ].map(({ title, body }) => (
-                            <div
-                                key={title}
-                                className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <FaCheckCircle className="text-indigo-500 text-2xl mb-4" />
-                                <h3 className="text-xl font-bold text-slate-900 mb-3">{title}</h3>
-                                <p className="text-slate-500 leading-relaxed">{body}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── INTERNAL LINKS — hub structure ────────────────────────────── */}
-            <section className="py-16 bg-white" aria-label="Explore GenAI Course platform">
-                <div className="container mx-auto px-6 max-w-4xl text-center">
-                    <h2 className="text-2xl font-black text-slate-900 mb-8 tracking-tight">
-                        Explore GenAI Course
-                    </h2>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {[
-                            { to: '/courses', label: 'All AI Courses' },
-                            { to: '/pricing', label: 'Course Pricing' },
-                            { to: '/how-it-works', label: 'How It Works' },
-                            { to: '/blog', label: 'AI Learning Blog' },
-                            { to: '/contact', label: 'Contact Us' },
-                        ].map(({ to, label }) => (
-                            <Link
-                                key={to}
-                                to={to}
-                                className="px-6 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-700 font-semibold hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-all text-sm"
-                            >
-                                {label}
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
             {/* ── Bottom CTA — Refined Apple Style ────────────────────────── */}
             <section className="py-40 relative text-center overflow-hidden bg-white">
