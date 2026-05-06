@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import { toast } from 'react-toastify';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import SEOHelmet from '../components/common/SEOHelmet';
 
 const Login = () => {
     const [searchParams] = useSearchParams();
@@ -39,6 +40,14 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-32 pb-20 px-4">
+            {/* ── SEO META ─────────────────────────────────────────── */}
+            <SEOHelmet
+                title="Login to Your AI Course Account"
+                description="Log in to GenAI Course to access your AI courses, track learning progress, and earn your AI certification."
+                canonical="/login"
+                noIndex={true}
+            />
+
             {/* Animated background elements for premium feel */}
             <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-400 rounded-full blur-[140px] opacity-10 animate-pulse"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-400 rounded-full blur-[140px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>

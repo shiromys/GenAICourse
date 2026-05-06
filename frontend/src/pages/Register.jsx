@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import { toast } from 'react-toastify';
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import SEOHelmet from '../components/common/SEOHelmet';
 
 const Register = () => {
     const [searchParams] = useSearchParams();
@@ -49,6 +50,14 @@ const Register = () => {
 
     return (
         <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-32 pb-24 px-4">
+            {/* ── SEO META ─────────────────────────────────────────── */}
+            <SEOHelmet
+                title="Create a Free AI Course Account"
+                description="Sign up for GenAI Course and start learning Generative AI online today. Free account — no credit card required."
+                canonical="/register"
+                noIndex={true}
+            />
+
             {/* Background Orbs */}
             <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-400 rounded-full blur-[140px] opacity-10 animate-pulse"></div>
             <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-400 rounded-full blur-[140px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>

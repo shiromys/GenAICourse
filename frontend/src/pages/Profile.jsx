@@ -8,6 +8,7 @@ import paymentService from '../services/paymentService.js';
 import certificateService from '../services/certificateService.js';
 import courseService from '../services/courseService.js';
 import { MagneticButton } from '../components/ui/MagneticButton';
+import SEOHelmet from '../components/common/SEOHelmet';
 
 const Profile = () => {
     const { user, updateUser, logout } = useAuth();
@@ -152,6 +153,14 @@ const Profile = () => {
 
     return (
         <div className="relative min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-indigo-50 selection:text-indigo-600 overflow-hidden">
+            {/* ── SEO META ─────────────────────────────────────────── */}
+            <SEOHelmet
+                title="My Profile | GenAI Course"
+                description="Manage your GenAI Course profile, update your password, and view your AI certification history."
+                canonical="/profile"
+                noIndex={true}
+            />
+
             {/* Background Blobs */}
             <div className="absolute top-0 left-0 w-full h-[1000px] pointer-events-none z-0">
                 <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-indigo-200/30 rounded-full blur-[120px] animate-pulse" />

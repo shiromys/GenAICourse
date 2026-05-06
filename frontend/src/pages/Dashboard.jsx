@@ -8,6 +8,7 @@ import { FaGraduationCap, FaTrophy, FaPlay, FaBookOpen, FaRotateLeft, FaCircleCh
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
+import SEOHelmet from '../components/common/SEOHelmet';
 
 const Dashboard = () => {
     const { user, refreshUser, updateUser } = useAuth();
@@ -105,6 +106,14 @@ const Dashboard = () => {
 
     return (
         <div className="section section-pt min-h-screen bg-[#FDFCFB]">
+            {/* ── SEO META ─────────────────────────────────────────── */}
+            <SEOHelmet
+                title="My AI Learning Dashboard"
+                description="View your enrolled AI courses, track your learning progress, and manage your AI certifications on GenAI Course."
+                canonical="/dashboard"
+                noIndex={true}
+            />
+
             <div className="container py-8 md:py-16">
 
                 {/* Header Section */}

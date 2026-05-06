@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import courseService from '../services/courseService.js';
 import CourseCard from '../components/courses/CourseCard.jsx';
 import Loader from '../components/common/Loader.jsx';
+import SEOHelmet from '../components/common/SEOHelmet';
 import { FaSearch, FaFilter, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -48,6 +49,20 @@ const CourseCatalogue = () => {
 
     return (
         <div className="section pt-32 min-h-screen bg-[var(--bg-main)]">
+
+            {/* ── SEO META ────────────────────────────────────────────────── */}
+            <SEOHelmet
+                title="AI Courses Online | Generative AI Training & Certification"
+                description="Search for Courses from our List Below
+
+."
+                canonical="/courses"
+                breadcrumb={[
+                    { name: 'Home', url: '/' },
+                    { name: 'AI Courses Online', url: '/courses' },
+                ]}
+            />
+
             <div className="container overflow-visible">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -57,16 +72,22 @@ const CourseCatalogue = () => {
                     <button
                         onClick={() => navigate(-1)}
                         className="absolute left-0 top-0 p-3 bg-white border border-gray-200 rounded-2xl text-brand hover:text-accent transition-all flex items-center gap-2 group shadow-sm hover:shadow-md"
+                        aria-label="Go back"
                     >
                         <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
                         <span className="text-xs font-black uppercase tracking-widest">Back</span>
                     </button>
 
+                    {/* H1 — Primary keyword: "generative AI course" */}
                     <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter text-center text-brand">
                         GenAi <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Course</span>
                     </h1>
-                    <p className="text-gray-500 font-bold tracking-widest uppercase text-xs text-center">Search for Courses from our List Below</p>
+                    {/* H2 — Supporting keyword: "AI courses online" */}
+                    <h2 className="text-gray-500 font-bold tracking-widest uppercase text-xs text-center">
+                        Search for Courses from our List Below
+                    </h2>
                 </motion.div>
+
 
                 {/* Filters Hub */}
                 <motion.div
@@ -76,8 +97,7 @@ const CourseCatalogue = () => {
                     className="glass-card p-6 mb-16 relative overflow-visible z-10 bg-white border border-gray-200 shadow-xl rounded-2xl"
                 >
                     <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
-                        <div className="flex items-center gap-4">
-                        </div>
+                        <div className="flex items-center gap-4"></div>
 
                         <div className="w-full lg:w-1/3 relative group px-2">
                             <FaSearch className="absolute left-7 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-accent transition-colors" />
@@ -86,7 +106,8 @@ const CourseCatalogue = () => {
                                 name="search"
                                 value={filters.search}
                                 onChange={handleFilterChange}
-                                placeholder="Search keywords..."
+                                placeholder="Search AI courses..."
+                                aria-label="Search AI courses"
                                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 pl-14 focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all text-brand placeholder:text-gray-400"
                                 data-testid="course-search"
                             />
@@ -114,8 +135,8 @@ const CourseCatalogue = () => {
                     </div>
                 ) : (
                     <div className="text-center py-32 glass-card border-dashed border-gray-300 bg-gray-50 rounded-2xl">
-                        <h3 className="text-3xl font-black text-brand mb-2 uppercase tracking-widest">Signal Lost</h3>
-                        <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">Adjust your filters to reconnect with the academy</p>
+                        <h3 className="text-3xl font-black text-brand mb-2 uppercase tracking-widest">No Courses Found</h3>
+                        <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">Adjust your search to find the right AI course</p>
                     </div>
                 )}
             </div>

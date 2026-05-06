@@ -6,6 +6,35 @@ import { useAuth } from '../context/AuthContext';
 import paymentService from '../services/paymentService';
 import { toast } from 'react-toastify';
 import { AuroraBackground } from '../components/ui/aurora-background';
+import SEOHelmet from '../components/common/SEOHelmet';
+
+// ── Pricing JSON-LD ───────────────────────────────────────────────────────
+const PRICING_SCHEMA = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'AI Course Pricing | Buy AI Course Online | GenAI Course',
+    description:
+        'Transparent AI course pricing. Buy individual AI certification courses from $29, or get all-access for $159. Job-ready generative AI training with certificate included.',
+    url: 'https://genaicourse.io/pricing',
+    mainEntity: [
+        {
+            '@type': 'Offer',
+            name: 'Single AI Course',
+            price: '29.00',
+            priceCurrency: 'USD',
+            description: 'Lifetime access to one AI course with certification',
+            url: 'https://genaicourse.io/courses',
+        },
+        {
+            '@type': 'Offer',
+            name: 'All Courses Bundle',
+            price: '159.00',
+            priceCurrency: 'USD',
+            description: 'Full access to all AI courses with certificates — one-time payment',
+            url: 'https://genaicourse.io/pricing',
+        },
+    ],
+};
 
 const Pricing = () => {
     const { isAuthenticated, user } = useAuth();
@@ -61,25 +90,39 @@ const Pricing = () => {
     return (
         <AuroraBackground id="pricing" className="pt-40 pb-32 overflow-hidden">
 
+            {/* ── SEO META ────────────────────────────────────────────────── */}
+            <SEOHelmet
+                title="AI Course Pricing | Buy AI Course Online"
+                description="Transparent AI course pricing. Buy individual AI certification courses from $29, or get all-access for $159 one-time. Job-ready generative AI training with certificate included."
+                canonical="/pricing"
+                schema={PRICING_SCHEMA}
+                breadcrumb={[
+                    { name: 'Home', url: '/' },
+                    { name: 'AI Course Pricing', url: '/pricing' },
+                ]}
+            />
+
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-20">
 
-
-                    <motion.h2
+                    {/* H1 — keyword: "buy AI course online" + "AI certification cost" */}
+                    <motion.h1
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight"
+                        transition={{ delay: 0.05 }}
+                        className="text-4xl md:text-6xl font-black text-slate-900 mb-3 tracking-tight"
                     >
-                        Simple <span className="text-indigo-600">and Transparent </span>
-                    </motion.h2>
+                        Simple <span className="text-indigo-600">and Transparent</span> Pricing
+                    </motion.h1>
+
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                         className="text-slate-500 max-w-2xl mx-auto font-medium text-lg"
                     >
-                        Choose the path that fits your learning journey. From individual mastery to all-access professional growth.
+                        Choose the path that fits your learning journey. Buy an individual AI course online
+                        from <strong>$29</strong>, or unlock all-access for a single one-time payment.
                     </motion.p>
                 </div>
 
@@ -93,8 +136,7 @@ const Pricing = () => {
                         className="bg-white rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col group hover:border-red-200 transition-all duration-500"
                     >
                         <div className="mb-8">
-                            <h3 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">One-Course plan</h3>
-
+                            <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">One-Course Plan</h2>
                         </div>
 
                         <div className="flex items-baseline gap-2 mb-10">
@@ -103,14 +145,18 @@ const Pricing = () => {
                         </div>
 
                         <div className="space-y-5 mb-12 flex-1">
-                            <FeatureItem text="Lifetime access to 1 course" />
-                            <FeatureItem text="Course Completion Certificate" />
+                            <FeatureItem text="Lifetime access to 1 AI course" />
+                            <FeatureItem text="AI Course Completion Certificate" />
                             <FeatureItem text="Regular Email Support" />
-                            <FeatureItem text="Unlimited Quiz Attempts" />
+                            <FeatureItem text="Quiz Attempt" />
                         </div>
 
-                        <Link to="/courses" className="w-full py-5 px-8 rounded-2xl bg-white border-2 border-slate-100 text-slate-900 font-black text-center hover:bg-slate-50 hover:border-slate-200 transition-all text-lg shadow-sm">
-                            Browse Courses
+                        <Link
+                            to="/courses"
+                            className="w-full py-5 px-8 rounded-2xl bg-white border-2 border-slate-100 text-slate-900 font-black text-center hover:bg-slate-50 hover:border-slate-200 transition-all text-lg shadow-sm"
+                            aria-label="Browse AI courses to buy individually"
+                        >
+                            Browse AI Courses
                         </Link>
                     </motion.div>
 
@@ -133,7 +179,7 @@ const Pricing = () => {
                                 <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg shadow-red-600/20">
                                     <FaBolt size={18} />
                                 </div>
-                                <h3 className="text-2xl font-black text-white uppercase tracking-tight">All Courses pack</h3>
+                                <h2 className="text-2xl font-black text-white uppercase tracking-tight">All Courses Pack</h2>
                             </div>
                         </div>
 
@@ -176,10 +222,10 @@ const Pricing = () => {
                         </div>
 
                         <div className="space-y-5 mb-12 flex-1">
-                            <FeatureItem text="Access to ALL our Courses" dark />
-                            <FeatureItem text="Course Completion Certificate" dark />
+                            <FeatureItem text="Access to ALL our AI Courses" dark />
+                            <FeatureItem text="AI Course Completion Certificate" dark />
                             <FeatureItem text="Priority Support" dark />
-                            <FeatureItem text="Unlimited Quiz Attempts" dark />
+                            <FeatureItem text="Quiz Attempt" dark />
                             <FeatureItem text="Future Course Updates (Free)" dark />
                         </div>
 
@@ -187,13 +233,12 @@ const Pricing = () => {
                             onClick={handleBundlePurchase}
                             disabled={isOwned}
                             className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}
+                            aria-label="Buy all AI courses — all-access bundle"
                         >
                             {isOwned ? 'ALREADY OWNED' : (bundlePricing?.isFreeUpgrade ? 'Unlock for FREE — Credits Applied' : 'Get All-Access Pass')}
                         </button>
                     </motion.div>
                 </div>
-
-
 
                 {/* FAQ Section */}
                 <div className="mt-32 max-w-4xl mx-auto relative z-10 px-4">
@@ -225,13 +270,12 @@ const Pricing = () => {
                         />
                         <FAQItem
                             question="Can I upgrade later?"
-                            answer="Yes, you can buy a single course first and then upgrade to the bundle later. We automatically discount the bundle based on what you already own!"
+                            answer="Yes, you can buy a single AI course first and then upgrade to the bundle later. We automatically discount the bundle based on what you already own!"
                         />
                         <FAQItem
                             question="Do you offer refunds?"
                             answer="No, we do not offer any refunds excluding special cases such as double payments."
                         />
-
                     </div>
                 </div>
             </div>
@@ -249,9 +293,7 @@ const FAQItem = ({ question, answer }) => (
         <h3 className="text-lg font-black text-slate-900 mb-3 tracking-tight group-hover:text-indigo-600 transition-colors">
             {question}
         </h3>
-        <p className="text-slate-500 font-medium leading-relaxed">
-            {answer}
-        </p>
+        <p className="text-slate-500 font-medium leading-relaxed">{answer}</p>
     </motion.div>
 );
 
@@ -260,7 +302,9 @@ const FeatureItem = ({ text, dark }) => (
         <div className={`w-3 h-3 rounded-full flex items-center justify-center flex-shrink-0 ${dark ? 'bg-red-500' : 'bg-red-100'}`}>
             <FaCheck size={8} className={dark ? 'text-white' : 'text-red-600'} />
         </div>
-        <span className={`font-bold transition-colors text-sm uppercase tracking-wide ${dark ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>{text}</span>
+        <span className={`font-bold transition-colors text-sm uppercase tracking-wide ${dark ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
+            {text}
+        </span>
     </div>
 );
 
