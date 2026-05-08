@@ -124,7 +124,7 @@ const Dashboard = () => {
                     >
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-3">User Dashboard</p>
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-                            hey,<span className="text-indigo-600">{user?.name || 'User'}</span>👋
+                            Hey,   <span className="text-indigo-600">{user?.name || 'User'}</span>👋
                         </h1>
                     </motion.div>
 

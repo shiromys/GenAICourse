@@ -35,8 +35,7 @@ import OAuthCallback from './pages/OAuthCallback';
 import Profile from './pages/Profile';
 import PaymentPage from './pages/PaymentPage';
 import PaymentSuccess from './pages/PaymentSuccess';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
+
 
 // Legal Page Imports
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -117,8 +116,7 @@ const AppContent = () => {
                         <Route path="/how-it-works" element={<PageContainer><HowItWorks /></PageContainer>} />
                         <Route path="/oauth-callback" element={<PageContainer><OAuthCallback /></PageContainer>} />
                         <Route path="/payment-success" element={<PageContainer><PaymentSuccess /></PageContainer>} />
-                        <Route path="/blog" element={<PageContainer><Blog /></PageContainer>} />
-                        <Route path="/blog/:slug" element={<PageContainer><BlogPost /></PageContainer>} />
+
 
                         {/* Legal Routes */}
                         <Route path="/privacy" element={<PageContainer><PrivacyPolicy /></PageContainer>} />

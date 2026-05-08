@@ -458,19 +458,19 @@ const AdminDashboard = () => {
                                                                     onClick={() => navigate(`/courses/${course._id || course.id}/learn?preview=true`)}
                                                                     icon={<FaEye />}
                                                                     color="blue"
-                                                                    title="Sync Preview"
+                                                                    title="Preview"
                                                                 />
                                                                 <AdminActionButton
                                                                     onClick={() => navigate(`/admin/courses/${course._id || course.id}/enrollments`)}
                                                                     icon={<FaUsers />}
                                                                     color="emerald"
-                                                                    title="View Nodes"
+                                                                    title="View Enrollements"
                                                                 />
                                                                 <AdminActionButton
                                                                     onClick={() => navigate(`/admin/courses/${course._id || course.id}/edit`)}
                                                                     icon={<FaEdit />}
                                                                     color="indigo"
-                                                                    title="Modify Matrix"
+                                                                    title="Modify Course"
                                                                 />
                                                                 <AdminActionButton
                                                                     onClick={() => handleDeleteCourse(course._id || course.id)}
