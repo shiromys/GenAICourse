@@ -357,8 +357,15 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
   const navigate = useNavigate();
   const [downloadingCert, setDownloadingCert] = useState(false);
   const isPassed = results.attempt?.passed ?? results.passed;
+  // Guests who pass get their course credit immediately, but the certificate
+  // itself is held back until they set a name/password (it prints their name).
+  const certificatePendingSetup = results.certificate?.pending && results.certificate?.reason === 'ACCOUNT_SETUP_REQUIRED';
 
   const handleDownloadCertificate = async () => {
+    if (certificatePendingSetup) {
+      navigate('/complete-account');
+      return;
+    }
     try {
       setDownloadingCert(true);
       let certificateId = results.certificate?.id || results.certificate?._id || results.certificate?.certificateId || results.certificateId;
@@ -406,7 +413,9 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
 
             <p className="text-xl text-gray-500 max-w-xl mx-auto font-medium leading-[1.6]">
               {isPassed
-                ? "You have achieved your certificate of completion, congratulations!"
+                ? (certificatePendingSetup
+                    ? "You've completed the course! Set up your account name and password to unlock your certificate."
+                    : "You have achieved your certificate of completion, congratulations!")
                 : "You didn't reach 50% this time. Please review the lessons and try the quiz again."
               }
             </p>
@@ -426,7 +435,9 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
                 disabled={downloadingCert}
                 className="btn-premium btn-primary !py-4 !px-12 text-lg"
               >
-                {downloadingCert ? 'Downloading Certificate...' : 'Generate Certificate'}
+                {certificatePendingSetup
+                  ? 'Set Up Account to Get Certificate'
+                  : (downloadingCert ? 'Downloading Certificate...' : 'Generate Certificate')}
                 <Award size={20} />
               </button>
             ) : (

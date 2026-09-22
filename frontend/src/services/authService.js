@@ -47,6 +47,18 @@ const authService = {
         return response.data;
     },
 
+    /**
+     * Converts a guest account (created during guest checkout) into a full
+     * account by setting a real name and password.
+     */
+    completeAccountSetup: async ({ name, password }) => {
+        const response = await api.put('/auth/complete-setup', { name, password });
+        if (response.data.success) {
+            localStorage.setItem('user', JSON.stringify(response.data.data));
+        }
+        return response.data;
+    },
+
     getStoredUser: () => {
         try {
             const user = localStorage.getItem('user');

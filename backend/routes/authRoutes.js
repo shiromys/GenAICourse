@@ -11,7 +11,8 @@ import {
     verifyEmail,
     logout,
     getAllUsers,
-    oauthSuccess
+    oauthSuccess,
+    completeAccountSetup
 } from '../controllers/authController.js';
 import { protect, authorize } from '../middleware/auth.js';
 import {
@@ -22,6 +23,7 @@ import {
     emailVerificationValidation,
     changePasswordValidation,
     profileUpdateValidation,
+    completeSetupValidation,
     validate
 } from '../middleware/validation.js';
 import { checkOauthConfig } from '../middleware/oauthCheck.js';
@@ -67,6 +69,7 @@ router.post('/resend-verification', resendVerification);
 router.get('/me', protect, getMe);
 router.put('/profile', protect, profileUpdateValidation, validate, updateProfile);
 router.put('/change-password', protect, changePasswordValidation, validate, changePassword);
+router.put('/complete-setup', protect, completeSetupValidation, validate, completeAccountSetup);
 router.post('/logout', protect, logout);
 
 // Admin routes

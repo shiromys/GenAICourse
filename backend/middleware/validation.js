@@ -90,6 +90,20 @@ export const resetPasswordValidation = [
         .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
 ];
 
+// Complete account setup validation (guest -> full account)
+export const completeSetupValidation = [
+    body('name')
+        .trim()
+        .notEmpty().withMessage('Name is required')
+        .isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters'),
+
+    body('password')
+        .notEmpty().withMessage('Password is required')
+        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number')
+];
+
 // Email verification validation
 export const emailVerificationValidation = [
     body('token')
@@ -126,5 +140,6 @@ export default {
     resetPasswordValidation,
     emailVerificationValidation,
     changePasswordValidation,
-    profileUpdateValidation
+    profileUpdateValidation,
+    completeSetupValidation
 };

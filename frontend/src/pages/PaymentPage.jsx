@@ -6,23 +6,28 @@ import paymentService from '../services/paymentService.js';
 import CheckoutForm from '../components/payment/CheckoutForm.jsx';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
 import { toast } from 'react-toastify';
 import { FaShieldAlt, FaRocket, FaChevronLeft, FaTag } from 'react-icons/fa';
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_sample');
 
+const EMAIL_RE = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
 const PaymentPage = () => {
     const { id } = useParams(); // courseId or 'all'
     const [searchParams] = useSearchParams();
     const purchaseType = searchParams.get('type') || 'single';
     const navigate = useNavigate();
+    const { isAuthenticated, handleOAuthSuccess } = useAuth();
 
     const [loading, setLoading] = useState(true);
     const [course, setCourse] = useState(null);
     const [bundlePricing, setBundlePricing] = useState(null);
     const [agreedToPolicy, setAgreedToPolicy] = useState(false);
     const [isInitiating, setIsInitiating] = useState(false);
+    const [guestEmail, setGuestEmail] = useState('');
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -53,9 +58,26 @@ const PaymentPage = () => {
             return;
         }
 
+        if (!isAuthenticated) {
+            if (!guestEmail.trim() || !EMAIL_RE.test(guestEmail.trim())) {
+                toast.warn('Please enter a valid email address to continue as a guest.');
+                return;
+            }
+        }
+
         try {
             setIsInitiating(true);
-            const response = await paymentService.createCheckoutSession(id, purchaseType);
+            const response = await paymentService.createCheckoutSession(
+                id,
+                purchaseType,
+                !isAuthenticated ? guestEmail.trim() : null
+            );
+
+            // A brand-new guest account was created for this checkout — log them
+            // in right away so they land on their course already signed in.
+            if (response.token) {
+                await handleOAuthSuccess(response.token);
+            }
 
             // Free upgrade: credit fully covers the bundle — no Stripe redirect
             if (response.success && response.freeUpgrade && response.redirectTo) {
@@ -71,6 +93,14 @@ const PaymentPage = () => {
             }
         } catch (error) {
             const serverMessage = error?.response?.data?.message;
+            const errorCode = error?.response?.data?.code;
+
+            if (errorCode === 'ACCOUNT_EXISTS') {
+                toast.info('An account already exists with that email — please log in to continue.');
+                navigate(`/login?redirect=${encodeURIComponent(`checkout/${id}?type=${purchaseType}`)}`);
+                return;
+            }
+
             const displayMsg = serverMessage || error.message || 'Payment initialization failed.';
             toast.error(`Error: ${displayMsg}`);
             console.error('Checkout Error:', error?.response?.data || error);
@@ -166,6 +196,32 @@ const PaymentPage = () => {
                             </div>
 
                             <div className="space-y-6 flex-1">
+                                {!isAuthenticated && (
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-semibold text-slate-700 ml-1">Email Address</label>
+                                        <input
+                                            type="email"
+                                            value={guestEmail}
+                                            onChange={(e) => setGuestEmail(e.target.value)}
+                                            className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-[15px] rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 block p-4 transition-all outline-none font-medium placeholder:text-slate-400"
+                                            placeholder="name@example.com"
+                                            required
+                                        />
+                                        <p className="text-xs text-slate-400 font-medium ml-1">
+                                            No account needed to pay — we'll send your receipt here and you can start the course right away.
+                                            Already have an account?{' '}
+                                            <button
+                                                type="button"
+                                                onClick={() => navigate(`/login?redirect=${encodeURIComponent(`checkout/${id}?type=${purchaseType}`)}`)}
+                                                className="font-bold text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                                            >
+                                                Log in
+                                            </button>{' '}
+                                            instead.
+                                        </p>
+                                    </div>
+                                )}
+
                                 <div className="p-6 rounded-3xl border border-dashed border-gray-200 bg-gray-50/30">
                                     <div className="flex items-start gap-3">
                                         <div className="pt-1">

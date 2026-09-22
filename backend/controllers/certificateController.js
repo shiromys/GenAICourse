@@ -49,6 +49,14 @@ export const generateCertificate = async (req, res, next) => {
             });
         }
 
+        if (user.isGuest) {
+            return res.status(403).json({
+                success: false,
+                message: 'Please finish setting up your account (name + password) before generating your certificate — it carries the name on your account.',
+                code: 'ACCOUNT_SETUP_REQUIRED'
+            });
+        }
+
         // Create certificate
         const certificate = await Certificate.create({
             userId,
@@ -239,6 +247,14 @@ export const downloadCertificate = async (req, res, next) => {
             return res.status(403).json({
                 success: false,
                 message: 'Not authorized to download this certificate'
+            });
+        }
+
+        if (req.user.isGuest) {
+            return res.status(403).json({
+                success: false,
+                message: 'Please finish setting up your account before downloading your certificate.',
+                code: 'ACCOUNT_SETUP_REQUIRED'
             });
         }
 

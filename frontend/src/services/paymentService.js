@@ -3,10 +3,18 @@ import api from './api';
 const paymentService = {
     /**
      * Creates a Stripe Hosted Checkout Session.
-     * Returns { success, url, sessionId } OR { success, freeUpgrade, redirectTo } for zero-cost upgrades.
+     * Pass `guestEmail` when the buyer isn't logged in — the backend creates a
+     * lightweight guest account behind the scenes and returns a `token` for it,
+     * which the caller should store (see AuthContext.handleOAuthSuccess) before
+     * redirecting to Stripe so the buyer comes back already signed in.
+     * Returns { success, url, sessionId, token? } OR { success, freeUpgrade, redirectTo, token? }
+     * for zero-cost upgrades. A guest email that already belongs to a real
+     * account comes back as a 409 with code 'ACCOUNT_EXISTS'.
      */
-    createCheckoutSession: async (courseId, purchaseType = 'single') => {
-        const response = await api.post('/payments/create-session', { courseId, purchaseType });
+    createCheckoutSession: async (courseId, purchaseType = 'single', guestEmail = null) => {
+        const payload = { courseId, purchaseType };
+        if (guestEmail) payload.email = guestEmail;
+        const response = await api.post('/payments/create-session', payload);
         return response.data;
     },
 

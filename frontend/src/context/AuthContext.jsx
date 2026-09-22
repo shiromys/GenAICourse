@@ -96,6 +96,16 @@ export const AuthProvider = ({ children }) => {
         return data.data;
     }, []);
 
+    // ── Complete account setup (guest -> full account) ────────────────────────
+    const completeAccountSetup = useCallback(async (setupData) => {
+        const data = await authService.completeAccountSetup(setupData);
+        if (data.success) {
+            setUser(data.data);
+            setIsAuthenticated(true);
+        }
+        return data;
+    }, []);
+
     // ── Update user locally (for profile edits etc.) ──────────────────────────
     const updateUser = useCallback((userData) => {
         setUser(userData);
@@ -139,6 +149,7 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         handleOAuthSuccess,
+        completeAccountSetup,
         updateUser,
         refreshUser,        // ← NEW: use after payment confirmation
         checkCourseAccess,

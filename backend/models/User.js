@@ -92,6 +92,11 @@ const UserSchema = new mongoose.Schema(
             averageScore: { type: Number, default: 0 }
         },
         stripe_customer_id: String,
+        // Guest checkout: created automatically when someone pays without registering first.
+        // Has a random unusable password until they complete account setup (name + real password),
+        // at which point isGuest flips to false. Certificates are withheld while isGuest is true,
+        // since the certificate carries the account's name.
+        isGuest: { type: Boolean, default: false },
         isVerified: { type: Boolean, default: false },
         verificationToken: String,
         resetPasswordToken: String,
@@ -145,6 +150,7 @@ UserSchema.methods.getPublicProfile = function () {
         enrolledCourses: this.enrolledCourses,
         hasAllCoursesAccess: this.hasAllCoursesAccess,
         stats: this.stats,
+        isGuest: this.isGuest,
         isVerified: this.isVerified,
         lastLogin: this.lastLogin,
         lastLoginAt: this.lastLoginAt,

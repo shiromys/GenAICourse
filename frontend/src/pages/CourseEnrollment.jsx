@@ -33,11 +33,14 @@ const CourseEnrollment = () => {
 
     const handleEnroll = async () => {
         if (!isAuthenticated) {
+            // Paid courses support guest checkout — go straight there.
+            // Free courses still need an account (no purchase to anchor a guest record to).
+            if (!course.isFree) {
+                navigate(`/checkout/${id}?type=single`);
+                return;
+            }
             toast.info('Please login to enroll');
-            // Send user to login, and tell login where to redirect back to.
-            // If the course is paid, redirect directly to checkout. If free, back here to auto-enroll.
-            const targetPath = course?.isFree ? `courses/${id}/enroll` : `checkout/${id}?type=single`;
-            navigate(`/login?redirect=${encodeURIComponent(targetPath)}`);
+            navigate(`/login?redirect=${encodeURIComponent(`courses/${id}/enroll`)}`);
             return;
         }
 

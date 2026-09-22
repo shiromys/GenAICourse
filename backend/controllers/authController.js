@@ -1,6 +1,8 @@
 import User from '../models/User.js';
+import UserProgress from '../models/UserProgress.js';
 import { generateToken } from '../middleware/auth.js';
 import { sendEmail } from '../services/emailService.js';
+import { issueCertificate } from '../services/certificateService.js';
 import { welcomeTemplate } from '../utils/email/templates/welcomeTemplate.js';
 import { loginAlertTemplate } from '../utils/email/templates/loginAlertTemplate.js';
 import { resetPasswordTemplate } from '../utils/email/templates/resetPasswordTemplate.js';
@@ -533,6 +535,78 @@ export const resendVerification = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Complete account setup for a guest account created during checkout —
+ *          sets a real name and password, converting it into a fully login-capable
+ *          account. Certificates are withheld until this runs (see certificateController).
+ * @route   PUT /api/auth/complete-setup
+ * @access  Private (the guest is already logged in via the token issued at checkout)
+ */
+export const completeAccountSetup = async (req, res, next) => {
+    try {
+        const { name, password } = req.body;
+
+        const user = await User.findById(req.user._id).select('+password');
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        if (!user.isGuest) {
+            return res.status(400).json({ success: false, message: 'Your account setup is already complete.' });
+        }
+
+        user.name = name;
+        user.password = password; // hashed by the pre-save hook
+        user.isGuest = false;
+        user.isVerified = true;
+        await user.save();
+
+        // Retroactively issue certificates for any course they finished while
+        // still a guest (course completion isn't blocked, only the certificate
+        // itself was, since it carries the account's name).
+        let certificatesIssued = 0;
+        try {
+            const pendingProgress = await UserProgress.find({
+                userId: user._id,
+                completedAt: { $ne: null },
+                certificate: null,
+            });
+
+            for (const progress of pendingProgress) {
+                const lastQuiz = progress.completedQuizzes?.[progress.completedQuizzes.length - 1];
+                const score = lastQuiz?.score ?? 0;
+                const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C+' : score >= 60 ? 'C' : 'Pass';
+
+                const certificate = await issueCertificate({
+                    userId: user._id,
+                    courseId: progress.courseId,
+                    score,
+                    grade,
+                });
+                if (certificate) {
+                    progress.certificate = certificate._id;
+                    await progress.save();
+                    certificatesIssued += 1;
+                }
+            }
+        } catch (certError) {
+            // Never fail account setup over a certificate hiccup — log and move on.
+            console.error('❌ Retroactive certificate issuance failed:', certError.message);
+        }
+
+        res.status(200).json({
+            success: true,
+            message: certificatesIssued > 0
+                ? `Account setup complete — ${certificatesIssued} certificate${certificatesIssued > 1 ? 's' : ''} now ready to download.`
+                : 'Account setup complete — you can now log in with your password from anywhere.',
+            certificatesIssued,
+            data: user.getPublicProfile()
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     register,
     login,
@@ -545,5 +619,6 @@ export default {
     verifyEmail,
     logout,
     getAllUsers,
-    oauthSuccess
+    oauthSuccess,
+    completeAccountSetup
 };

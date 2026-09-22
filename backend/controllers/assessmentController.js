@@ -4,10 +4,8 @@ import UserProgress from '../models/UserProgress.js';
 import Course from '../models/Course.js';
 import Certificate from '../models/Certificate.js';
 import User from '../models/User.js';
-import { generateCertificatePDF } from '../services/certificateService.js';
+import { issueCertificate } from '../services/certificateService.js';
 import asyncHandler from 'express-async-handler';
-import { sendEmail } from '../services/emailService.js';
-import { certificateTemplate } from '../utils/email/templates/certificateTemplate.js';
 
 // @desc    Get assessment details for a course (for taking the quiz)
 // @route   GET /api/assessments/:courseId/quiz
@@ -211,6 +209,9 @@ export const takeAssessment = asyncHandler(async (req, res) => {
   // Update user progress
   userProgress.completeQuiz(quiz._id, attempt._id, percentageScore, passed);
 
+  let certificateIssued = null;
+  let certificatePendingSetup = false;
+
   if (passed) {
     let certificate = await Certificate.findOne({ userId, courseId });
 
@@ -223,7 +224,14 @@ export const takeAssessment = asyncHandler(async (req, res) => {
       await certificate.save();
     }
 
-    userProgress.certificate = certificate._id;
+    if (certificate) {
+      userProgress.certificate = certificate._id;
+      certificateIssued = certificate;
+    } else {
+      // Guest account — course is completed, but the certificate is withheld
+      // until they finish account setup.
+      certificatePendingSetup = true;
+    }
     userProgress.completedAt = new Date();
   }
 
@@ -247,7 +255,9 @@ export const takeAssessment = asyncHandler(async (req, res) => {
 
   res.json({
     success: true,
-    message: passed ? 'Congratulations! You passed the assessment.' : 'You did not pass. Please try again.',
+    message: certificatePendingSetup
+      ? 'Congratulations! You passed the assessment. Complete your account setup to receive your certificate.'
+      : (passed ? 'Congratulations! You passed the assessment.' : 'You did not pass. Please try again.'),
     attempt: {
       id: attempt._id,
       score,
@@ -260,10 +270,10 @@ export const takeAssessment = asyncHandler(async (req, res) => {
       timeSpent,
       createdAt: attempt.createdAt
     },
-    certificate: passed ? {
-      id: userProgress.certificate,
-      downloadUrl: `/api/certificates/${userProgress.certificate}/download`
-    } : null,
+    certificate: certificateIssued ? {
+      id: certificateIssued._id,
+      downloadUrl: `/api/certificates/${certificateIssued._id}/download`
+    } : (certificatePendingSetup ? { pending: true, reason: 'ACCOUNT_SETUP_REQUIRED' } : null),
     nextAttemptAvailable: previousAttempts.length < quiz.maxAttempts - 1,
     attemptsRemaining: quiz.maxAttempts - (previousAttempts.length + 1)
   });
@@ -348,55 +358,13 @@ function getGrade(score) {
 }
 
 // Helper function to generate certificate
+// Returns null (no certificate issued yet) for guest accounts — the certificate
+// carries the account's name, and a guest account doesn't have a real one set
+// until they complete account setup. The course is still marked completed;
+// the certificate is generated retroactively once they set up their account
+// (see completeAccountSetup in authController.js).
 async function generateCertificate(userId, courseId, score, grade) {
-  const user = await User.findById(userId).select('name email');
-  const course = await Course.findById(courseId)
-    .select('title description createdBy modules')
-    .populate('createdBy', 'name');
-
-  const totalModules = course.modules?.length ?? 0;
-  const certificateData = {
-    userId,
-    courseId,
-    userName: user.name,
-    userEmail: user.email,
-    courseTitle: course.title,
-    courseDescription: course.description,
-    instructorName: course.createdBy?.name || 'Course Instructor',
-    score,
-    grade,
-    completionDate: new Date(),
-    certificateId: `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-    totalTimeSpent: 0,
-    modulesCompleted: totalModules,
-    totalModules
-  };
-
-  const certificate = await Certificate.create(certificateData);
-  const pdfBuffer = await generateCertificatePDF(certificateData);
-  certificate.certificateUrl = `/api/certificates/${certificate._id}/download`;
-  await certificate.save();
-
-  // 🔥 SEND CERTIFICATE EMAIL (With PDF Attachment)
-  try {
-    // Dynmically generate a professional filename
-    const filename = `Certificate_${course.title.replace(/\s+/g, '_')}_${user.name.replace(/\s+/g, '_')}.pdf`;
-
-    await sendEmail(
-      user.email,
-      `Course Certified: ${course.title} 🏆`,
-      certificateTemplate(user.name, course.title),
-      [{
-        filename: filename,
-        content: pdfBuffer,
-        contentType: 'application/pdf'
-      }]
-    );
-  } catch (emailError) {
-    console.error('❌ Failed to send certificate email:', emailError.message);
-  }
-
-  return certificate;
+  return issueCertificate({ userId, courseId, score, grade });
 }
 
 export default {

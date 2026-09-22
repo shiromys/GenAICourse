@@ -4,7 +4,9 @@ import Course from '../models/Course.js';
 import Payment from '../models/Payment.js';
 import UserProgress from '../models/UserProgress.js';
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 import { sendEmail } from '../services/emailService.js';
+import { generateToken } from '../middleware/auth.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -125,15 +127,70 @@ const grantAllAccess = async (userId, user) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SHARED HELPER: Guest checkout — find-or-create a lightweight account by email
+// so an unauthenticated buyer can pay without registering first. Throws a
+// tagged error if the email already belongs to a real (non-guest) account,
+// so we never silently attach a purchase to someone else's account.
+// ─────────────────────────────────────────────────────────────────────────────
+class GuestAccountConflictError extends Error {
+    constructor(message) {
+        super(message);
+        this.code = 'ACCOUNT_EXISTS';
+    }
+}
+
+const findOrCreateGuestUser = async (rawEmail) => {
+    const email = (rawEmail || '').trim().toLowerCase();
+    if (!email || !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        const err = new Error('A valid email address is required to check out as a guest.');
+        err.code = 'INVALID_EMAIL';
+        throw err;
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+        if (!existing.isGuest) {
+            throw new GuestAccountConflictError(
+                'An account already exists with this email. Please log in to continue your purchase.'
+            );
+        }
+        return existing; // Reuse the same unclaimed guest account for repeat guest purchases
+    }
+
+    return User.create({
+        name: 'Guest',
+        email,
+        password: crypto.randomBytes(24).toString('hex'), // random, unusable until account setup
+        isGuest: true,
+        isVerified: false,
+    });
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CONTROLLER 1 — Create Stripe Checkout Session (with upgrade-credit logic)
 // POST /api/payments/create-session
+// Works for both logged-in users (req.user set by optionalAuth) and guests
+// (email supplied in the body) — a brand-new guest account is issued a JWT
+// in the response so the frontend can log them straight in before the
+// Stripe redirect.
 // ─────────────────────────────────────────────────────────────────────────────
 export const createCheckoutSession = async (req, res, next) => {
     try {
-        const { courseId, purchaseType } = req.body;
+        const { courseId, purchaseType, email } = req.body;
 
         if (!purchaseType) {
             return res.status(400).json({ success: false, message: 'purchaseType is required' });
+        }
+
+        let guestToken = null;
+        if (!req.user) {
+            try {
+                req.user = await findOrCreateGuestUser(email);
+                guestToken = generateToken(req.user._id);
+            } catch (err) {
+                const status = err.code === 'ACCOUNT_EXISTS' ? 409 : 400;
+                return res.status(status).json({ success: false, message: err.message, code: err.code });
+            }
         }
 
         const userId = req.user._id.toString();
@@ -196,6 +253,7 @@ export const createCheckoutSession = async (req, res, next) => {
                     freeUpgrade: true,
                     message: 'All-Access granted via credit! Redirecting to dashboard.',
                     redirectTo: `${frontendUrl}/dashboard?payment=success`,
+                    token: guestToken || undefined,
                 });
             }
 
@@ -248,6 +306,7 @@ export const createCheckoutSession = async (req, res, next) => {
             success: true,
             url: session.url,
             sessionId: session.id,
+            token: guestToken || undefined,
         });
     } catch (error) {
         console.error('createCheckoutSession error:', error.message);

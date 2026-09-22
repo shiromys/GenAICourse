@@ -4,7 +4,7 @@ import courseService from '@/services/courseService.js';
 import paymentService from '@/services/paymentService.js';
 import Loader from '../components/common/Loader.jsx';
 import { Link, useSearchParams } from 'react-router-dom';
-import { FaGraduationCap, FaTrophy, FaPlay, FaBookOpen, FaRotateLeft, FaCircleCheck, FaTriangleExclamation } from 'react-icons/fa6';
+import { FaGraduationCap, FaTrophy, FaPlay, FaBookOpen, FaRotateLeft, FaCircleCheck, FaTriangleExclamation, FaUserPlus, FaXmark } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
@@ -17,6 +17,7 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [recovering, setRecovering] = useState(false);
     const [recoveryResult, setRecoveryResult] = useState(null); // { recovered, items }
+    const [guestBannerDismissed, setGuestBannerDismissed] = useState(false);
 
     // ── On mount: detect payment=success in URL and refresh user ──────────────
     useEffect(() => {
@@ -146,6 +147,42 @@ const Dashboard = () => {
                         </Link>
                     </motion.div>
                 </div>
+
+                {/* ── GUEST ACCOUNT SETUP BANNER ──────────────────────────────── */}
+                <AnimatePresence>
+                    {user?.isGuest && !guestBannerDismissed && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="mb-12 rounded-[2rem] bg-blue-50 border border-blue-100 p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-blue-500/5 relative"
+                        >
+                            <button
+                                onClick={() => setGuestBannerDismissed(true)}
+                                className="absolute top-5 right-5 text-blue-400 hover:text-blue-600 transition-colors"
+                                aria-label="Dismiss"
+                            >
+                                <FaXmark size={16} />
+                            </button>
+                            <div className="w-20 h-20 rounded-3xl bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+                                <FaUserPlus size={32} />
+                            </div>
+                            <div className="flex-1 text-center md:text-left">
+                                <h3 className="text-xl font-black text-blue-900 mb-2">Save your account</h3>
+                                <p className="text-blue-700/80 font-medium leading-relaxed max-w-2xl">
+                                    You checked out as a guest. Set a name and password so you can log back in from any device —
+                                    it's also required before you can download a course certificate.
+                                </p>
+                            </div>
+                            <Link
+                                to="/complete-account"
+                                className="px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black shadow-lg shadow-blue-500/20 transition-all active:scale-95 whitespace-nowrap"
+                            >
+                                Set Up Account
+                            </Link>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* ── RECOVERY BANNER ─────────────────────────────────────────── */}
                 <AnimatePresence>

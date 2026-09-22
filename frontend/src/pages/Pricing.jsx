@@ -66,7 +66,9 @@ const Pricing = () => {
 
     const handleBundlePurchase = async () => {
         if (!isAuthenticated) {
-            navigate('/register?redirect=checkout/all&type=all');
+            // Guest checkout handles this — enter email on the checkout page, no
+            // registration required up front.
+            navigate('/checkout/all?type=all');
             return;
         }
 
@@ -232,7 +234,7 @@ const Pricing = () => {
                         <button
                             onClick={handleBundlePurchase}
                             disabled={isOwned}
-                            className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
+                            className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(37,99,235,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
                             aria-label="Buy all AI courses — all-access bundle"
                         >
                             {isOwned ? 'ALREADY OWNED' : (bundlePricing?.isFreeUpgrade ? 'Unlock for FREE — Credits Applied' : 'Get All-Access Pass')}

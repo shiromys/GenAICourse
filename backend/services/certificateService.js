@@ -2,6 +2,11 @@ import PDFDocument from 'pdfkit';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { promises as fs } from 'fs';
+import Certificate from '../models/Certificate.js';
+import Course from '../models/Course.js';
+import User from '../models/User.js';
+import { sendEmail } from './emailService.js';
+import { certificateTemplate } from '../utils/email/templates/certificateTemplate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -260,3 +265,58 @@ export function generateCertificateHTML(data) {
 </html>
   `;
 }
+
+/**
+ * @desc Create a Certificate document, generate its PDF, and email it to the
+ *       user. Shared by the assessment-completion flow (issues immediately)
+ *       and account setup (issues retroactively for a course a guest already
+ *       completed, once they've set a real name). Returns null for a guest
+ *       account — the certificate carries the account's name, so it can't be
+ *       issued until that's real.
+ */
+export const issueCertificate = async ({ userId, courseId, score, grade }) => {
+    const user = await User.findById(userId).select('name email isGuest');
+    if (!user || user.isGuest) return null;
+
+    const course = await Course.findById(courseId)
+        .select('title description createdBy modules')
+        .populate('createdBy', 'name');
+    if (!course) return null;
+
+    const totalModules = course.modules?.length ?? 0;
+    const certificateData = {
+        userId,
+        courseId,
+        userName: user.name,
+        userEmail: user.email,
+        courseTitle: course.title,
+        courseDescription: course.description,
+        instructorName: course.createdBy?.name || 'Course Instructor',
+        score,
+        grade,
+        completionDate: new Date(),
+        certificateId: `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        totalTimeSpent: 0,
+        modulesCompleted: totalModules,
+        totalModules,
+    };
+
+    const certificate = await Certificate.create(certificateData);
+    const pdfBuffer = await generateCertificatePDF(certificateData);
+    certificate.certificateUrl = `/api/certificates/${certificate._id}/download`;
+    await certificate.save();
+
+    try {
+        const filename = `Certificate_${course.title.replace(/\s+/g, '_')}_${user.name.replace(/\s+/g, '_')}.pdf`;
+        await sendEmail(
+            user.email,
+            `Course Certified: ${course.title} 🏆`,
+            certificateTemplate(user.name, course.title),
+            [{ filename, content: pdfBuffer, contentType: 'application/pdf' }]
+        );
+    } catch (emailError) {
+        console.error('❌ Failed to send certificate email:', emailError.message);
+    }
+
+    return certificate;
+};

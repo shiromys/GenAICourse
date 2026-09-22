@@ -60,6 +60,38 @@ export const protect = async (req, res, next) => {
 };
 
 /**
+ * Optional Authentication Middleware
+ * Same JWT check as `protect`, but never blocks the request when no/invalid
+ * token is present — it just proceeds with req.user left unset (undefined).
+ * Used on routes that must work for both logged-in users AND guests
+ * (e.g. checkout), where the controller decides what to do in each case.
+ */
+export const optionalAuth = async (req, res, next) => {
+    try {
+        let token;
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+
+        if (!token) return next();
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            if (decoded && decoded.id) {
+                req.user = await User.findById(decoded.id).select('-password');
+            }
+        } catch (error) {
+            // Invalid/expired token on an optional route — treat as a guest
+            // rather than rejecting the request.
+        }
+
+        next();
+    } catch (error) {
+        next();
+    }
+};
+
+/**
  * Role-based Authorization Middleware
  * Restricts access based on user roles
  */

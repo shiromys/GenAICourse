@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaLock, FaCog, FaCamera, FaSave, FaSignOutAlt, FaBook, FaHistory, FaBell, FaCertificate, FaFileInvoiceDollar, FaDownload, FaBolt, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -12,6 +13,7 @@ import SEOHelmet from '../components/common/SEOHelmet';
 
 const Profile = () => {
     const { user, updateUser, logout } = useAuth();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('profile');
     const [isLoading, setIsLoading] = useState(false);
     const [payments, setPayments] = useState([]);
@@ -76,6 +78,13 @@ const Profile = () => {
     };
 
     const handleDownloadCertificate = async (id) => {
+        // Defensive guard: guests shouldn't have certificates listed at all
+        // (issuance is deferred until account setup), but guard here too.
+        if (user?.isGuest) {
+            toast.info('Please set up your account name and password before downloading your certificate.');
+            navigate('/complete-account');
+            return;
+        }
         try {
             await certificateService.downloadCertificate(id);
             toast.success('Certificate downloaded successfully');

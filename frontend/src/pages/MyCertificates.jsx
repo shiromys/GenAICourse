@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Search, Download, Eye, Calendar, Award, Filter, Grid, List } from 'lucide-react';
 import certificateService from '../../services/certificateService';
 import CertificateViewer from './CertificateViewer';
+import { useAuth } from '@/context/AuthContext.jsx';
 
 const MyCertificates = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,10 +34,19 @@ const MyCertificates = () => {
   };
 
   const handleDownload = async (certificateId) => {
+    // Guests must finish setting up a real account (name + password) before
+    // downloading a certificate, since the certificate carries their name.
+    if (user?.isGuest) {
+      toast.info('Please set up your account name and password before downloading your certificate.');
+      navigate('/complete-account');
+      return;
+    }
+
     try {
       await certificateService.downloadCertificate(certificateId);
     } catch (error) {
       console.error('Failed to download certificate:', error);
+      toast.error(error.message || 'Failed to download certificate');
     }
   };
 

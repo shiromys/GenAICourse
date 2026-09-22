@@ -37,12 +37,13 @@ const CourseCard = ({ course }) => {
     const handleActionClick = (e) => {
         if (!hasAccess) {
             e.preventDefault();
-            // Route to checkout
-            if (!isAuthenticated) {
-                navigate(`/register?redirect=checkout/${courseId}&type=single`);
-            } else {
-                navigate(`/checkout/${courseId}?type=single`);
+            // Checkout supports guest checkout for paid courses — go straight there
+            // whether logged in or not. Free courses still need an account.
+            if (!isAuthenticated && course?.isFree) {
+                navigate(`/login?redirect=${encodeURIComponent(`courses/${courseId}/enroll`)}`);
+                return;
             }
+            navigate(`/checkout/${courseId}?type=single`);
         }
         // If has access, Link handles the navigation to /courses/:id
     };

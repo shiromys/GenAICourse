@@ -33,6 +33,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import OAuthCallback from './pages/OAuthCallback';
 import Profile from './pages/Profile';
+import CompleteAccount from './pages/CompleteAccount';
 import PaymentPage from './pages/PaymentPage';
 import PaymentSuccess from './pages/PaymentSuccess';
 
@@ -116,6 +117,8 @@ const AppContent = () => {
                         <Route path="/how-it-works" element={<PageContainer><HowItWorks /></PageContainer>} />
                         <Route path="/oauth-callback" element={<PageContainer><OAuthCallback /></PageContainer>} />
                         <Route path="/payment-success" element={<PageContainer><PaymentSuccess /></PageContainer>} />
+                        {/* Guest checkout: works logged-out (guest enters email) or logged-in */}
+                        <Route path="/checkout/:id" element={<PageContainer><PaymentPage /></PageContainer>} />
 
 
                         {/* Legal Routes */}
@@ -128,7 +131,7 @@ const AppContent = () => {
                         <Route element={<PrivateRoute />}>
                             <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />
                             <Route path="/profile" element={<PageContainer><Profile /></PageContainer>} />
-                            <Route path="/checkout/:id" element={<PageContainer><PaymentPage /></PageContainer>} />
+                            <Route path="/complete-account" element={<PageContainer><CompleteAccount /></PageContainer>} />
                         </Route>
 
                         {/* Admin Routes */}
