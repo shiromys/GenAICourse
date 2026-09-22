@@ -82,12 +82,12 @@ const PaymentPage = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-red-50 selection:text-red-600">
+        <div className="min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-blue-50 selection:text-blue-600">
             <div className="container max-w-5xl mx-auto px-4">
 
                 <button
                     onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest mb-10 hover:text-red-600 transition-colors group"
+                    className="flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest mb-10 hover:text-blue-600 transition-colors group"
                 >
                     <FaChevronLeft className="group-hover:-translate-x-1 transition-transform" />
                     Back to Terminal
@@ -98,7 +98,7 @@ const PaymentPage = () => {
                     {/* Left Side: Info */}
                     <div className="space-y-8">
                         <div>
-                            <span className="px-4 py-1.5 bg-red-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-900/20">
+                            <span className="px-4 py-1.5 bg-blue-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-900/20">
                                 Secure Upgrade
                             </span>
                             <h1 className="text-4xl lg:text-6xl font-black text-slate-900 mt-6 leading-tight tracking-tight">
@@ -115,7 +115,7 @@ const PaymentPage = () => {
                                 { icon: <FaShieldAlt />, text: 'Payment processed via Stripe' },
                             ].map((item, idx) => (
                                 <div key={idx} className="flex items-center gap-4 p-5 rounded-3xl bg-white border border-gray-100 shadow-sm">
-                                    <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-red-600 text-xl">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 text-xl">
                                         {item.icon}
                                     </div>
                                     <span className="text-base font-bold text-slate-700">{item.text}</span>
@@ -133,10 +133,10 @@ const PaymentPage = () => {
                     {/* Right Side: Summary & Actions */}
                     <div className="space-y-6">
                         <div className="bg-white rounded-[2.5rem] p-8 lg:p-10 shadow-2xl shadow-slate-200/40 border border-gray-50 flex flex-col">
-                            <div className="mb-8 p-6 bg-red-50/50 rounded-3xl border border-red-100">
+                            <div className="mb-8 p-6 bg-blue-50/50 rounded-3xl border border-blue-100">
                                 <div className="flex justify-between items-center mb-4">
                                     <span className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Your Selection</span>
-                                    <FaShieldAlt className="text-red-600" />
+                                    <FaShieldAlt className="text-blue-600" />
                                 </div>
                                 <div className="flex justify-between items-end">
                                     <div>
@@ -147,10 +147,10 @@ const PaymentPage = () => {
                                         {purchaseType === 'all' && bundlePricing && bundlePricing.creditApplied > 0 ? (
                                             <>
                                                 <div className="text-base font-bold text-slate-400 line-through">${(bundlePricing.bundlePrice / 100).toFixed(0)}</div>
-                                                <span className="text-3xl font-black text-red-600">${(bundlePricing.finalAmount / 100).toFixed(2)}</span>
+                                                <span className="text-3xl font-black text-blue-600">${(bundlePricing.finalAmount / 100).toFixed(2)}</span>
                                             </>
                                         ) : (
-                                            <span className="text-3xl font-black text-red-600">${purchaseType === 'all' ? 159 : (course?.price || 29)}</span>
+                                            <span className="text-3xl font-black text-blue-600">${purchaseType === 'all' ? 159 : (course?.price || 29)}</span>
                                         )}
                                         <p className="text-[10px] text-slate-400 font-bold">USD</p>
                                     </div>
@@ -174,11 +174,11 @@ const PaymentPage = () => {
                                                 id="refund-policy"
                                                 checked={agreedToPolicy}
                                                 onChange={(e) => setAgreedToPolicy(e.target.checked)}
-                                                className="w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                                                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                             />
                                         </div>
                                         <label htmlFor="refund-policy" className="text-sm text-slate-600 font-medium cursor-pointer select-none leading-relaxed">
-                                            I understand that this digital purchase is <span className="font-black text-red-600">non-refundable</span>. I agree to the terms and wish to proceed with the activation.
+                                            I understand that this digital purchase is <span className="font-black text-blue-600">non-refundable</span>. I agree to the terms and wish to proceed with the activation.
                                         </label>
                                     </div>
                                 </div>
@@ -186,7 +186,7 @@ const PaymentPage = () => {
                                 <button
                                     onClick={handlePaymentAction}
                                     disabled={isInitiating}
-                                    className={`w-full btn-premium btn-primary !rounded-[2rem] !py-6 !text-lg !font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-red-500/20 ${isInitiating ? 'opacity-70' : ''}`}
+                                    className={`w-full btn-premium btn-primary !rounded-[2rem] !py-6 !text-lg !font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-blue-500/20 ${isInitiating ? 'opacity-70' : ''}`}
                                 >
                                     {isInitiating ? (
                                         <>

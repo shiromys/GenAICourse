@@ -44,7 +44,7 @@ const ForgotPassword = () => {
                 {!isSubmitted ? (
                     <>
                         <div className="text-center mb-8">
-                            <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <FaMailBulk size={32} />
                             </div>
                             <h2 className="text-3xl font-bold text-slate-900">Forgot Password?</h2>
@@ -57,7 +57,7 @@ const ForgotPassword = () => {
                                 <input
                                     type="email"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
                                     placeholder="name@example.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -76,7 +76,7 @@ const ForgotPassword = () => {
                                 )}
                             </button>
 
-                            <Link to="/login" className="flex items-center justify-center text-indigo-600 font-semibold hover:text-indigo-700 transition-colors">
+                            <Link to="/login" className="flex items-center justify-center text-blue-600 font-semibold hover:text-blue-700 transition-colors">
                                 <FaArrowLeft className="mr-2" size={12} />
                                 Back to Login
                             </Link>
@@ -94,7 +94,7 @@ const ForgotPassword = () => {
                         <div className="space-y-4">
                             <button
                                 onClick={handleSubmit}
-                                className="text-indigo-600 font-semibold hover:underline"
+                                className="text-blue-600 font-semibold hover:underline"
                                 disabled={isLoading}
                             >
                                 {isLoading ? 'Sending...' : "Didn't receive the email? Resend link"}

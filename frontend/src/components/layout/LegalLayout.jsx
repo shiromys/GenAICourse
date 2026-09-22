@@ -12,7 +12,7 @@ const LegalLayout = ({ title, lastUpdated, icon: Icon, children }) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
                 >
-                    <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-indigo-50">
+                    <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-blue-50">
                         <Icon size={36} />
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-brand tracking-tighter uppercase mb-4">
@@ -44,7 +44,7 @@ const LegalLayout = ({ title, lastUpdated, icon: Icon, children }) => {
                 <div className="mt-12 text-center">
                     <p className="text-slate-400 text-sm">
                         Questions regarding these protocols? 
-                        <a href="mailto:info@genaicourse.io" className="text-indigo-600 ml-1 hover:underline font-bold">
+                        <a href="mailto:info@genaicourse.io" className="text-blue-600 ml-1 hover:underline font-bold">
                             Contact Legal Support
                         </a>
                     </p>

@@ -152,7 +152,7 @@ const Profile = () => {
     ];
 
     return (
-        <div className="relative min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-indigo-50 selection:text-indigo-600 overflow-hidden">
+        <div className="relative min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-blue-50 selection:text-blue-600 overflow-hidden">
             {/* ── SEO META ─────────────────────────────────────────── */}
             <SEOHelmet
                 title="My Profile | GenAI Course"
@@ -163,9 +163,9 @@ const Profile = () => {
 
             {/* Background Blobs */}
             <div className="absolute top-0 left-0 w-full h-[1000px] pointer-events-none z-0">
-                <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-indigo-200/30 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute top-[40%] right-[10%] w-[500px] h-[500px] bg-violet-200/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '2s' }} />
-                <div className="absolute bottom-[10%] left-[20%] w-[350px] h-[350px] bg-pink-100/30 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '4s' }} />
+                <div className="absolute top-[10%] left-[5%] w-[400px] h-[400px] bg-blue-200/30 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute top-[40%] right-[10%] w-[500px] h-[500px] bg-blue-200/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '2s' }} />
+                <div className="absolute bottom-[10%] left-[20%] w-[350px] h-[350px] bg-blue-100/30 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '4s' }} />
             </div>
 
             <div className="container relative z-10 max-w-6xl mx-auto px-4">
@@ -175,14 +175,14 @@ const Profile = () => {
                     <div className="w-full lg:w-80 flex-shrink-0">
                         <div className="glass-card bg-white/95 backdrop-blur-2xl rounded-[2.5rem] border border-white shadow-[0_32px_64px_-15px_rgba(0,0,0,0.08)] overflow-hidden sticky top-32">
                             {/* Avatar Section */}
-                            <div className="p-8 text-center bg-gradient-to-b from-indigo-50/50 to-white border-b border-gray-50">
+                            <div className="p-8 text-center bg-gradient-to-b from-blue-50/50 to-white border-b border-gray-50">
                                 <div className="relative inline-block group mb-4">
-                                    <div className="w-32 h-32 rounded-3xl bg-red-100 flex items-center justify-center text-red-600 text-4xl font-black border-4 border-white shadow-2xl transition-transform duration-500 group-hover:scale-105">
+                                    <div className="w-32 h-32 rounded-3xl bg-blue-100 flex items-center justify-center text-blue-600 text-4xl font-black border-4 border-white shadow-2xl transition-transform duration-500 group-hover:scale-105">
                                         {user?.name?.[0].toUpperCase()}
                                     </div>
                                 </div>
                                 <h2 className="text-xl font-black text-slate-900 mb-1">{user?.name}</h2>
-                                <p className="text-xs font-bold text-indigo-600 uppercase tracking-[0.2em]">{user?.role || 'User'}</p>
+                                <p className="text-xs font-bold text-blue-600 uppercase tracking-[0.2em]">{user?.role || 'User'}</p>
                             </div>
 
                             {/* Navigation List */}
@@ -192,18 +192,18 @@ const Profile = () => {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm transition-all duration-300 relative group ${activeTab === tab.id
-                                            ? 'bg-indigo-50/80 text-indigo-600 shadow-sm'
+                                            ? 'bg-blue-50/80 text-blue-600 shadow-sm'
                                             : 'text-slate-500 hover:bg-gray-50'
                                             }`}
                                     >
                                         {activeTab === tab.id && (
                                             <motion.div
                                                 layoutId="activeTabIndicator"
-                                                className="absolute left-2 w-1.5 h-6 bg-indigo-600 rounded-full"
+                                                className="absolute left-2 w-1.5 h-6 bg-blue-600 rounded-full"
                                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                             />
                                         )}
-                                        <span className={`transition-colors duration-300 ${activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'}`}>
+                                        <span className={`transition-colors duration-300 ${activeTab === tab.id ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`}>
                                             {tab.icon}
                                         </span>
                                         {tab.label}
@@ -214,7 +214,7 @@ const Profile = () => {
 
                                 <button
                                     onClick={logout}
-                                    className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-gray-400 hover:text-indigo-600 hover:bg-indigo-50/50 transition-all"
+                                    className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-gray-400 hover:text-blue-600 hover:bg-blue-50/50 transition-all"
                                 >
                                     <FaSignOutAlt />
                                     Sign Out
@@ -243,24 +243,24 @@ const Profile = () => {
                                         <form onSubmit={handleProfileUpdate} className="space-y-8">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                                 <div className="space-y-2 group">
-                                                    <label className="text-[11px] font-black text-indigo-600/70 group-focus-within:text-indigo-600 uppercase tracking-[0.2em] ml-1 transition-colors">Full Identity</label>
+                                                    <label className="text-[11px] font-black text-blue-600/70 group-focus-within:text-blue-600 uppercase tracking-[0.2em] ml-1 transition-colors">Full Identity</label>
                                                     <input
                                                         type="text"
                                                         value={profileData.name}
                                                         onChange={e => setProfileData({ ...profileData, name: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
+                                                        className="w-full px-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 outline-none transition-all shadow-inner"
                                                         placeholder="Your Full Name"
                                                     />
                                                 </div>
                                             </div>
 
                                             <div className="space-y-2 group">
-                                                <label className="text-[11px] font-black text-indigo-600/70 group-focus-within:text-indigo-600 uppercase tracking-[0.2em] ml-1 transition-colors">Bio Protocol</label>
+                                                <label className="text-[11px] font-black text-blue-600/70 group-focus-within:text-blue-600 uppercase tracking-[0.2em] ml-1 transition-colors">Bio Protocol</label>
                                                 <textarea
                                                     rows="4"
                                                     value={profileData.bio}
                                                     onChange={e => setProfileData({ ...profileData, bio: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner resize-none"
+                                                    className="w-full px-6 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 outline-none transition-all shadow-inner resize-none"
                                                     placeholder="Tell us about yourself..."
                                                 ></textarea>
                                             </div>
@@ -292,14 +292,14 @@ const Profile = () => {
 
                                         <form onSubmit={handlePasswordChange} className="space-y-8 max-w-xl">
                                             <div className="space-y-2">
-                                                <label className="text-[11px] font-black text-indigo-600 uppercase tracking-widest ml-1">New Password</label>
+                                                <label className="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">New Password</label>
                                                 <div className="relative">
                                                     <input
                                                         type={showNewPassword ? "text" : "password"}
                                                         required
                                                         value={passwordData.newPassword}
                                                         onChange={e => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
+                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 outline-none transition-all shadow-inner"
                                                     />
                                                     <button
                                                         type="button"
@@ -312,14 +312,14 @@ const Profile = () => {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <label className="text-[11px] font-black text-indigo-600 uppercase tracking-widest ml-1">Confirm New Password</label>
+                                                <label className="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1">Confirm New Password</label>
                                                 <div className="relative">
                                                     <input
                                                         type={showConfirmPassword ? "text" : "password"}
                                                         required
                                                         value={passwordData.confirmPassword}
                                                         onChange={e => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/5 outline-none transition-all shadow-inner"
+                                                        className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-slate-700 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 outline-none transition-all shadow-inner"
                                                     />
                                                     <button
                                                         type="button"
@@ -357,17 +357,17 @@ const Profile = () => {
                                             ) : enrolledCourses?.length > 0 ? (
                                                 enrolledCourses.map((enrollment, idx) => (
                                                     <div key={idx} className="flex flex-col md:flex-row gap-6 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-xl transition-all duration-500">
-                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-indigo-100 flex-shrink-0 flex items-center justify-center text-indigo-500">
+                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-500">
                                                             <FaBook size={32} />
                                                         </div>
                                                         <div className="flex-1">
                                                             <h4 className="font-black text-lg text-slate-900 mb-1">{enrollment.courseId?.title || 'Unknown Course'}</h4>
                                                             <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">
-                                                                <span className="flex items-center gap-1"><FaHistory className="text-indigo-500" /> Joined {new Date(enrollment.enrolledAt).toLocaleDateString()}</span>
-                                                                <span className="flex items-center gap-1"><FaCertificate className="text-indigo-500" /> {enrollment.progressPercentage || 0}% Finished</span>
+                                                                <span className="flex items-center gap-1"><FaHistory className="text-blue-500" /> Joined {new Date(enrollment.enrolledAt).toLocaleDateString()}</span>
+                                                                <span className="flex items-center gap-1"><FaCertificate className="text-blue-500" /> {enrollment.progressPercentage || 0}% Finished</span>
                                                             </div>
                                                             <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                                                <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${enrollment.progressPercentage || 0}%` }}></div>
+                                                                <div className="h-full bg-blue-600 rounded-full" style={{ width: `${enrollment.progressPercentage || 0}%` }}></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -391,7 +391,7 @@ const Profile = () => {
                                             {/* RECTIFIED: Manual Sync Trigger */}
                                             <button
                                                 onClick={fetchPayments}
-                                                className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold text-xs hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                                                className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold text-xs hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                                             >
                                                 <FaBolt className={paymentsLoading ? "animate-pulse" : ""} /> Sync Records
                                             </button>
@@ -403,7 +403,7 @@ const Profile = () => {
                                             ) : payments?.length > 0 ? (
                                                 payments.map((payment, idx) => (
                                                     <div key={idx} className="flex flex-col md:flex-row gap-6 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-xl transition-all duration-500">
-                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-green-100 flex-shrink-0 flex items-center justify-center text-green-600">
+                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-600">
                                                             <FaFileInvoiceDollar size={32} />
                                                         </div>
                                                         <div className="flex-1">
@@ -411,14 +411,14 @@ const Profile = () => {
                                                                 <h4 className="font-black text-lg text-slate-900">
                                                                     {/* ── RECTIFIED: Bundle Fallback Logic ── */}
                                                                     {payment.purchaseType === 'all' ? (
-                                                                        <span className="flex items-center gap-2 text-indigo-600">
-                                                                            <FaBolt className="text-indigo-500" /> All-Access Pass (GENAICOURSE.IO)
+                                                                        <span className="flex items-center gap-2 text-blue-600">
+                                                                            <FaBolt className="text-blue-500" /> All-Access Pass (GENAICOURSE.IO)
                                                                         </span>
                                                                     ) : (
                                                                         payment.courseId?.title || 'Course Enrollment'
                                                                     )}
                                                                 </h4>
-                                                                <span className="font-bold text-lg text-green-600">${(payment.amountPaid / 100).toFixed(2)}</span>
+                                                                <span className="font-bold text-lg text-blue-600">${(payment.amountPaid / 100).toFixed(2)}</span>
                                                             </div>
                                                             <div className="flex items-center gap-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
                                                                 <span className="flex items-center gap-1">Date: {new Date(payment.createdAt).toLocaleDateString()}</span>
@@ -431,7 +431,7 @@ const Profile = () => {
                                                             </p>
                                                             {/* ── RECTIFIED: Lifetime Indicator ── */}
                                                             {payment.purchaseType === 'all' && (
-                                                                <p className="text-[10px] text-red-400 font-bold uppercase mt-1 tracking-widest leading-none">
+                                                                <p className="text-[10px] text-blue-500 font-bold uppercase mt-1 tracking-widest leading-none">
                                                                     Lifetime Access Unlocked
                                                                 </p>
                                                             )}
@@ -443,7 +443,7 @@ const Profile = () => {
                                                     <p className="text-gray-400 font-bold italic">No payments found.</p>
                                                     <button
                                                         onClick={fetchPayments}
-                                                        className="mt-4 text-red-600 font-black text-xs uppercase tracking-widest hover:underline"
+                                                        className="mt-4 text-blue-600 font-black text-xs uppercase tracking-widest hover:underline"
                                                     >
                                                         Sync History
                                                     </button>
@@ -466,7 +466,7 @@ const Profile = () => {
                                             ) : certificates?.length > 0 ? (
                                                 certificates.map((cert, idx) => (
                                                     <div key={idx} className="flex flex-col md:flex-row gap-6 p-6 rounded-[2rem] border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-xl transition-all duration-500 items-center">
-                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-yellow-100 flex-shrink-0 flex items-center justify-center text-yellow-600">
+                                                        <div className="w-full md:w-32 h-20 rounded-2xl bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-600">
                                                             <FaCertificate size={32} />
                                                         </div>
                                                         <div className="flex-1 w-full">
@@ -479,7 +479,7 @@ const Profile = () => {
                                                         </div>
                                                         <button
                                                             onClick={() => handleDownloadCertificate(cert._id)}
-                                                            className="mt-4 md:mt-0 px-6 py-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl font-bold transition-colors flex items-center gap-2"
+                                                            className="mt-4 md:mt-0 px-6 py-3 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl font-bold transition-colors flex items-center gap-2"
                                                         >
                                                             <FaDownload /> Download
                                                         </button>

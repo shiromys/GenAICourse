@@ -75,7 +75,7 @@ const InstructorDashboard = () => {
               <button
                 onClick={() => setActiveView('dashboard')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeView === 'dashboard'
-                    ? 'border-indigo-600 text-indigo-600'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
               >
@@ -84,7 +84,7 @@ const InstructorDashboard = () => {
               <button
                 onClick={() => setActiveView('manage')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeView === 'manage'
-                    ? 'border-indigo-600 text-indigo-600'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
               >
@@ -93,7 +93,7 @@ const InstructorDashboard = () => {
               <button
                 onClick={() => setActiveView('upload')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${activeView === 'upload'
-                    ? 'border-indigo-600 text-indigo-600'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
               >
@@ -109,8 +109,8 @@ const InstructorDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-indigo-100 rounded-lg p-3">
-                    <FileText className="h-6 w-6 text-indigo-600" />
+                  <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+                    <FileText className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Total Assessments</p>
@@ -133,8 +133,8 @@ const InstructorDashboard = () => {
 
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
-                    <Award className="h-6 w-6 text-yellow-600" />
+                  <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+                    <Award className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Total Questions</p>
@@ -145,8 +145,8 @@ const InstructorDashboard = () => {
 
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-                    <Clock className="h-6 w-6 text-purple-600" />
+                  <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+                    <Clock className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Avg. Time Limit</p>
@@ -164,7 +164,7 @@ const InstructorDashboard = () => {
               <div className="p-6">
                 {loading ? (
                   <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                   </div>
                 ) : filteredAssessments.length === 0 ? (
                   <div className="text-center py-8">
@@ -172,7 +172,7 @@ const InstructorDashboard = () => {
                     <p className="text-gray-600">No assessments found</p>
                     <button
                       onClick={() => setActiveView('upload')}
-                      className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                      className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       Create Your First Assessment
                     </button>
@@ -188,7 +188,7 @@ const InstructorDashboard = () => {
                             {assessment.maxAttempts} attempts
                           </p>
                           {assessment.courseTitle && (
-                            <p className="text-sm text-indigo-600 mt-1">
+                            <p className="text-sm text-blue-600 mt-1">
                               {assessment.courseTitle}
                             </p>
                           )}
@@ -202,7 +202,7 @@ const InstructorDashboard = () => {
                           </span>
                           <button
                             onClick={() => setActiveView('manage')}
-                            className="p-2 text-gray-600 hover:text-indigo-600"
+                            className="p-2 text-gray-600 hover:text-blue-600"
                           >
                             <Eye className="h-4 w-4" />
                           </button>
@@ -223,7 +223,7 @@ const InstructorDashboard = () => {
                 <h2 className="text-lg font-semibold text-gray-900">Manage Assessments</h2>
                 <button
                   onClick={() => setActiveView('upload')}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center space-x-2"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2"
                 >
                   <Plus className="h-4 w-4" />
                   <span>New Assessment</span>
@@ -242,7 +242,7 @@ const InstructorDashboard = () => {
                       placeholder="Search assessments..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -257,7 +257,7 @@ const InstructorDashboard = () => {
             <div className="divide-y">
               {loading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                 </div>
               ) : filteredAssessments.length === 0 ? (
                 <div className="text-center py-8">
@@ -301,7 +301,7 @@ const InstructorDashboard = () => {
                         </div>
 
                         {assessment.courseTitle && (
-                          <p className="text-sm text-indigo-600 mt-2">
+                          <p className="text-sm text-blue-600 mt-2">
                             Course: {assessment.courseTitle}
                           </p>
                         )}
@@ -313,13 +313,13 @@ const InstructorDashboard = () => {
 
                       <div className="flex items-center space-x-2 ml-4">
                         <button
-                          className="p-2 text-gray-600 hover:text-indigo-600"
+                          className="p-2 text-gray-600 hover:text-blue-600"
                           title="View Details"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
-                          className="p-2 text-gray-600 hover:text-indigo-600"
+                          className="p-2 text-gray-600 hover:text-blue-600"
                           title="Edit"
                         >
                           <Edit className="h-4 w-4" />

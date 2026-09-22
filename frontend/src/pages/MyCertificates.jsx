@@ -143,7 +143,7 @@ const MyCertificates = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredCertificates.map((certificate) => (
                   <div key={certificate._id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 group">
-                    <div className="bg-gradient-to-r from-violet-600 to-indigo-600 p-6 relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
                       <div className="flex justify-between items-start relative z-10">
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -243,7 +243,7 @@ const MyCertificates = () => {
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => setSelectedCertificate(certificate._id)}
-                                className="p-2 text-indigo-600 hover:text-indigo-800 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                                className="p-2 text-blue-600 hover:text-blue-800 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                               >
                                 <Eye className="h-4 w-4" />
                               </button>

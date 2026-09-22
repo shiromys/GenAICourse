@@ -222,7 +222,7 @@ const LessonPlayer = () => {
                     {showAssessment ? (
                         <div className="py-10">
                             <div className="flex items-center gap-4 mb-10">
-                                <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
                                     <FaClipboardCheck size={24} />
                                 </div>
                                 <div>
@@ -324,7 +324,7 @@ const LessonPlayer = () => {
                                                         href={resource.url}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex items-center text-accent hover:text-orange-700 transition-colors font-medium"
+                                                        className="flex items-center text-accent hover:text-blue-700 transition-colors font-medium"
                                                     >
                                                         <span>{resource.title || resource.url}</span>
                                                     </a>
@@ -376,7 +376,7 @@ const LessonPlayer = () => {
                                     ) : (
                                         <button
                                             onClick={() => setShowAssessment(true)}
-                                            className="flex items-center px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20"
+                                            className="flex items-center px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20"
                                         >
                                             Take Assessment
                                             <FaClipboardCheck className="ml-2" />

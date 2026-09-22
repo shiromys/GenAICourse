@@ -68,7 +68,7 @@ const HowItWorks = () => {
                 <div className="space-y-12">
                     {/* Step 1 */}
                     <div className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
-                        <div className="w-20 h-20 flex-shrink-0 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <div className="w-20 h-20 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
                             <FaBookReader size={32} aria-hidden="true" />
                         </div>
                         <div className="flex-1 text-center md:text-left">
@@ -89,7 +89,7 @@ const HowItWorks = () => {
 
                     {/* Step 2 */}
                     <div className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
-                        <div className="w-20 h-20 flex-shrink-0 bg-pink-100 rounded-full flex items-center justify-center text-pink-600">
+                        <div className="w-20 h-20 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
                             <FaLaptopCode size={32} aria-hidden="true" />
                         </div>
                         <div className="flex-1 text-center md:text-left">
@@ -128,22 +128,22 @@ const HowItWorks = () => {
                 </div>
 
                 {/* Internal Links CTA */}
-                <div className="mt-20 bg-indigo-50 border border-indigo-100 rounded-2xl p-10 text-center">
+                <div className="mt-20 bg-blue-50 border border-blue-100 rounded-2xl p-10 text-center">
                     <h2 className="text-2xl font-black text-brand mb-4">
                         Ready to Start Your AI Certification Journey?
                     </h2>
                     <p className="text-gray-500 mb-8 max-w-lg mx-auto">
                         Explore our generative AI courses online, check transparent{' '}
-                        <Link to="/pricing" className="text-indigo-600 font-semibold hover:underline">pricing</Link>,
+                        <Link to="/pricing" className="text-blue-600 font-semibold hover:underline">pricing</Link>,
                         or{' '}
-                        <Link to="/register" className="text-indigo-600 font-semibold hover:underline">
+                        <Link to="/register" className="text-blue-600 font-semibold hover:underline">
                             create a free account
                         </Link>{' '}
                         to get started today.
                     </p>
                     <Link
                         to="/courses"
-                        className="inline-flex items-center gap-2 bg-slate-900 text-white font-bold text-lg px-10 py-4 rounded-2xl hover:bg-indigo-600 transition-all"
+                        className="inline-flex items-center gap-2 bg-slate-900 text-white font-bold text-lg px-10 py-4 rounded-2xl hover:bg-blue-600 transition-all"
                         aria-label="Browse all AI courses online"
                     >
                         Browse AI Courses <FaArrowRight className="text-sm opacity-80" />

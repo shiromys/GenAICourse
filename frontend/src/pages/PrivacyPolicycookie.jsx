@@ -30,7 +30,7 @@ const PrivacyPolicycookie = () => {
 
                 <section>
                     <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
-                        <ShieldCheck className="text-indigo-500" /> 3. Cookie Usage
+                        <ShieldCheck className="text-blue-500" /> 3. Cookie Usage
                     </h2>
                     <p>
                         We use strictly necessary cookies for core site functions, such as keeping you logged into your dashboard. Optional analytics (Google) cookies are blocked by default and only activated if you provide explicit consent via our banner. <strong>We do not use marketing or social media tracking pixels.</strong>

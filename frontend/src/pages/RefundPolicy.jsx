@@ -53,7 +53,7 @@ const RefundPolicy = () => {
 
                         <section className="mb-12">
                             <h2 className="text-brand font-black text-2xl mb-6 uppercase tracking-tight flex items-center gap-3">
-                                <FaTools className="text-indigo-600" />
+                                <FaTools className="text-blue-600" />
                                 Valid Exceptions
                             </h2>
                             <p>We will review and potentially approve refund requests only under the following specific conditions:</p>

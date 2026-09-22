@@ -124,7 +124,7 @@ const Dashboard = () => {
                     >
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-3">User Dashboard</p>
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-                            Hey,   <span className="text-indigo-600">{user?.name || 'User'}</span>👋
+                            Hey,   <span className="text-blue-600">{user?.name || 'User'}</span>👋
                         </h1>
                     </motion.div>
 
@@ -154,14 +154,14 @@ const Dashboard = () => {
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="mb-12 rounded-[2rem] bg-amber-50 border border-amber-100 p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-amber-500/5"
+                            className="mb-12 rounded-[2rem] bg-blue-50 border border-blue-100 p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-blue-500/5"
                         >
-                            <div className="w-20 h-20 rounded-3xl bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                            <div className="w-20 h-20 rounded-3xl bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
                                 <FaTriangleExclamation size={32} />
                             </div>
                             <div className="flex-1 text-center md:text-left">
-                                <h3 className="text-xl font-black text-amber-900 mb-2">Missing your course?</h3>
-                                <p className="text-amber-700/80 font-medium leading-relaxed max-w-2xl">
+                                <h3 className="text-xl font-black text-blue-900 mb-2">Missing your course?</h3>
+                                <p className="text-blue-700/80 font-medium leading-relaxed max-w-2xl">
                                     If you completed payment but closed the browser before being redirected,
                                     your access might still be processing. Click below to instantly restore your purchase.
                                 </p>
@@ -169,7 +169,7 @@ const Dashboard = () => {
                             <button
                                 onClick={() => handleRecoverPayments(false)}
                                 disabled={recovering}
-                                className="px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-black shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50"
+                                className="px-8 py-4 rounded-2xl bg-blue-500 hover:bg-blue-600 text-white font-black shadow-lg shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50"
                             >
                                 {recovering ? 'Verifying...' : 'Restore Access Now'}
                             </button>
@@ -207,7 +207,7 @@ const Dashboard = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex items-center gap-6 hover:border-indigo-100 transition-all duration-500"
+                            className="group bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex items-center gap-6 hover:border-blue-100 transition-all duration-500"
                         >
                             <div className={`w-16 h-16 rounded-2xl bg-${stat.color}-50 flex items-center justify-center text-${stat.color}-600 group-hover:scale-110 transition-transform duration-500`}>
                                 {stat.icon}
@@ -233,7 +233,7 @@ const Dashboard = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
-                                className="group relative bg-white rounded-[2.5rem] border border-slate-100 p-6 flex flex-col lg:flex-row gap-8 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-1"
+                                className="group relative bg-white rounded-[2.5rem] border border-slate-100 p-6 flex flex-col lg:flex-row gap-8 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-1"
                             >
                                 <div className="w-full lg:w-48 h-36 rounded-2xl bg-slate-50 overflow-hidden flex-shrink-0">
                                     <img
@@ -244,13 +244,13 @@ const Dashboard = () => {
                                 </div>
 
                                 <div className="flex-1 flex flex-col justify-center">
-                                    <h3 className="text-xl font-black text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">
+                                    <h3 className="text-xl font-black text-slate-900 mb-2 group-hover:text-blue-600 transition-colors uppercase tracking-tight">
                                         {progress.courseId?.title}
                                     </h3>
 
                                     <div className="flex items-center justify-between mb-4">
                                         <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Progress</span>
-                                        <span className="text-sm font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg">
+                                        <span className="text-sm font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
                                             {progress.progressPercentage || 0}%
                                         </span>
                                     </div>
@@ -260,13 +260,13 @@ const Dashboard = () => {
                                             initial={{ width: 0 }}
                                             animate={{ width: `${progress.progressPercentage || 0}%` }}
                                             transition={{ duration: 1, delay: 0.5 }}
-                                            className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"
+                                            className="h-full bg-gradient-to-r from-blue-500 to-blue-700 rounded-full"
                                         />
                                     </div>
 
                                     <Link
                                         to={`/courses/${progress.courseId?._id}/learn`}
-                                        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-slate-900 text-white font-black text-sm hover:bg-indigo-600 transition-all shadow-lg active:scale-[0.98]"
+                                        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-slate-900 text-white font-black text-sm hover:bg-blue-600 transition-all shadow-lg active:scale-[0.98]"
                                     >
                                         <FaPlay size={12} className="mr-1" />
                                         {progress.progressPercentage > 0 ? 'Resume Course' : 'Start Learning'}
@@ -288,7 +288,7 @@ const Dashboard = () => {
                         <p className="text-slate-400 font-medium mb-10 max-w-sm mx-auto">
                             You haven't started any courses yet. Let's find something amazing for you to learn!
                         </p>
-                        <Link to="/courses" className="inline-flex items-center px-10 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-indigo-600 transition-all shadow-xl active:scale-95">
+                        <Link to="/courses" className="inline-flex items-center px-10 py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-blue-600 transition-all shadow-xl active:scale-95">
                             Browse Courses
                         </Link>
                     </motion.div>

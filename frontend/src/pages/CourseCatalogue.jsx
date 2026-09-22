@@ -80,7 +80,7 @@ const CourseCatalogue = () => {
 
                     {/* H1 — Primary keyword: "generative AI course" */}
                     <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter text-center text-brand">
-                        GenAi <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Course</span>
+                        GenAi <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Course</span>
                     </h1>
                     {/* H2 — Supporting keyword: "AI courses online" */}
                     <h2 className="text-gray-500 font-bold tracking-widest uppercase text-xs text-center">
@@ -118,7 +118,7 @@ const CourseCatalogue = () => {
                 {/* Grid Results */}
                 {loading ? (
                     <div className="flex justify-center py-20">
-                        <div className="w-12 h-12 border-4 border-indigo-200 border-t-accent rounded-full animate-spin"></div>
+                        <div className="w-12 h-12 border-4 border-blue-200 border-t-accent rounded-full animate-spin"></div>
                     </div>
                 ) : courses.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">

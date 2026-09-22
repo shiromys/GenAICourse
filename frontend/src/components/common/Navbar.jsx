@@ -81,7 +81,7 @@ const Navbar = () => {
                                                 <Link
                                                     to="/admin/dashboard"
                                                     onClick={() => setUserMenuOpen(false)}
-                                                    className="block px-4 py-2.5 text-[13px] font-bold text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                                                    className="block px-4 py-2.5 text-[13px] font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                                                 >
                                                     Admin Console
                                                 </Link>
@@ -89,7 +89,7 @@ const Navbar = () => {
                                             <div className="my-2 border-t border-slate-50"></div>
                                             <button
                                                 onClick={() => { logout(); setUserMenuOpen(false); toast.success('Logout successful'); }}
-                                                className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-all"
                                             >
                                                 Logout
                                             </button>
@@ -145,7 +145,7 @@ const Navbar = () => {
                                     )}
                                     <button
                                         onClick={() => { logout(); setIsOpen(false); }}
-                                        className="text-left text-red-500 font-bold"
+                                        className="text-left text-slate-500 font-bold"
                                     >
                                         Log Out
                                     </button>
@@ -181,7 +181,7 @@ const NavLink = ({ to, children, active }) => {
             {active && (
                 <motion.div
                     layoutId="nav-underline"
-                    className="absolute -bottom-[6px] left-[10%] right-[10%] h-[3px] bg-orange-600 rounded-t-full"
+                    className="absolute -bottom-[6px] left-[10%] right-[10%] h-[3px] bg-blue-600 rounded-t-full"
                 />
             )}
         </Link>

@@ -52,9 +52,9 @@ const VerifyCertificate = () => {
                     <motion.div 
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="mx-auto w-20 h-20 bg-indigo-50/50 backdrop-blur-3xl rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-indigo-100/20"
+                        className="mx-auto w-20 h-20 bg-blue-50/50 backdrop-blur-3xl rounded-3xl flex items-center justify-center mb-6 shadow-xl border border-blue-100/20"
                     >
-                        <Search className="h-10 w-10 text-indigo-500" />
+                        <Search className="h-10 w-10 text-blue-500" />
                     </motion.div>
                     <h2 className="text-3xl font-bold tracking-tight text-[var(--text-main)] sm:text-4xl">
                         Certificate Verification
@@ -67,11 +67,11 @@ const VerifyCertificate = () => {
                 <div className="bg-[var(--card-bg)] border border-[var(--border-color)] shadow-2xl rounded-3xl overflow-hidden p-8 relative">
                     
                     {/* Decorative blurred blob */}
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-12">
-                            <Loader2 className="h-12 w-12 text-indigo-500 animate-spin mb-4" />
+                            <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" />
                             <p className="text-[var(--text-secondary)]">Verifying record securely...</p>
                         </div>
                     ) : error ? (
@@ -85,7 +85,7 @@ const VerifyCertificate = () => {
                             </div>
                             <h3 className="text-xl font-bold text-[var(--text-main)] mb-2">Verification Failed</h3>
                             <p className="text-[var(--text-secondary)] mb-8">{error}</p>
-                            <Link to="/courses" className="text-indigo-500 font-semibold hover:text-indigo-400">
+                            <Link to="/courses" className="text-blue-500 font-semibold hover:text-blue-400">
                                 Browse our courses →
                             </Link>
                         </motion.div>
@@ -107,7 +107,7 @@ const VerifyCertificate = () => {
 
                             <div className="space-y-6">
                                 <div>
-                                    <label className="flex items-center text-xs font-semibold text-indigo-500 uppercase tracking-wider mb-2">
+                                    <label className="flex items-center text-xs font-semibold text-blue-500 uppercase tracking-wider mb-2">
                                         <User className="h-4 w-4 mr-2" /> Recipient Name
                                     </label>
                                     <p className="text-2xl font-bold text-[var(--text-main)] font-serif italic">
@@ -116,7 +116,7 @@ const VerifyCertificate = () => {
                                 </div>
 
                                 <div>
-                                    <label className="flex items-center text-xs font-semibold text-indigo-500 uppercase tracking-wider mb-2">
+                                    <label className="flex items-center text-xs font-semibold text-blue-500 uppercase tracking-wider mb-2">
                                         <Award className="h-4 w-4 mr-2" /> Course Completed
                                     </label>
                                     <p className="text-xl font-semibold text-[var(--text-main)]">
@@ -124,7 +124,7 @@ const VerifyCertificate = () => {
                                     </p>
                                     {verificationData.certificate.score > 0 && (
                                         <p className="text-sm mt-2 text-[var(--text-secondary)]">
-                                            Passed with a score of <strong className="text-indigo-500">{Math.round(verificationData.certificate.score)}%</strong>
+                                            Passed with a score of <strong className="text-blue-500">{Math.round(verificationData.certificate.score)}%</strong>
                                         </p>
                                     )}
                                 </div>

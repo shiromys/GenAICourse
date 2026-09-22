@@ -136,7 +136,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
               </span>
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className="p-1 text-gray-600 hover:text-indigo-600"
+                className="p-1 text-gray-600 hover:text-blue-600"
                 title="Preview Assessment"
               >
                 <Eye className="h-4 w-4" />
@@ -226,7 +226,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                 <button
                   onClick={() => setActiveTab('file')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'file'
-                      ? 'border-indigo-600 text-indigo-600'
+                      ? 'border-blue-600 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                 >
@@ -235,7 +235,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                 <button
                   onClick={() => setActiveTab('json')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'json'
-                      ? 'border-indigo-600 text-indigo-600'
+                      ? 'border-blue-600 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                 >
@@ -279,7 +279,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                   <button
                     onClick={handleFileImport}
                     disabled={!selectedFile || uploading}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
                     {uploading ? 'Importing...' : 'Import File'}
                   </button>
@@ -317,7 +317,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                     value={jsonInput}
                     onChange={(e) => setJsonInput(e.target.value)}
                     placeholder="Paste your assessment JSON data here..."
-                    className="w-full h-48 p-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full h-48 p-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -333,7 +333,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                   <button
                     onClick={handleJsonUpload}
                     disabled={!jsonInput.trim() || uploading}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
                     {uploading ? 'Uploading...' : 'Upload Assessment'}
                   </button>

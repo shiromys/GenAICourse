@@ -8,7 +8,7 @@ import { FaFileContract, FaCopyright, FaUserShield, FaBan } from 'react-icons/fa
  */
 const TermsOfUse = () => {
     return (
-        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-indigo-100 selection:text-indigo-600">
+        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-blue-100 selection:text-blue-600">
             <div className="container max-w-4xl mx-auto px-6">
 
                 {/* Header Section */}
@@ -17,7 +17,7 @@ const TermsOfUse = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
                 >
-                    <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-indigo-50">
+                    <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-blue-50">
                         <FaFileContract size={36} />
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-brand tracking-tighter uppercase mb-4">
@@ -50,7 +50,7 @@ const TermsOfUse = () => {
 
                         <section className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
-                                <FaCopyright className="text-indigo-600" size={24} />
+                                <FaCopyright className="text-blue-600" size={24} />
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">2. Intellectual Property</h2>
                             </div>
                             <p>
@@ -66,7 +66,7 @@ const TermsOfUse = () => {
 
                         <section className="mb-12 bg-slate-50 p-8 rounded-3xl border border-slate-100">
                             <div className="flex items-center gap-3 mb-4">
-                                <FaUserShield className="text-indigo-600" size={24} />
+                                <FaUserShield className="text-blue-600" size={24} />
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">3. Certificates & Identity</h2>
                             </div>
                             <p>

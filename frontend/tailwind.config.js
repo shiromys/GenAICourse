@@ -7,11 +7,12 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: "#cc1b1bff", // Keep for now or map to brand? Let's add new ones first.
-                brand: "#111827", // Deep navy
-                accent: "#C2410C", // Burnt orange
-                success: "#059669", // Emerald
-                "bg-main": "#FDFCFB", // Off-white
+                // 3-color brand theme: blue (action), charcoal (text), off-white (surface)
+                primary: "#2563EB", // Blue - primary actions/links
+                brand: "#1F2937", // Charcoal - headings/body text
+                accent: "#2563EB", // Blue - same as primary, single accent color
+                success: "#059669", // Emerald - semantic status only, not part of brand palette
+                "bg-main": "#F9FAFB", // Off-white - page background
             },
             boxShadow: {
                 premium: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",

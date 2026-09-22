@@ -51,16 +51,16 @@ const Footer = () => {
                         <h4 className="text-white font-bold mb-6">Contact</h4>
                         <ul className="space-y-6">
                             <li className="flex gap-4 text-gray-400 text-sm">
-                                <FaMapMarkerAlt className="text-orange-500 mt-1 flex-shrink-0" />
+                                <FaMapMarkerAlt className="text-blue-500 mt-1 flex-shrink-0" />
                                 <span>5080 Spectrum Drive, Suite 575E, Addison, TX 75001</span>
                             </li>
                             <li className="flex gap-4 text-gray-400 text-sm">
-                                <FaEnvelope className="text-orange-500 mt-1 flex-shrink-0" />
-                                <a href="mailto:info@genaicourse.io" className="hover:text-orange-500 transition-colors">info@genaicourse.io</a>
+                                <FaEnvelope className="text-blue-500 mt-1 flex-shrink-0" />
+                                <a href="mailto:info@genaicourse.io" className="hover:text-blue-500 transition-colors">info@genaicourse.io</a>
                             </li>
                             <li className="flex gap-4 text-gray-400 text-sm">
-                                <FaPhoneAlt className="text-orange-500 mt-1 flex-shrink-0" />
-                                <a href="tel:+18009718013" className="hover:text-orange-500 transition-colors">(800) 971-8013</a>
+                                <FaPhoneAlt className="text-blue-500 mt-1 flex-shrink-0" />
+                                <a href="tel:+18009718013" className="hover:text-blue-500 transition-colors">(800) 971-8013</a>
                             </li>
                         </ul>
                     </div>
@@ -88,13 +88,13 @@ const Footer = () => {
 };
 
 const FooterLink = ({ to, children }) => (
-    <Link to={to} className="text-gray-400 hover:text-orange-500 transition-colors text-sm">
+    <Link to={to} className="text-gray-400 hover:text-blue-500 transition-colors text-sm">
         {children}
     </Link>
 );
 
 const SocialLink = ({ icon, href }) => (
-    <a href={href} className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-orange-500 hover:text-white transition-all duration-300">
+    <a href={href} className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-blue-500 hover:text-white transition-all duration-300">
         {icon}
     </a>
 );

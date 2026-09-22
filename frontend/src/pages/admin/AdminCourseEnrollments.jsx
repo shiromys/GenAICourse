@@ -39,7 +39,7 @@ const AdminCourseEnrollments = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="min-h-screen theme-beige bg-[var(--bg-main)] text-[var(--text-main)] font-sans p-6 pt-28">
+        <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] font-sans p-6 pt-28">
             <div className="container mx-auto max-w-6xl">
                 <div className="mb-8 flex items-center gap-4">
                     <Link to="/admin/dashboard" className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
@@ -71,7 +71,7 @@ const AdminCourseEnrollments = () => {
                                     enrollments.map((enrollment, index) => (
                                         <tr key={index} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4 font-bold text-slate-900 flex items-center gap-3">
-                                                <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-xs font-black text-amber-600 border border-amber-100 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                                                <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-xs font-black text-blue-600 border border-blue-100 group-hover:bg-blue-500 group-hover:text-white transition-all">
                                                     {enrollment.userId?.name ? enrollment.userId.name.charAt(0).toUpperCase() : <FaUser />}
                                                 </div>
                                                 {enrollment.userId?.name || 'Unknown User'}
@@ -84,7 +84,7 @@ const AdminCourseEnrollments = () => {
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-24 bg-slate-100 rounded-full h-2 overflow-hidden">
                                                         <div
-                                                            className="bg-amber-500 h-2 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.3)]"
+                                                            className="bg-blue-500 h-2 rounded-full shadow-[0_0_8px_rgba(37, 99, 235,0.3)]"
                                                             style={{ width: `${enrollment.progress || 0}%` }}
                                                         ></div>
                                                     </div>
@@ -97,7 +97,7 @@ const AdminCourseEnrollments = () => {
                                                         <FaCheckCircle /> Completed
                                                     </span>
                                                 ) : (
-                                                    <span className="flex items-center gap-1.5 text-amber-400 text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 w-fit">
+                                                    <span className="flex items-center gap-1.5 text-blue-400 text-xs font-bold px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 w-fit">
                                                         <FaClock /> In Progress
                                                     </span>
                                                 )}

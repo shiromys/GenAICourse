@@ -172,7 +172,7 @@ const AssessmentUpload = () => {
                 onClick={() => setActiveTab('upload')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'upload'
-                    ? 'border-indigo-600 text-indigo-600'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -182,7 +182,7 @@ const AssessmentUpload = () => {
                 onClick={() => setActiveTab('manage')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'manage'
-                    ? 'border-indigo-600 text-indigo-600'
+                    ? 'border-blue-600 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
@@ -233,7 +233,7 @@ const AssessmentUpload = () => {
                       <button
                         onClick={handleFileImport}
                         disabled={!selectedFile || uploading}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                       >
                         {uploading ? 'Importing...' : 'Import File'}
                       </button>
@@ -247,12 +247,12 @@ const AssessmentUpload = () => {
                       value={jsonInput}
                       onChange={(e) => setJsonInput(e.target.value)}
                       placeholder="Paste your assessment JSON data here..."
-                      className="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full h-64 p-4 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                     <button
                       onClick={handleJsonUpload}
                       disabled={!jsonInput.trim() || uploading}
-                      className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                      className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                     >
                       {uploading ? 'Uploading...' : 'Upload JSON'}
                     </button>
@@ -300,7 +300,7 @@ const AssessmentUpload = () => {
                 
                 {loading ? (
                   <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="text-gray-600 mt-2">Loading assessments...</p>
                   </div>
                 ) : assessments.length === 0 ? (
@@ -309,7 +309,7 @@ const AssessmentUpload = () => {
                     <p className="text-gray-600">No assessments uploaded yet</p>
                     <button
                       onClick={() => setActiveTab('upload')}
-                      className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                      className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       Upload First Assessment
                     </button>
@@ -326,7 +326,7 @@ const AssessmentUpload = () => {
                               {assessment.maxAttempts} attempts • {assessment.passingScore}% passing
                             </p>
                             {assessment.courseTitle && (
-                              <p className="text-sm text-indigo-600 mt-1">
+                              <p className="text-sm text-blue-600 mt-1">
                                 Course: {assessment.courseTitle}
                               </p>
                             )}
@@ -334,13 +334,13 @@ const AssessmentUpload = () => {
                           
                           <div className="flex items-center space-x-2 ml-4">
                             <button
-                              className="p-2 text-gray-600 hover:text-indigo-600"
+                              className="p-2 text-gray-600 hover:text-blue-600"
                               title="View Details"
                             >
                               <Eye className="h-4 w-4" />
                             </button>
                             <button
-                              className="p-2 text-gray-600 hover:text-indigo-600"
+                              className="p-2 text-gray-600 hover:text-blue-600"
                               title="Edit"
                             >
                               <Edit className="h-4 w-4" />

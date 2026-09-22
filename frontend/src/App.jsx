@@ -93,7 +93,7 @@ const AppContent = () => {
     const shouldHideNavbar = hideNavbarPaths.some(path => location.pathname.includes(path));
 
     return (
-        <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] font-sans selection:bg-indigo-600 selection:text-white transition-colors duration-500">
+        <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] font-sans selection:bg-blue-600 selection:text-white transition-colors duration-500">
             <ScrollToTop />
             {!shouldHideNavbar && <Navbar />}
             <main className="relative">

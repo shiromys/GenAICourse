@@ -51,7 +51,7 @@ const CourseCard = ({ course }) => {
         <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="course-card glass-card group flex flex-col h-full !pb-0 bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:border-red-100 transition-all duration-300 rounded-[2rem] overflow-hidden"
+            className="course-card glass-card group flex flex-col h-full !pb-0 bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all duration-300 rounded-[2rem] overflow-hidden"
         >
             {/* Thumbnail */}
             <div className="relative h-56 overflow-hidden flex-shrink-0">
@@ -75,7 +75,7 @@ const CourseCard = ({ course }) => {
 
             {/* Content */}
             <div className="p-7 flex flex-col flex-1">
-                <h3 className="text-xl font-black text-brand mb-3 leading-tight tracking-tight group-hover:text-indigo-600 transition-colors">
+                <h3 className="text-xl font-black text-brand mb-3 leading-tight tracking-tight group-hover:text-blue-600 transition-colors">
                     {course?.title || 'Untitled'}
                 </h3>
 
@@ -91,7 +91,7 @@ const CourseCard = ({ course }) => {
                     {/* Meta row */}
                     <div className="flex items-center gap-5 py-3 border-t border-gray-100">
                         <div className="flex items-center gap-1.5 text-gray-400 font-bold text-[10px] uppercase tracking-widest">
-                            <FaBookOpen className="text-red-400" size={12} />
+                            <FaBookOpen className="text-blue-400" size={12} />
                             <span>{course?.totalLessons || 0} Lessons</span>
                         </div>
                     </div>

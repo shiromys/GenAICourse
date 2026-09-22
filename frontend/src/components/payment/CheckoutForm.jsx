@@ -41,10 +41,10 @@ const CheckoutForm = ({ clientSecret, onSucceeded, amount, courseTitle }) => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="bg-red-50/50 rounded-2xl p-6 border border-red-100 mb-8">
+            <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 mb-8">
                 <div className="flex justify-between items-center mb-4">
                     <span className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Secure Transaction</span>
-                    <FaShieldAlt className="text-red-600" />
+                    <FaShieldAlt className="text-blue-600" />
                 </div>
                 <div className="flex justify-between items-end">
                     <div>
@@ -52,15 +52,15 @@ const CheckoutForm = ({ clientSecret, onSucceeded, amount, courseTitle }) => {
                         <p className="text-xs text-slate-500 font-medium">genaicourse Academy Enrollment</p>
                     </div>
                     <div className="text-right">
-                        <span className="text-2xl font-black text-red-600">${amount}</span>
+                        <span className="text-2xl font-black text-blue-600">${amount}</span>
                         <p className="text-[10px] text-slate-400 font-bold">USD</p>
                     </div>
                 </div>
             </div>
 
             <div className="space-y-2">
-                <label className="text-[10px] font-black text-red-600 uppercase tracking-widest ml-1">Card Details</label>
-                <div className="px-6 py-5 bg-white border border-gray-100 rounded-2xl shadow-inner group focus-within:border-red-500 transition-all">
+                <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest ml-1">Card Details</label>
+                <div className="px-6 py-5 bg-white border border-gray-100 rounded-2xl shadow-inner group focus-within:border-blue-500 transition-all">
                     <CardElement
                         options={{
                             style: {

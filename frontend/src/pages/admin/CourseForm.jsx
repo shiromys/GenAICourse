@@ -114,14 +114,14 @@ const CourseForm = ({ isEditing = false }) => {
 
     if (fetchLoading) {
         return (
-            <div className="section min-h-screen flex items-center justify-center theme-beige bg-[var(--bg-main)] text-[var(--text-main)]">
+            <div className="section min-h-screen flex items-center justify-center bg-[var(--bg-main)] text-[var(--text-main)]">
                 <div className="loading w-12 h-12" />
             </div>
         );
     }
 
     return (
-        <div className="section min-h-screen theme-beige bg-[var(--bg-main)] text-[var(--text-main)]">
+        <div className="section min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
             <div className="container max-w-4xl">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
@@ -151,7 +151,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
-                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                 placeholder="Enter course title"
                                 required
                             />
@@ -167,7 +167,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 value={formData.description}
                                 onChange={handleChange}
                                 rows="4"
-                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                 placeholder="Enter course description"
                                 required
                             />
@@ -182,7 +182,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                 required
                             >
                                 <option value="">Select Category</option>
@@ -203,7 +203,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 name="level"
                                 value={formData.level}
                                 onChange={handleChange}
-                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                 required
                             >
                                 <option value="Beginner">Beginner</option>
@@ -222,7 +222,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 name="thumbnail"
                                 value={formData.thumbnail}
                                 onChange={handleChange}
-                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                 placeholder="/images/courses/my-course.jpg or https://example.com/image.jpg"
                             />
                             {formData.thumbnail && (
@@ -234,7 +234,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 />
                             )}
                             <p className="mt-1 text-xs text-slate-500">
-                                Use a relative path like <code className="text-amber-600 font-bold">/images/courses/filename.jpg</code> for images stored in the app, or paste any public image URL.
+                                Use a relative path like <code className="text-blue-600 font-bold">/images/courses/filename.jpg</code> for images stored in the app, or paste any public image URL.
                             </p>
                         </div>
 
@@ -250,7 +250,7 @@ const CourseForm = ({ isEditing = false }) => {
                                 onChange={handleChange}
                                 min="0"
                                 step="0.01"
-                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                className="w-full bg-white border border-slate-200 rounded-lg py-3 px-4 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                 placeholder="0.00"
                             />
                         </div>
@@ -266,7 +266,7 @@ const CourseForm = ({ isEditing = false }) => {
                                         type="text"
                                         value={item}
                                         onChange={(e) => handleArrayChange('whatYoullLearn', index, e.target.value)}
-                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                         placeholder="Learning objective"
                                     />
                                     <button
@@ -282,7 +282,7 @@ const CourseForm = ({ isEditing = false }) => {
                             <button
                                 type="button"
                                 onClick={() => addArrayItem('whatYoullLearn')}
-                                className="text-amber-600 hover:text-amber-700 font-bold text-sm transition-colors"
+                                className="text-blue-600 hover:text-blue-700 font-bold text-sm transition-colors"
                             >
                                 + Add learning objective
                             </button>
@@ -299,7 +299,7 @@ const CourseForm = ({ isEditing = false }) => {
                                         type="text"
                                         value={item}
                                         onChange={(e) => handleArrayChange('requirements', index, e.target.value)}
-                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                         placeholder="Course requirement"
                                     />
                                     <button
@@ -315,7 +315,7 @@ const CourseForm = ({ isEditing = false }) => {
                             <button
                                 type="button"
                                 onClick={() => addArrayItem('requirements')}
-                                className="text-amber-600 hover:text-amber-700 font-bold text-sm transition-colors"
+                                className="text-blue-600 hover:text-blue-700 font-bold text-sm transition-colors"
                             >
                                 + Add requirement
                             </button>
@@ -332,7 +332,7 @@ const CourseForm = ({ isEditing = false }) => {
                                         type="text"
                                         value={tag}
                                         onChange={(e) => handleArrayChange('tags', index, e.target.value)}
-                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all outline-none"
+                                        className="flex-1 bg-white border border-slate-200 rounded-lg py-2 px-3 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                                         placeholder="course-tag"
                                     />
                                     <button
@@ -348,7 +348,7 @@ const CourseForm = ({ isEditing = false }) => {
                             <button
                                 type="button"
                                 onClick={() => addArrayItem('tags')}
-                                className="text-amber-600 hover:text-amber-700 font-bold text-sm transition-colors"
+                                className="text-blue-600 hover:text-blue-700 font-bold text-sm transition-colors"
                             >
                                 + Add tag
                             </button>
@@ -362,7 +362,7 @@ const CourseForm = ({ isEditing = false }) => {
                                     name="isPublished"
                                     checked={formData.isPublished}
                                     onChange={handleChange}
-                                    className="w-4 h-4 text-amber-600 bg-white border-slate-300 rounded focus:ring-amber-500 focus:ring-2 transition-colors cursor-pointer"
+                                    className="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500 focus:ring-2 transition-colors cursor-pointer"
                                 />
                                 <span className="text-sm font-bold text-slate-700">
                                     Publish course (make it visible to users)
@@ -382,7 +382,7 @@ const CourseForm = ({ isEditing = false }) => {
                         </button>
                         <button
                             type="submit"
-                            className="btn bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20"
+                            className="btn bg-blue-500 hover:bg-blue-600 text-white font-bold px-8 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20"
                             disabled={loading}
                         >
                             {loading ? <div className="loading w-4 h-4" /> : <FaSave />}

@@ -150,7 +150,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center"
         >
-          <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-6 shadow-xl"></div>
+          <div className="w-16 h-16 border-4 border-blue-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-6 shadow-xl"></div>
           <p className="text-gray-500 font-bold tracking-widest uppercase text-xs">Initializing GENAICOURSE Assessment...</p>
         </motion.div>
       </div>
@@ -221,7 +221,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-indigo-100">Active Session</span>
+                <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-blue-100">Active Session</span>
                 <h1 className="text-2xl font-black text-brand">{assessment?.title || 'Assessment'}</h1>
               </div>
               <div className="flex items-center gap-4 text-gray-500 font-bold text-xs uppercase tracking-widest">
@@ -231,7 +231,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
               </div>
             </div>
 
-            <div className={`flex flex-col items-center px-8 py-4 rounded-3xl border-2 transition-all duration-500 ${timeRemaining < 300 ? 'bg-red-50 border-red-200 text-red-500 animate-pulse' : 'bg-gray-50 border-gray-100 text-indigo-600'
+            <div className={`flex flex-col items-center px-8 py-4 rounded-3xl border-2 transition-all duration-500 ${timeRemaining < 300 ? 'bg-red-50 border-red-200 text-red-500 animate-pulse' : 'bg-gray-50 border-gray-100 text-blue-600'
               }`}>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 opacity-60">Time Remaining</span>
               <div className="flex items-center gap-2">
@@ -244,7 +244,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           {/* Progress Bar */}
           <div className="mt-8 h-2 bg-gray-100 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500"
+              className="h-full bg-gradient-to-r from-blue-500 to-blue-700"
               initial={{ width: 0 }}
               animate={{ width: `${((currentQuestion + 1) / (assessment?.questions?.length || 1)) * 100}%` }}
               transition={{ duration: 0.8 }}
@@ -262,7 +262,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             className="glass-card p-10 mb-8 bg-white border border-gray-200 shadow-xl rounded-2xl"
           >
             <div className="flex items-start gap-6">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center font-black text-indigo-600 text-xl flex-shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center font-black text-blue-600 text-xl flex-shrink-0">
                 {currentQuestion + 1}
               </div>
               <div className="flex-1">
@@ -278,16 +278,16 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
                         key={index}
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
-                        className={`flex items-center p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 relative overflow-hidden group/opt ${isSelected ? 'bg-indigo-50 border-indigo-500' : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-indigo-200'
+                        className={`flex items-center p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 relative overflow-hidden group/opt ${isSelected ? 'bg-blue-50 border-blue-500' : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-blue-200'
                           }`}
                       >
                         {isSelected && (
                           <motion.div
                             layoutId="active-opt"
-                            className="absolute inset-0 bg-indigo-500/5 -z-10"
+                            className="absolute inset-0 bg-blue-500/5 -z-10"
                           />
                         )}
-                        <div className={`w-6 h-6 rounded-lg border-2 mr-6 flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'bg-transparent border-gray-300 group-hover/opt:border-indigo-300'
+                        <div className={`w-6 h-6 rounded-lg border-2 mr-6 flex items-center justify-center transition-all ${isSelected ? 'bg-blue-500 border-blue-500' : 'bg-transparent border-gray-300 group-hover/opt:border-blue-300'
                           }`}>
                           {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
                         </div>
@@ -324,7 +324,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             {assessment?.questions?.map((_, idx) => (
               <div
                 key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'w-8 bg-indigo-500' : answers[idx] ? 'w-2 bg-emerald-500' : 'w-2 bg-gray-300'
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'w-8 bg-blue-500' : answers[idx] ? 'w-2 bg-emerald-500' : 'w-2 bg-gray-300'
                   }`}
               />
             ))}
@@ -432,7 +432,7 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
             ) : (
               <button
                 onClick={onRetake}
-                className="btn-premium bg-indigo-600 hover:bg-indigo-700 text-white !py-4 !px-12 text-lg"
+                className="btn-premium bg-blue-600 hover:bg-blue-700 text-white !py-4 !px-12 text-lg"
               >
                 Try Again Test <RefreshCw size={20} />
               </button>

@@ -26,7 +26,7 @@ const SidebarBox = ({ badge, title, subtitle, description, features, link, accen
                 <span className="bg-slate-900/5 backdrop-blur-sm text-slate-500 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-[0.2em]">
                     {badge}
                 </span>
-                <a href={link} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-indigo-500 transition-colors duration-300">
+                <a href={link} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-500 transition-colors duration-300">
                     <FaExternalLinkAlt size={12} />
                 </a>
             </div>
@@ -53,7 +53,7 @@ const SidebarBox = ({ badge, title, subtitle, description, features, link, accen
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`relative z-10 inline-flex items-center gap-2 ${bgColor} text-white text-[10px] font-black px-6 py-2.5 rounded-full transition-all shadow-lg shadow-indigo-500/10 active:scale-95 tracking-[0.1em] uppercase`}
+                className={`relative z-10 inline-flex items-center gap-2 ${bgColor} text-white text-[10px] font-black px-6 py-2.5 rounded-full transition-all shadow-lg shadow-blue-500/10 active:scale-95 tracking-[0.1em] uppercase`}
             >
                 Learn More <FaArrowRight size={9} />
             </motion.a>
@@ -96,7 +96,7 @@ const Contact = () => {
     };
 
     return (
-        <AuroraBackground className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center min-h-screen selection:bg-indigo-100 selection:text-indigo-900">
+        <AuroraBackground className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center min-h-screen selection:bg-blue-100 selection:text-blue-900">
             <Helmet>
                 <title>Contact Us | GenAI Course</title>
                 <meta name="description" content="Contact Shiro Technologies LLC in Addison, TX for AI course inquiries." />
@@ -143,7 +143,7 @@ const Contact = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-6xl font-bold text-slate-900 mb-5 tracking-tight"
                     >
-                        Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Touch</span>
+                        Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">Touch</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0 }}
@@ -166,8 +166,8 @@ const Contact = () => {
                             description="The platform to Blast Resumes for Job opportunities."
                             features={["Instant Resume Blast", "Job Opportunities"]}
                             link="https://www.resumeblast.ai/"
-                            textColor="text-indigo-500"
-                            bgColor="bg-indigo-600"
+                            textColor="text-blue-500"
+                            bgColor="bg-blue-600"
                         />
                         <SidebarBox
                             badge="SPONSORED"
@@ -203,7 +203,7 @@ const Contact = () => {
                                                 onChange={handleChange}
                                                 required
                                                 placeholder="Jane Smith"
-                                                className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500/40 transition-all duration-300 font-bold placeholder-slate-300 text-[15px]"
+                                                className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500/40 transition-all duration-300 font-bold placeholder-slate-300 text-[15px]"
                                             />
                                         </div>
                                         <div className="space-y-2.5">
@@ -215,7 +215,7 @@ const Contact = () => {
                                                 onChange={handleChange}
                                                 required
                                                 placeholder="you@example.com"
-                                                className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500/40 transition-all duration-300 font-bold placeholder-slate-300 text-[15px]"
+                                                className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500/40 transition-all duration-300 font-bold placeholder-slate-300 text-[15px]"
                                             />
                                         </div>
                                     </div>
@@ -227,7 +227,7 @@ const Contact = () => {
                                                 name="subject"
                                                 value={formData.subject}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500/40 transition-all duration-300 font-bold appearance-none cursor-pointer text-[15px]"
+                                                className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl px-6 py-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500/40 transition-all duration-300 font-bold appearance-none cursor-pointer text-[15px]"
                                             >
                                                 <option value="General Inquiry">General Inquiry</option>
                                                 <option value="Course Support">Course Support</option>
@@ -247,7 +247,7 @@ const Contact = () => {
                                             required
                                             rows="5"
                                             placeholder="How can we help you today?"
-                                            className="w-full bg-slate-50/50 border border-slate-200/60 rounded-[2rem] px-6 py-4.5 text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500/40 transition-all duration-300 font-bold placeholder-slate-300 resize-none text-[15px]"
+                                            className="w-full bg-slate-50/50 border border-slate-200/60 rounded-[2rem] px-6 py-4.5 text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500/40 transition-all duration-300 font-bold placeholder-slate-300 resize-none text-[15px]"
                                         ></textarea>
                                     </div>
 
@@ -256,7 +256,7 @@ const Contact = () => {
                                         whileTap={{ scale: 0.99 }}
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-indigo-500/25 transition-all disabled:opacity-70 flex items-center justify-center gap-3 text-[13px] uppercase tracking-[0.2em]"
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-500/25 transition-all disabled:opacity-70 flex items-center justify-center gap-3 text-[13px] uppercase tracking-[0.2em]"
                                     >
                                         {isSubmitting ? (
                                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -281,8 +281,8 @@ const Contact = () => {
                             description="Master AI with less theory but more real-life application."
                             features={["Artificial Intelligence", "Clarity over complexity"]}
                             link="https://www.aicoursehubpro.com/"
-                            textColor="text-pink-500"
-                            bgColor="bg-pink-600"
+                            textColor="text-blue-500"
+                            bgColor="bg-blue-600"
                         />
                         <SidebarBox
                             badge="SPONSORED"
@@ -291,8 +291,8 @@ const Contact = () => {
                             description="Self-paced, AI-powered LMS for IT upskilling ."
                             features={["Career Growth", "Skill Upgrade"]}
                             link="https://www.benzaitenlms.com"
-                            textColor="text-orange-500"
-                            bgColor="bg-orange-600"
+                            textColor="text-blue-500"
+                            bgColor="bg-blue-600"
                         />
                     </div>
                 </div>
@@ -307,7 +307,7 @@ const Contact = () => {
                         className="bg-white/50 backdrop-blur-xl rounded-[2rem] p-8 border border-white shadow-[0_10px_40px_rgba(0,0,0,0.02)] flex flex-col justify-center h-[240px]"
                     >
                         <div className="flex items-center gap-3 mb-5">
-                            <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
                                 <FaMapMarkerAlt size={18} />
                             </div>
                             <h3 className="text-lg font-bold text-slate-900 tracking-tight">Our Office</h3>
@@ -322,11 +322,11 @@ const Contact = () => {
                                 </p>
                             </div>
                             <div className="flex items-center gap-3 text-[13px] font-bold text-slate-800">
-                                <FaPhoneAlt className="text-indigo-400" size={14} />
+                                <FaPhoneAlt className="text-blue-400" size={14} />
                                 <span>(800) 971-8013</span>
                             </div>
-                            <div className="flex items-center gap-3 text-[13px] font-bold text-indigo-600">
-                                <FaEnvelope className="text-indigo-400" size={14} />
+                            <div className="flex items-center gap-3 text-[13px] font-bold text-blue-600">
+                                <FaEnvelope className="text-blue-400" size={14} />
                                 <a href="mailto:info@genaicourse.io" className="hover:underline">info@genaicourse.io</a>
                             </div>
                         </div>
@@ -351,7 +351,7 @@ const Contact = () => {
                             className="filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
                         ></iframe>
                         <div className="absolute top-6 right-6">
-                            <a href="https://www.google.com/maps/place/5080+Spectrum+Dr+Suite+575E,+Addison,+TX+75001/@32.9551059,-96.8266452,17.25z/" target="_blank" rel="noopener noreferrer" className="bg-white/90 backdrop-blur-md p-2 rounded-lg text-indigo-600 shadow-lg hover:bg-white transition-all">
+                            <a href="https://www.google.com/maps/place/5080+Spectrum+Dr+Suite+575E,+Addison,+TX+75001/@32.9551059,-96.8266452,17.25z/" target="_blank" rel="noopener noreferrer" className="bg-white/90 backdrop-blur-md p-2 rounded-lg text-blue-600 shadow-lg hover:bg-white transition-all">
                                 <FaExternalLinkAlt size={12} />
                             </a>
                         </div>

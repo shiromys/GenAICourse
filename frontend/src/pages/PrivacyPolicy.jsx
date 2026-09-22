@@ -8,7 +8,7 @@ import { FaShieldAlt, FaUserSecret, FaServer, FaHandshake } from 'react-icons/fa
  */
 const PrivacyPolicy = () => {
     return (
-        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-indigo-100 selection:text-indigo-600">
+        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-blue-100 selection:text-blue-600">
             <div className="container max-w-4xl mx-auto px-6">
 
                 {/* Header Section */}
@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
                 >
-                    <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-indigo-50">
+                    <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-blue-50">
                         <FaShieldAlt size={36} />
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-brand tracking-tighter uppercase mb-4">
@@ -44,7 +44,7 @@ const PrivacyPolicy = () => {
 
                         <section className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
-                                <FaUserSecret className="text-indigo-600" size={24} />
+                                <FaUserSecret className="text-blue-600" size={24} />
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">What We Collect</h2>
                             </div>
                             <p>
@@ -55,7 +55,7 @@ const PrivacyPolicy = () => {
 
                         <section className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
-                                <FaServer className="text-indigo-600" size={24} />
+                                <FaServer className="text-blue-600" size={24} />
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">How We Use It</h2>
                             </div>
                             <p>
@@ -77,20 +77,20 @@ const PrivacyPolicy = () => {
 
                         <section>
                             <div className="flex items-center gap-3 mb-6">
-                                <FaHandshake className="text-indigo-600" size={24} />
+                                <FaHandshake className="text-blue-600" size={24} />
                                 <h2 className="text-brand font-black text-2xl m-0 uppercase tracking-tight">Third-Party Services</h2>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm text-center">
-                                    <h4 className="font-black text-indigo-600 mb-2 uppercase text-sm">OpenAI</h4>
+                                    <h4 className="font-black text-blue-600 mb-2 uppercase text-sm">OpenAI</h4>
                                     <p className="text-xs font-medium">Powering 24/7 User support chat</p>
                                 </div>
                                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm text-center">
-                                    <h4 className="font-black text-indigo-600 mb-2 uppercase text-sm">Stripe</h4>
+                                    <h4 className="font-black text-blue-600 mb-2 uppercase text-sm">Stripe</h4>
                                     <p className="text-xs font-medium">Managing secure payment and billing</p>
                                 </div>
                                 <div className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm text-center">
-                                    <h4 className="font-black text-indigo-600 mb-2 uppercase text-sm">Resend</h4>
+                                    <h4 className="font-black text-blue-600 mb-2 uppercase text-sm">Resend</h4>
                                     <p className="text-xs font-medium">Used for sending Emails</p>
                                 </div>
                             </div>

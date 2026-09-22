@@ -156,7 +156,7 @@ const CourseViewer = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-indigo-500 selection:text-white">
+        <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-blue-500 selection:text-white">
             <Helmet>
                 <title>{course?.title ? `${course.title} | Learning | GenAI Course` : 'Course Viewer | GenAI Course'}</title>
             </Helmet>
@@ -165,7 +165,7 @@ const CourseViewer = () => {
                 {/* LEFT SIDEBAR: Redesigned for Screenshot matching */}
                 <div className={`w-full lg:w-80 flex-shrink-0 border-r border-slate-100 bg-white lg:sticky lg:top-0 h-screen overflow-y-auto no-scrollbar transition-all duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                     <div className="p-6 border-b border-slate-50">
-                        <Link to="/dashboard" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-orange-600 transition-colors mb-8 group">
+                        <Link to="/dashboard" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors mb-8 group">
                             <FaChevronLeft className="group-hover:-translate-x-1 transition-transform" />
                             Back to Dashboard
                         </Link>
@@ -182,7 +182,7 @@ const CourseViewer = () => {
                             course?.modules?.map((mod, mIdx) => (
                                 <div key={mod._id || mIdx} className="space-y-4">
                                     <div className="px-2">
-                                        <h4 className="text-[10px] uppercase tracking-[0.2em] font-black text-orange-600 mb-1">
+                                        <h4 className="text-[10px] uppercase tracking-[0.2em] font-black text-blue-600 mb-1">
                                             {mod.category || 'Course Module'}
                                         </h4>
                                         <h5 className="text-[11px] uppercase tracking-wider font-extrabold text-slate-400">
@@ -206,15 +206,15 @@ const CourseViewer = () => {
                                                         setCurrentLessonIndex(lIdx);
                                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                                     }}
-                                                    className={`w-full text-left p-3.5 rounded-xl flex items-center justify-between group transition-all duration-200 ${isCurrent ? 'bg-orange-50/80' : 'hover:bg-slate-50'
+                                                    className={`w-full text-left p-3.5 rounded-xl flex items-center justify-between group transition-all duration-200 ${isCurrent ? 'bg-blue-50/80' : 'hover:bg-slate-50'
                                                         }`}
                                                 >
                                                     <div className="flex items-center gap-3 overflow-hidden">
-                                                        <div className={`w-5 h-5 flex-shrink-0 flex items-center justify-center ${isCompleted ? 'text-emerald-500' : isCurrent ? 'text-orange-600' : 'text-slate-300'
+                                                        <div className={`w-5 h-5 flex-shrink-0 flex items-center justify-center ${isCompleted ? 'text-emerald-500' : isCurrent ? 'text-blue-600' : 'text-slate-300'
                                                             }`}>
                                                             {isCompleted ? <FaCheck size={12} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
                                                         </div>
-                                                        <p className={`text-xs font-bold truncate leading-tight ${isCurrent ? 'text-orange-700' : 'text-slate-600 group-hover:text-slate-900'
+                                                        <p className={`text-xs font-bold truncate leading-tight ${isCurrent ? 'text-blue-700' : 'text-slate-600 group-hover:text-slate-900'
                                                             }`}>{less.title}</p>
                                                     </div>
                                                     <span className="text-[10px] font-black text-slate-300 group-hover:text-slate-400">
@@ -235,7 +235,7 @@ const CourseViewer = () => {
                                     onClick={() => { setShowAssessment(true); setShowCertificate(false); }}
                                     className={`w-full flex items-center justify-between p-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${showAssessment
                                         ? 'bg-slate-900 text-white shadow-lg'
-                                        : 'bg-white border border-slate-100 text-slate-600 hover:border-orange-200 hover:text-orange-600'
+                                        : 'bg-white border border-slate-100 text-slate-600 hover:border-blue-200 hover:text-blue-600'
                                         }`}
                                 >
                                     <span>Final Assessment</span>
@@ -247,8 +247,8 @@ const CourseViewer = () => {
                                 <button
                                     onClick={() => { setShowCertificate(true); setShowAssessment(false); }}
                                     className={`w-full flex items-center justify-between p-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${showCertificate
-                                        ? 'bg-orange-600 text-white shadow-lg'
-                                        : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                                         }`}
                                 >
                                     <span>My Certificate</span>
@@ -272,16 +272,16 @@ const CourseViewer = () => {
                             >
                                 {showCertificate && existingCertificate ? (
                                     <div className="text-center py-12 px-4">
-                                        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-br from-[#1E293B] to-[#0F172A] text-amber-500 mb-8 border-[4px] border-[#0F172A] shadow-[0_0_40px_rgba(245,158,11,0.2)] relative">
-                                            <div className="absolute inset-0 rounded-full border border-amber-500/30 animate-pulse"></div>
+                                        <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-gradient-to-br from-[#1E293B] to-[#0F172A] text-blue-500 mb-8 border-[4px] border-[#0F172A] shadow-[0_0_40px_rgba(37, 99, 235,0.2)] relative">
+                                            <div className="absolute inset-0 rounded-full border border-blue-500/30 animate-pulse"></div>
                                             <FaMedal size={48} className="drop-shadow-md" />
                                         </div>
                                         <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">Certificate Issued</h2>
 
 
-                                        <div className="max-w-xl mx-auto bg-[#0F172A] border border-amber-500/20 rounded-[2.5rem] p-12 text-left shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+                                        <div className="max-w-xl mx-auto bg-[#0F172A] border border-blue-500/20 rounded-[2.5rem] p-12 text-left shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] relative overflow-hidden group">
                                             {/* Decorative Background Elements */}
-                                            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-colors duration-700 group-hover:bg-amber-500/10 pointer-events-none"></div>
+                                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-colors duration-700 group-hover:bg-blue-500/10 pointer-events-none"></div>
                                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl -ml-24 -mb-24 pointer-events-none"></div>
 
                                             <div className="relative z-10">
@@ -311,7 +311,7 @@ const CourseViewer = () => {
                                                 <button
                                                     onClick={handleDownloadCertificate}
                                                     disabled={downloadingCert}
-                                                    className="w-full flex items-center justify-center gap-3 p-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-[#0F172A] font-black text-xs uppercase tracking-[0.2em] transition-all active:scale-95 disabled:opacity-60 shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] border border-amber-300/50"
+                                                    className="w-full flex items-center justify-center gap-3 p-5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 text-[#0F172A] font-black text-xs uppercase tracking-[0.2em] transition-all active:scale-95 disabled:opacity-60 shadow-[0_0_20px_rgba(37, 99, 235,0.3)] hover:shadow-[0_0_30px_rgba(37, 99, 235,0.5)] border border-blue-300/50"
                                                 >
                                                     <FaDownload size={14} />
                                                     {downloadingCert ? 'Processing Document...' : 'Download Official PDF'}
@@ -322,7 +322,7 @@ const CourseViewer = () => {
                                 ) : !showAssessment ? (
                                     <div className="space-y-12">
                                         <div>
-                                            <h4 className="text-[11px] uppercase tracking-[0.3em] font-black text-orange-600 mb-3">
+                                            <h4 className="text-[11px] uppercase tracking-[0.3em] font-black text-blue-600 mb-3">
                                                 {currentModule?.title || 'No Module Title'}
                                             </h4>
                                             <h1 className="text-4xl lg:text-6xl font-black text-slate-900 leading-[1.1] mb-4">
@@ -334,7 +334,7 @@ const CourseViewer = () => {
                                         {/* Styled Key Points Box */}
                                         {currentLesson?.keyPoints && currentLesson?.keyPoints?.length > 0 && (
                                             <div className="bg-[#FBFCFD] border-2 border-slate-50 rounded-[2.5rem] p-10 relative overflow-hidden">
-                                                <div className="absolute left-0 top-10 bottom-10 w-1.5 bg-orange-600 rounded-r-full" />
+                                                <div className="absolute left-0 top-10 bottom-10 w-1.5 bg-blue-600 rounded-r-full" />
                                                 <h3 className="text-lg font-bold text-slate-900 mb-8 flex items-center gap-3">
                                                     Key Points
                                                 </h3>

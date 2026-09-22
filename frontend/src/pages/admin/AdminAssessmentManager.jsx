@@ -166,7 +166,7 @@ const AdminAssessmentManager = () => {
                 {activeTab === 'manage' && (
                     <button
                         onClick={() => setActiveTab('upload')}
-                        className="btn bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+                        className="btn bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
                     >
                         <Plus className="h-4 w-4" />
                         <span>Upload New</span>
@@ -211,7 +211,7 @@ const AdminAssessmentManager = () => {
                         <select
                             value={selectedCourse}
                             onChange={(e) => setSelectedCourse(e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                            className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                         >
                             <option value="">-- Don't link to a course yet --</option>
                             {courses.map(course => (
@@ -231,14 +231,14 @@ const AdminAssessmentManager = () => {
                         {/* File Upload Column */}
                         <div className="bg-white/80 backdrop-blur-md rounded-xl p-6 border border-[var(--card-border)] shadow-sm">
                             <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center font-heading">
-                                <Upload className="mr-2 h-5 w-5 text-amber-600" />
+                                <Upload className="mr-2 h-5 w-5 text-blue-600" />
                                 File Upload
                             </h3>
-                            <div className="border-2 border-dashed border-slate-200 hover:border-amber-500 rounded-lg p-8 text-center transition-colors bg-slate-50/50">
+                            <div className="border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-lg p-8 text-center transition-colors bg-slate-50/50">
                                 <Upload className="h-12 w-12 text-slate-500 mx-auto mb-4" />
                                 <div className="mb-4">
                                     <label htmlFor="fileInput" className="cursor-pointer block">
-                                        <span className="text-indigo-400 hover:text-indigo-300 font-medium">Click to upload</span>
+                                        <span className="text-blue-400 hover:text-blue-300 font-medium">Click to upload</span>
                                         <span className="text-slate-400"> or drag and drop</span>
                                     </label>
                                     <p className="text-xs text-slate-500 mt-1">JSON or CSV files up to 5MB</p>
@@ -254,7 +254,7 @@ const AdminAssessmentManager = () => {
                                 {selectedFile && (
                                     <div className="mb-4 p-3 bg-white border border-slate-200 rounded-lg flex items-center justify-between">
                                         <div className="flex items-center">
-                                            <FileText className="h-5 w-5 text-amber-600 mr-2" />
+                                            <FileText className="h-5 w-5 text-blue-600 mr-2" />
                                             <span className="text-sm text-slate-700 font-medium">{selectedFile.name}</span>
                                         </div>
                                         <button onClick={() => setSelectedFile(null)} className="text-slate-400 hover:text-slate-900 transition-colors">×</button>
@@ -266,7 +266,7 @@ const AdminAssessmentManager = () => {
                                     disabled={!selectedFile || uploading}
                                     className={`w-full py-2 rounded-lg font-medium transition-colors ${!selectedFile || uploading
                                         ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                                        : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                                        : 'bg-blue-600 hover:bg-blue-700 text-white'
                                         }`}
                                 >
                                     {uploading ? 'Importing...' : 'Import File'}
@@ -295,7 +295,7 @@ const AdminAssessmentManager = () => {
                         {/* JSON Input Column */}
                         <div className="bg-white/80 backdrop-blur-md rounded-xl p-6 border border-[var(--card-border)] shadow-sm">
                             <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center font-heading">
-                                <FileText className="mr-2 h-5 w-5 text-amber-600" />
+                                <FileText className="mr-2 h-5 w-5 text-blue-600" />
                                 Paste JSON
                             </h3>
                             <div className="relative">
@@ -306,7 +306,7 @@ const AdminAssessmentManager = () => {
   "title": "My Assessment",
   "questions": [...]
 }`}
-                                    className="w-full h-[320px] bg-white border border-slate-200 rounded-lg p-4 font-mono text-sm text-slate-700 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none resize-none transition-all"
+                                    className="w-full h-[320px] bg-white border border-slate-200 rounded-lg p-4 font-mono text-sm text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none transition-all"
                                 />
                                 <div className="absolute bottom-4 right-4">
                                     <button
@@ -343,7 +343,7 @@ const AdminAssessmentManager = () => {
                                 {loading ? (
                                     <tr>
                                         <td colSpan="5" className="px-6 py-12 text-center">
-                                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500 mb-2"></div>
+                                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-2"></div>
                                             <p className="text-slate-500">Loading assessments...</p>
                                         </td>
                                     </tr>
@@ -354,7 +354,7 @@ const AdminAssessmentManager = () => {
                                             <p>No assessments found</p>
                                             <button
                                                 onClick={() => setActiveTab('upload')}
-                                                className="mt-4 text-indigo-400 hover:text-indigo-300 text-sm font-medium"
+                                                className="mt-4 text-blue-400 hover:text-blue-300 text-sm font-medium"
                                             >
                                                 Upload your first assessment
                                             </button>
@@ -364,12 +364,12 @@ const AdminAssessmentManager = () => {
                                     assessments.map((assessment) => (
                                         <tr key={assessment.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
-                                                <div className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{assessment.title}</div>
+                                                <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{assessment.title}</div>
                                                 <div className="text-xs text-slate-500 mt-1 truncate max-w-[200px] font-medium">{assessment.description}</div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {assessment.courseTitle ? (
-                                                    <span className="text-amber-600 font-bold">{assessment.courseTitle}</span>
+                                                    <span className="text-blue-600 font-bold">{assessment.courseTitle}</span>
                                                 ) : (
                                                     <span className="text-slate-400 italic">Not linked</span>
                                                 )}
@@ -394,7 +394,7 @@ const AdminAssessmentManager = () => {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <button className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-700 rounded-lg transition-colors" title="View">
+                                                    <button className="p-2 text-slate-400 hover:text-blue-400 hover:bg-slate-700 rounded-lg transition-colors" title="View">
                                                         <Eye className="h-4 w-4" />
                                                     </button>
                                                     <button className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors" title="Edit">

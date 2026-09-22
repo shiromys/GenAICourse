@@ -60,7 +60,7 @@ const Register = () => {
 
             {/* Background Orbs */}
             <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-400 rounded-full blur-[140px] opacity-10 animate-pulse"></div>
-            <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-400 rounded-full blur-[140px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-400 rounded-full blur-[140px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}

@@ -50,7 +50,7 @@ const Login = () => {
 
             {/* Animated background elements for premium feel */}
             <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-400 rounded-full blur-[140px] opacity-10 animate-pulse"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-400 rounded-full blur-[140px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-400 rounded-full blur-[140px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -89,7 +89,7 @@ const Login = () => {
                         <div className="space-y-1.5">
                             <div className="flex justify-between items-center ml-1">
                                 <label className="text-sm font-semibold text-slate-700">Password</label>
-                                <Link to="/forgot-password" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                                <Link to="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                                     Forgot your password?
                                 </Link>
                             </div>

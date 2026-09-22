@@ -66,7 +66,7 @@ export const CertificationSteps = () => {
                             whileInView={{ width: "100%" }}
                             viewport={{ once: true }}
                             transition={{ duration: 1.5, delay: 0.5 }}
-                            className="h-full bg-gradient-to-r from-violet-500 to-cyan-500"
+                            className="h-full bg-gradient-to-r from-blue-500 to-blue-700"
                         />
                     </div>
 
@@ -90,11 +90,11 @@ const StepCard = ({ step, index }) => {
         >
             <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
-                className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center mb-8 shadow-lg shadow-violet-200 transition-all duration-300 relative"
+                className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mb-8 shadow-lg shadow-blue-200 transition-all duration-300 relative"
             >
                 {step.icon}
                 {/* Number Badge */}
-                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white border-2 border-violet-100 flex items-center justify-center text-sm font-bold text-brand shadow-sm">
+                <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white border-2 border-blue-100 flex items-center justify-center text-sm font-bold text-brand shadow-sm">
                     {index + 1}
                 </div>
             </motion.div>

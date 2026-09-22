@@ -66,11 +66,11 @@ const CookieConsent = () => {
                     className="fixed bottom-0 left-0 w-full z-[100]"
                 >
                     <div className="bg-[#0F172A] border-t border-white/10 rounded-t-[2rem] shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.5)] backdrop-blur-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[60px] rounded-full pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[60px] rounded-full pointer-events-none" />
 
                         <div className="flex flex-col md:flex-row items-center gap-6">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
-                                <ShieldCheck className="text-indigo-400" size={24} />
+                            <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                <ShieldCheck className="text-blue-400" size={24} />
                             </div>
                             <div className="text-center md:text-left">
                                 <h3 className="text-white font-black text-sm uppercase tracking-widest mb-1">GDPR & Privacy Compliance</h3>

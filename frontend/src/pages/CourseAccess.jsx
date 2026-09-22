@@ -230,7 +230,7 @@ const CourseAccess = () => {
                                                         disabled={isLocked}
                                                         className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ml-2 whitespace-nowrap ${isCompleted
                                                             ? 'bg-white border border-green-200 text-green-600 hover:bg-green-50'
-                                                            : 'bg-accent text-white hover:bg-orange-600 shadow-md shadow-orange-500/20'
+                                                            : 'bg-accent text-white hover:bg-blue-600 shadow-md shadow-blue-500/20'
                                                             }`}
                                                     >
                                                         {isLocked ? 'Locked' : isCompleted ? 'Review' : 'Start'}

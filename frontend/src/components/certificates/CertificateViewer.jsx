@@ -65,7 +65,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -81,11 +81,11 @@ const CertificateViewer = ({ certificateId, onClose }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Certificate Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6">
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-2xl font-bold mb-2">Certificate of Completion</h2>
-            <p className="text-indigo-100">GENAICOURSE.IO</p>
+            <p className="text-blue-100">GENAICOURSE.IO</p>
           </div>
           <div className="flex space-x-2">
             <button
@@ -118,7 +118,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
       {/* Certificate Content */}
       <div className="p-8">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full mb-6">
             <Award className="h-12 w-12 text-white" />
           </div>
 
@@ -130,8 +130,8 @@ const CertificateViewer = ({ certificateId, onClose }) => {
             has successfully completed the course
           </p>
 
-          <div className="bg-indigo-50 inline-block px-8 py-4 rounded-lg mb-6">
-            <h4 className="text-2xl font-bold text-indigo-900">
+          <div className="bg-blue-50 inline-block px-8 py-4 rounded-lg mb-6">
+            <h4 className="text-2xl font-bold text-blue-900">
               {certificate.courseTitle}
             </h4>
           </div>
@@ -156,8 +156,8 @@ const CertificateViewer = ({ certificateId, onClose }) => {
           </div>
 
           <div className="text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mx-auto mb-3">
-              <Calendar className="h-6 w-6 text-purple-600" />
+            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mx-auto mb-3">
+              <Calendar className="h-6 w-6 text-blue-600" />
             </div>
             <p className="text-sm text-gray-600 mb-1">Completed</p>
             <p className="text-xl font-bold text-gray-900">
@@ -185,7 +185,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
                 href={`/verify/${certificate.certificateId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-indigo-600 hover:text-indigo-700 flex items-center"
+                className="text-blue-600 hover:text-blue-700 flex items-center"
               >
                 Verify Online
                 <ExternalLink className="h-4 w-4 ml-1" />
@@ -208,7 +208,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
           <button
             onClick={handleShare}
             disabled={sharing}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center space-x-2"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2"
           >
             <Share2 className="h-4 w-4" />
             <span>{sharing ? 'Sharing...' : 'Share'}</span>

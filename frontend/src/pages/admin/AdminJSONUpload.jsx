@@ -62,7 +62,7 @@ const AdminJSONUpload = () => {
             <div className="max-w-4xl mx-auto">
                 <div className="mb-10 text-center">
                     <h1 className="text-4xl md:text-5xl font-black text-brand mb-4">
-                        JSON <span className="text-accent bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">Publisher</span>
+                        JSON <span className="text-accent bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">Publisher</span>
                     </h1>
                     <p className="text-gray-500 text-lg font-medium">Upload structured course content directly via JSON.</p>
                 </div>

@@ -30,7 +30,7 @@ const HOME_SCHEMA = {
 
 const Home = () => {
     return (
-        <div className="min-h-screen relative bg-white text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+        <div className="min-h-screen relative bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
 
             {/* ── SEO META ────────────────────────────────────────────────── */}
             <SEOHelmet
@@ -55,8 +55,8 @@ const Home = () => {
                         className="inline-flex items-center gap-2 px-5 py-2 mb-8 rounded-full bg-slate-50 border border-slate-200/60 shadow-sm"
                     >
                         <span className="flex h-2 w-2 relative">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                         </span>
                         <span className="text-sm font-semibold text-slate-600 tracking-wide">
                             Introducing our Generative AI Courses
@@ -72,7 +72,7 @@ const Home = () => {
                     >
                         Build your AI knowledge,{' '}
                         <br className="hidden sm:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500">
                             Become the Best!
                         </span>
                     </motion.h1>
@@ -97,7 +97,7 @@ const Home = () => {
                     >
                         <Link
                             to="/register"
-                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-indigo-600 transition-all duration-300 shadow-xl shadow-slate-900/10 hover:shadow-indigo-500/25 hover:-translate-y-0.5"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-blue-600 transition-all duration-300 shadow-xl shadow-slate-900/10 hover:shadow-blue-500/25 hover:-translate-y-0.5"
                             aria-label="Start learning generative AI — create free account"
                         >
                             Start Learning Free <FaArrowRight className="text-sm opacity-80" />
@@ -152,7 +152,7 @@ const Home = () => {
             {/* ── Bottom CTA — Refined Apple Style ────────────────────────── */}
             <section className="py-40 relative text-center overflow-hidden bg-white">
                 <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
-                    <div className="absolute w-[600px] h-[600px] bg-indigo-50 rounded-full blur-[120px] opacity-60" />
+                    <div className="absolute w-[600px] h-[600px] bg-blue-50 rounded-full blur-[120px] opacity-60" />
                 </div>
                 <div className="container relative z-10 max-w-4xl mx-auto px-6">
                     <motion.div
@@ -170,7 +170,7 @@ const Home = () => {
                         </p>
                         <Link
                             to="/register"
-                            className="inline-flex items-center gap-2 bg-slate-900 text-white font-bold text-lg px-10 py-5 rounded-2xl shadow-xl hover:bg-indigo-600 hover:-translate-y-1 transition-all duration-300"
+                            className="inline-flex items-center gap-2 bg-slate-900 text-white font-bold text-lg px-10 py-5 rounded-2xl shadow-xl hover:bg-blue-600 hover:-translate-y-1 transition-all duration-300"
                             aria-label="Create a free GenAI Course account"
                         >
                             Create Free Account <FaArrowRight className="text-sm opacity-80" />

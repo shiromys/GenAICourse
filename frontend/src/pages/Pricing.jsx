@@ -112,7 +112,7 @@ const Pricing = () => {
                         transition={{ delay: 0.05 }}
                         className="text-4xl md:text-6xl font-black text-slate-900 mb-3 tracking-tight"
                     >
-                        Simple <span className="text-indigo-600">and Transparent</span> Pricing
+                        Simple <span className="text-blue-600">and Transparent</span> Pricing
                     </motion.h1>
 
                     <motion.p
@@ -133,7 +133,7 @@ const Pricing = () => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="bg-white rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col group hover:border-red-200 transition-all duration-500"
+                        className="bg-white rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col group hover:border-blue-200 transition-all duration-500"
                     >
                         <div className="mb-8">
                             <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">One-Course Plan</h2>
@@ -169,14 +169,14 @@ const Pricing = () => {
                         className="bg-[#0B0E14] rounded-[2.5rem] p-10 shadow-[0_30px_60px_rgba(0,0,0,0.3)] relative flex flex-col transform hover:scale-[1.02] transition-all duration-500"
                     >
                         <div className="absolute top-0 right-10 -translate-y-1/2">
-                            <span className="bg-red-600 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-2xl ring-4 ring-white/10">
+                            <span className="bg-blue-600 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-2xl ring-4 ring-white/10">
                                 {hasCredit ? 'Upgrade Deal' : 'Recommended'}
                             </span>
                         </div>
 
                         <div className="mb-8">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg shadow-red-600/20">
+                                <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/20">
                                     <FaBolt size={18} />
                                 </div>
                                 <h2 className="text-2xl font-black text-white uppercase tracking-tight">All Courses Pack</h2>
@@ -213,7 +213,7 @@ const Pricing = () => {
                                         </p>
                                     )}
                                     {isOwned && (
-                                        <p className="text-red-500 font-black text-sm mt-2 uppercase tracking-widest">
+                                        <p className="text-blue-500 font-black text-sm mt-2 uppercase tracking-widest">
                                             Access Protocol Active: You own all courses
                                         </p>
                                     )}
@@ -232,7 +232,7 @@ const Pricing = () => {
                         <button
                             onClick={handleBundlePurchase}
                             disabled={isOwned}
-                            className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}
+                            className={`w-full py-5 px-8 rounded-2xl font-black text-center shadow-[0_20px_40px_rgba(225,29,72,0.3)] transition-all text-lg ${isOwned ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500'}`}
                             aria-label="Buy all AI courses — all-access bundle"
                         >
                             {isOwned ? 'ALREADY OWNED' : (bundlePricing?.isFreeUpgrade ? 'Unlock for FREE — Credits Applied' : 'Get All-Access Pass')}
@@ -249,7 +249,7 @@ const Pricing = () => {
                             viewport={{ once: true }}
                             className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest"
                         >
-                            <span className="flex h-2 w-2 rounded-full bg-indigo-500"></span>
+                            <span className="flex h-2 w-2 rounded-full bg-blue-500"></span>
                             Got Questions?
                         </motion.div>
                         <motion.h2
@@ -290,7 +290,7 @@ const FAQItem = ({ question, answer }) => (
         viewport={{ once: true }}
         className="bg-white/40 backdrop-blur-md border border-slate-100 p-8 rounded-[2rem] hover:bg-white transition-all duration-300 shadow-sm hover:shadow-md group"
     >
-        <h3 className="text-lg font-black text-slate-900 mb-3 tracking-tight group-hover:text-indigo-600 transition-colors">
+        <h3 className="text-lg font-black text-slate-900 mb-3 tracking-tight group-hover:text-blue-600 transition-colors">
             {question}
         </h3>
         <p className="text-slate-500 font-medium leading-relaxed">{answer}</p>
@@ -299,8 +299,8 @@ const FAQItem = ({ question, answer }) => (
 
 const FeatureItem = ({ text, dark }) => (
     <div className="flex items-center gap-4 group">
-        <div className={`w-3 h-3 rounded-full flex items-center justify-center flex-shrink-0 ${dark ? 'bg-red-500' : 'bg-red-100'}`}>
-            <FaCheck size={8} className={dark ? 'text-white' : 'text-red-600'} />
+        <div className={`w-3 h-3 rounded-full flex items-center justify-center flex-shrink-0 ${dark ? 'bg-blue-500' : 'bg-blue-100'}`}>
+            <FaCheck size={8} className={dark ? 'text-white' : 'text-blue-600'} />
         </div>
         <span className={`font-bold transition-colors text-sm uppercase tracking-wide ${dark ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'}`}>
             {text}
