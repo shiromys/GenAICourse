@@ -328,7 +328,11 @@ const CourseViewer = () => {
                                             <h1 className="text-4xl lg:text-6xl font-black text-slate-900 leading-[1.1] mb-4">
                                                 {currentLesson?.title || 'No Lesson Found'}
                                             </h1>
-                                            <div className="text-3xl font-bold text-slate-200">0</div>
+                                            {currentLesson?.duration ? (
+                                                <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">
+                                                    {currentLesson.duration} min read
+                                                </div>
+                                            ) : null}
                                         </div>
 
                                         {/* Styled Key Points Box */}
