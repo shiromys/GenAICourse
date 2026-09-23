@@ -38,38 +38,38 @@ const buildPaymentEmail = (userName, courseTitle, amount, frontendUrl) => `
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#F8FAFC;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;padding:40px 20px;">
+<body style="margin:0;padding:0;background:#F9FAFB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9FAFB;padding:40px 20px;">
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.08);">
         <tr>
-          <td style="background:linear-gradient(135deg,#E11D48 0%,#9F1239 100%);padding:40px;text-align:center;">
+          <td style="background:linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%);padding:40px;text-align:center;">
             <img src="${frontendUrl}/logo.png" alt="GenAI Logo" style="height: 45px; width: auto; margin-bottom: 10px; filter: brightness(0) invert(1);">
             <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;">Payment Confirmed</p>
           </td>
         </tr>
         <tr>
           <td style="padding:50px 40px;">
-            <h2 style="margin:0 0 20px;color:#0F172A;font-size:24px;font-weight:800;">You're in, ${userName}! 🎉</h2>
-            <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.7;">Your payment has been successfully processed and your access has been <strong style="color:#10B981;">activated</strong>.</p>
-            <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;margin-bottom:32px;">
+            <h2 style="margin:0 0 20px;color:#1F2937;font-size:24px;font-weight:800;">You're in, ${userName}! 🎉</h2>
+            <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.7;">Your payment has been successfully processed and your access has been <strong style="color:#059669;">activated</strong>.</p>
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9FAFB;border:1px solid #E2E8F0;border-radius:16px;margin-bottom:32px;">
               <tr>
                 <td style="padding:24px 28px;">
                   <p style="margin:0 0 6px;font-size:11px;font-weight:800;color:#94A3B8;text-transform:uppercase;letter-spacing:2px;">Purchase Details</p>
                   <table width="100%"><tr>
-                    <td style="font-size:16px;font-weight:700;color:#0F172A;">${courseTitle}</td>
-                    <td align="right" style="font-size:20px;font-weight:900;color:#E11D48;">$${(amount / 100).toFixed(2)}</td>
+                    <td style="font-size:16px;font-weight:700;color:#1F2937;">${courseTitle}</td>
+                    <td align="right" style="font-size:20px;font-weight:900;color:#2563EB;">$${(amount / 100).toFixed(2)}</td>
                   </tr></table>
                   <hr style="border:0;border-top:1px solid #E2E8F0;margin:16px 0;">
                   <table width="100%"><tr>
                     <td style="font-size:14px;color:#64748B;">Status</td>
-                    <td align="right" style="font-size:14px;font-weight:700;color:#10B981;">Activated</td>
+                    <td align="right" style="font-size:14px;font-weight:700;color:#059669;">Activated</td>
                   </tr></table>
                 </td>
               </tr>
             </table>
             <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:10px 0 32px;">
-              <a href="${frontendUrl}/dashboard" style="display:inline-block;background:#E11D48;color:#ffffff;padding:18px 48px;border-radius:50px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:0.5px;box-shadow:0 10px 25px rgba(225,29,72,0.35);">
+              <a href="${frontendUrl}/dashboard" style="display:inline-block;background:#2563EB;color:#ffffff;padding:18px 48px;border-radius:50px;text-decoration:none;font-weight:900;font-size:16px;letter-spacing:0.5px;box-shadow:0 10px 25px rgba(37,99,235,0.35);">
                 Start Learning Now
               </a>
             </td></tr></table>
@@ -77,7 +77,7 @@ const buildPaymentEmail = (userName, courseTitle, amount, frontendUrl) => `
           </td>
         </tr>
         <tr>
-          <td style="background:#F8FAFC;border-top:1px solid #E2E8F0;padding:24px 40px;text-align:center;">
+          <td style="background:#F9FAFB;border-top:1px solid #E2E8F0;padding:24px 40px;text-align:center;">
             <p style="margin:0;color:#94A3B8;font-size:11px;font-weight:600;line-height:1.6;">
               This payment is <strong>non-refundable</strong>.<br>
               For support, reply to this email.

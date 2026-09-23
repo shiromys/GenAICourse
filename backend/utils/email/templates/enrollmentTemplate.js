@@ -22,7 +22,7 @@ export const enrollmentTemplate = (name, courseTitle) => {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f7fa;
+      background-color: #F9FAFB;
     }
     .email-container {
       max-width: 600px;
@@ -33,7 +33,7 @@ export const enrollmentTemplate = (name, courseTitle) => {
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
     .header {
-      background: #4f46e5;
+      background: linear-gradient(135deg,#2563EB 0%,#1D4ED8 100%);
       padding: 40px 30px;
       text-align: center;
       color: #ffffff;
@@ -44,7 +44,7 @@ export const enrollmentTemplate = (name, courseTitle) => {
       line-height: 1.8;
     }
     .course-card {
-      background: #f3f4f6;
+      background: #F9FAFB;
       border-radius: 8px;
       padding: 20px;
       margin: 20px 0;
@@ -52,7 +52,7 @@ export const enrollmentTemplate = (name, courseTitle) => {
       text-align: center;
     }
     .footer {
-      background-color: #111827;
+      background-color: #1F2937;
       color: #9ca3af;
       padding: 30px;
       text-align: center;
@@ -72,8 +72,8 @@ export const enrollmentTemplate = (name, courseTitle) => {
       
       <div class="course-card">
         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: bold;">Enrolled Course</p>
-        <h3 style="margin: 10px 0; color: #111827; font-size: 22px;">${courseTitle}</h3>
-        <a href="${process.env.FRONTEND_URL}/dashboard" style="display: inline-block; padding: 12px 24px; background: #4f46e5; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px;">Start Learning</a>
+        <h3 style="margin: 10px 0; color: #1F2937; font-size: 22px;">${courseTitle}</h3>
+        <a href="${process.env.FRONTEND_URL}/dashboard" style="display: inline-block; padding: 12px 24px; background: #2563EB; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px;">Start Learning</a>
       </div>
 
       <p>Mastering AI is a journey. We recommend setting aside a few hours each week to stay consistent. Your progress will be saved automatically.</p>
