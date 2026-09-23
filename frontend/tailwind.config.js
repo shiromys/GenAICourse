@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class', // scoped via a `.dark` ancestor class (used only inside the admin console)
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",

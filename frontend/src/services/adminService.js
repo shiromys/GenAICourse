@@ -24,9 +24,21 @@ const adminService = {
         return response.data;
     },
 
-    // Get deleted users (Principals)
+    // Get deleted users (Audit Log)
     getDeletedUsers: async () => {
         const response = await api.get('/admin/deleted-users');
+        return response.data;
+    },
+
+    // Get recent platform activity (purchases, quiz passes, completions)
+    getRecentActivity: async () => {
+        const response = await api.get('/admin/activity');
+        return response.data;
+    },
+
+    // Get per-quiz performance (attempts, avg score, pass rate)
+    getQuizPerformance: async () => {
+        const response = await api.get('/admin/quiz-performance');
         return response.data;
     },
 

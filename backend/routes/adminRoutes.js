@@ -14,7 +14,9 @@ import {
     getDashboardStats,
     getCourseEnrollments,
     getPaymentAnalytics,
-    getDeletedUsers
+    getDeletedUsers,
+    getRecentActivity,
+    getQuizPerformance
 } from '../controllers/adminController.js';
 
 import { protect, authorize } from '../middleware/auth.js';
@@ -38,6 +40,8 @@ router.post('/courses/save-json', uploadCourseFromJSON);
 // Dashboard & Analytics
 router.get('/stats', getDashboardStats);
 router.get('/payments/analytics', getPaymentAnalytics);
+router.get('/activity', getRecentActivity);
+router.get('/quiz-performance', getQuizPerformance);
 
 // User management
 router.get('/users', getAllUsers);

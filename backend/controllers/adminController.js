@@ -2,6 +2,8 @@ import User from '../models/User.js';
 import Course from '../models/Course.js';
 import UserProgress from '../models/UserProgress.js';
 import Payment from '../models/Payment.js';
+import Quiz from '../models/Quiz.js';
+import UserQuizAttempt from '../models/UserQuizAttempt.js';
 
 /**
  * Admin Controller
@@ -134,7 +136,7 @@ export const deleteUser = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'User removed from active registry and moved to Principals log'
+            message: 'User removed from active registry and moved to the audit log'
         });
     } catch (error) {
         next(error);
@@ -425,6 +427,50 @@ export const getDashboardStats = async (req, res, next) => {
             { $group: { _id: '$category', count: { $sum: 1 } } }
         ]);
 
+        // --- Trend data for the Overview stat cards (sparklines + 7-day deltas) ---
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+
+        const newUsersLast7Days = await User.countDocuments({
+            isDeleted: { $ne: true },
+            createdAt: { $gte: sevenDaysAgo }
+        });
+
+        const newEnrollmentsLast7Days = await UserProgress.countDocuments({
+            enrolledAt: { $gte: sevenDaysAgo }
+        });
+
+        const dailySignupsAgg = await User.aggregate([
+            { $match: { isDeleted: { $ne: true }, createdAt: { $gte: sevenDaysAgo } } },
+            { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } }
+        ]);
+        const dailyEnrollmentsAgg = await UserProgress.aggregate([
+            { $match: { enrolledAt: { $gte: sevenDaysAgo } } },
+            { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$enrolledAt' } }, count: { $sum: 1 } } }
+        ]);
+
+        // Fill in any days with zero activity so sparklines always have exactly 7 points
+        const fillLast7Days = (agg) => {
+            const map = {};
+            agg.forEach(a => { map[a._id] = a.count; });
+            const out = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const key = d.toISOString().slice(0, 10);
+                out.push({ date: key, count: map[key] || 0 });
+            }
+            return out;
+        };
+
+        const trends = {
+            newUsersLast7Days,
+            newEnrollmentsLast7Days,
+            dailySignups: fillLast7Days(dailySignupsAgg),
+            dailyEnrollments: fillLast7Days(dailyEnrollmentsAgg)
+        };
+
         res.status(200).json({
             success: true,
             data: {
@@ -436,8 +482,128 @@ export const getDashboardStats = async (req, res, next) => {
                 },
                 recentUsers,
                 popularCourses,
-                categoryStats
+                categoryStats,
+                trends
             }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Get a merged, chronological feed of recent platform activity
+ *          (purchases, quiz passes, course completions) for the admin overview.
+ * @route   GET /api/admin/activity
+ * @access  Private/Admin
+ */
+export const getRecentActivity = async (req, res, next) => {
+    try {
+        const [payments, quizPasses, completions] = await Promise.all([
+            Payment.find({ status: 'completed' })
+                .sort({ createdAt: -1 })
+                .limit(8)
+                .populate('userId', 'name')
+                .populate('courseId', 'title'),
+            UserQuizAttempt.find({ passed: true })
+                .sort({ createdAt: -1 })
+                .limit(8)
+                .populate('userId', 'name')
+                .populate('quizId', 'title'),
+            UserProgress.find({ completedAt: { $ne: null } })
+                .sort({ completedAt: -1 })
+                .limit(8)
+                .populate('userId', 'name')
+                .populate('courseId', 'title')
+        ]);
+
+        const events = [];
+
+        payments.forEach(p => {
+            const name = p.userId?.name || 'A learner';
+            const what = p.purchaseType === 'all' ? 'the All-Access Bundle' : (p.courseId?.title || 'a course');
+            events.push({
+                type: 'payment',
+                text: `${name} purchased ${what}`,
+                meta: `$${(p.amountPaid / 100).toFixed(0)}`,
+                date: p.createdAt
+            });
+        });
+
+        quizPasses.forEach(q => {
+            const name = q.userId?.name || 'A learner';
+            events.push({
+                type: 'quiz',
+                text: `${name} passed "${q.quizId?.title || 'a quiz'}"`,
+                meta: `${Math.round(q.score)}%`,
+                date: q.createdAt
+            });
+        });
+
+        completions.forEach(c => {
+            const name = c.userId?.name || 'A learner';
+            events.push({
+                type: 'completion',
+                text: `${name} completed ${c.courseId?.title || 'a course'}`,
+                meta: null,
+                date: c.completedAt
+            });
+        });
+
+        events.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        res.status(200).json({
+            success: true,
+            data: events.slice(0, 12)
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Per-quiz performance (attempts, average score, pass rate), worst first —
+ *          surfaces which course assessments may need attention.
+ * @route   GET /api/admin/quiz-performance
+ * @access  Private/Admin
+ */
+export const getQuizPerformance = async (req, res, next) => {
+    try {
+        const agg = await UserQuizAttempt.aggregate([
+            {
+                $group: {
+                    _id: '$quizId',
+                    attempts: { $sum: 1 },
+                    avgScore: { $avg: '$score' },
+                    passedCount: { $sum: { $cond: ['$passed', 1, 0] } }
+                }
+            }
+        ]);
+
+        const quizIds = agg.map(a => a._id);
+        const quizzes = await Quiz.find({ _id: { $in: quizIds } }).select('title courseId');
+        const courseIds = quizzes.map(q => q.courseId).filter(Boolean);
+        const courses = await Course.find({ _id: { $in: courseIds } }).select('title');
+        const courseMap = {};
+        courses.forEach(c => { courseMap[c._id.toString()] = c.title; });
+
+        const data = agg.map(a => {
+            const quiz = quizzes.find(q => q._id.toString() === a._id.toString());
+            const courseTitle = quiz?.courseId ? (courseMap[quiz.courseId.toString()] || 'Unknown Course') : 'Unknown Course';
+            return {
+                quizId: a._id,
+                quizTitle: quiz?.title || 'Unknown Quiz',
+                courseTitle,
+                attempts: a.attempts,
+                avgScore: Math.round(a.avgScore || 0),
+                passRate: a.attempts > 0 ? Math.round((a.passedCount / a.attempts) * 100) : 0
+            };
+        }).sort((a, b) => a.passRate - b.passRate); // lowest pass rate first — most actionable
+
+        res.status(200).json({
+            success: true,
+            count: data.length,
+            data
         });
     } catch (error) {
         next(error);
@@ -677,6 +843,7 @@ export default {
     getDeletedUsers,
     getUserById,
     updateUserRole,
+    deleteUser,
     permanentlyDeleteUser,
     getAllCourses,
     getCourse,
@@ -686,5 +853,7 @@ export default {
     uploadCourseFromJSON,
     getDashboardStats,
     getCourseEnrollments,
-    getPaymentAnalytics
+    getPaymentAnalytics,
+    getRecentActivity,
+    getQuizPerformance
 };
