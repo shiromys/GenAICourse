@@ -48,7 +48,7 @@ const CourseCatalogue = () => {
     };
 
     return (
-        <div className="section pt-32 min-h-screen bg-[var(--bg-main)]">
+        <div className="section pt-8 min-h-screen bg-[var(--bg-main)]">
 
             {/* ── SEO META ────────────────────────────────────────────────── */}
             <SEOHelmet

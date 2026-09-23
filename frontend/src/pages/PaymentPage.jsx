@@ -112,7 +112,7 @@ const PaymentPage = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-blue-50 selection:text-blue-600">
+        <div className="min-h-screen bg-[#F8FAFC] pt-8 pb-20 selection:bg-blue-50 selection:text-blue-600">
             <div className="container max-w-5xl mx-auto px-4">
 
                 <button

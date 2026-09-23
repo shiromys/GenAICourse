@@ -124,7 +124,7 @@ const CourseDetail = () => {
     };
 
     return (
-        <div className="bg-[var(--bg-main)] min-h-screen pt-24">
+        <div className="bg-[var(--bg-main)] min-h-screen pt-8">
             <Helmet>
                 <title>{course.title ? `${course.title} | GenAI Course` : 'Course Details'}</title>
                 <meta name="description" content={course.description || "Enroll in our top-rated AI course today."} />

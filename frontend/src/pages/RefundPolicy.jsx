@@ -8,7 +8,7 @@ import { FaUndo, FaExclamationTriangle, FaCheckCircle, FaTimesCircle, FaTools } 
  */
 const RefundPolicy = () => {
     return (
-        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20 selection:bg-red-50 selection:text-red-600">
+        <div className="min-h-screen bg-[var(--bg-secondary)] pt-8 pb-20 selection:bg-red-50 selection:text-red-600">
             <div className="container max-w-4xl mx-auto px-6">
 
                 {/* Header Section */}

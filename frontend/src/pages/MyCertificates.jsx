@@ -87,7 +87,7 @@ const MyCertificates = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] py-12 section-pt">
+    <div className="min-h-screen bg-[var(--bg-main)] py-12 pt-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="mb-12">

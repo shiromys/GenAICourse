@@ -73,7 +73,7 @@ const CourseAccess = () => {
     const totalLessons = getTotalLessons();
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-24 font-sans">
+        <div className="min-h-screen bg-gray-50 pt-8 font-sans">
             {/* Header */}
             <div className="bg-white border-b border-gray-200 sticky top-16 z-40 shadow-sm">
                 <div className="container py-4">

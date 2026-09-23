@@ -39,7 +39,7 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-32 pb-20 px-4">
+        <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-8 pb-20 px-4">
             {/* ── SEO META ─────────────────────────────────────────── */}
             <SEOHelmet
                 title="Login to Your AI Course Account"

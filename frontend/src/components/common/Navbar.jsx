@@ -13,6 +13,9 @@ const Navbar = () => {
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const location = useLocation();
 
+    // Sticky bar now sits in normal document flow (it reserves its own space instead of
+    // floating over the page), so this only toggles a subtle shadow/border once the page
+    // has scrolled — it no longer changes the bar's size or transparency.
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
@@ -23,20 +26,18 @@ const Navbar = () => {
 
     return (
         <nav
-            className={`fixed w-full z-50 transition-all duration-500 top-0 ${scrolled
-                ? 'py-4 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-lg'
-                : 'py-6 bg-transparent'
+            className={`sticky top-0 z-40 w-full py-3 bg-white/95 backdrop-blur-xl border-b transition-shadow duration-300 ${scrolled ? 'border-slate-100 shadow-md' : 'border-slate-100/60 shadow-sm'
                 }`}
         >
             <div className="container mx-auto px-6 flex justify-between items-center text-[var(--brand)]">
                 <Link to="/" className="flex items-center group">
-                    <img src="/logo.png" alt="GenAI" className="h-[90px] w-auto object-contain" />
+                    <img src="/logo.png" alt="GenAI" className="h-11 w-auto object-contain" />
                 </Link>
 
                 {/* Desktop Menu */}
                 <div className="hidden lg:flex items-center gap-6">
                     {/* Liquid Glass Pill Navbar */}
-                    <div className="flex items-center gap-6 bg-white/95 px-8 py-3 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-2xl">
+                    <div className="flex items-center gap-6 bg-white/95 px-8 py-2.5 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-2xl">
                         <NavLink to="/" active={isActive('/')}>Home</NavLink>
                         <NavLink to="/courses" active={isActive('/courses')}>Courses</NavLink>
                         <NavLink to="/pricing" active={isActive('/pricing')}>Pricing</NavLink>

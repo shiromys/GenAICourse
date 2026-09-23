@@ -38,7 +38,7 @@ const HOW_IT_WORKS_SCHEMA = {
 
 const HowItWorks = () => {
     return (
-        <div className="section section-pt bg-[var(--bg-main)]">
+        <div className="section pt-8 bg-[var(--bg-main)]">
 
             {/* ── SEO META ────────────────────────────────────────────────── */}
             <SEOHelmet

@@ -106,7 +106,7 @@ const Dashboard = () => {
     ];
 
     return (
-        <div className="section section-pt min-h-screen bg-[#FDFCFB]">
+        <div className="section pt-8 min-h-screen bg-[#FDFCFB]">
             {/* ── SEO META ─────────────────────────────────────────── */}
             <SEOHelmet
                 title="My AI Learning Dashboard"

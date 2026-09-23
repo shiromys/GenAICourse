@@ -4,7 +4,7 @@ import { FaShieldAlt, FaFileContract, FaUndo } from 'react-icons/fa';
 
 const LegalLayout = ({ title, lastUpdated, icon: Icon, children }) => {
     return (
-        <div className="min-h-screen bg-[var(--bg-secondary)] pt-32 pb-20">
+        <div className="min-h-screen bg-[var(--bg-secondary)] pt-8 pb-20">
             <div className="container max-w-4xl mx-auto px-6">
                 {/* Header Section */}
                 <motion.div 

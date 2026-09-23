@@ -96,7 +96,7 @@ const Contact = () => {
     };
 
     return (
-        <AuroraBackground className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center min-h-screen selection:bg-blue-100 selection:text-blue-900">
+        <AuroraBackground className="pt-8 pb-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center min-h-screen selection:bg-blue-100 selection:text-blue-900">
             <Helmet>
                 <title>Contact Us | GenAI Course</title>
                 <meta name="description" content="Contact Shiro Technologies LLC in Addison, TX for AI course inquiries." />

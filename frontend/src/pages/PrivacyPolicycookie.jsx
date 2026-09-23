@@ -18,7 +18,7 @@ const PrivacyPolicycookie = () => {
     ];
 
     return (
-        <AuroraBackground dark className="min-h-screen pt-28 pb-12">
+        <AuroraBackground dark className="min-h-screen pt-8 pb-12">
             {/* ... Header and Grid sections remain identical to your source code */}
 
             <motion.div

@@ -49,7 +49,7 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-32 pb-24 px-4">
+        <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-8 pb-24 px-4">
             {/* ── SEO META ─────────────────────────────────────────── */}
             <SEOHelmet
                 title="Create a Free AI Course Account"

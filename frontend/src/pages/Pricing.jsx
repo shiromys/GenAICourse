@@ -90,7 +90,7 @@ const Pricing = () => {
     };
 
     return (
-        <AuroraBackground id="pricing" className="pt-40 pb-32 overflow-hidden">
+        <AuroraBackground id="pricing" className="pt-14 pb-32 overflow-hidden">
 
             {/* ── SEO META ────────────────────────────────────────────────── */}
             <SEOHelmet

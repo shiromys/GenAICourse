@@ -161,7 +161,7 @@ const Profile = () => {
     ];
 
     return (
-        <div className="relative min-h-screen bg-[#F8FAFC] pt-32 pb-20 selection:bg-blue-50 selection:text-blue-600 overflow-hidden">
+        <div className="relative min-h-screen bg-[#F8FAFC] pt-8 pb-20 selection:bg-blue-50 selection:text-blue-600 overflow-hidden">
             {/* ── SEO META ─────────────────────────────────────────── */}
             <SEOHelmet
                 title="My Profile | GenAI Course"

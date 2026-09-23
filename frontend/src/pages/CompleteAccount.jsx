@@ -47,7 +47,7 @@ const CompleteAccount = () => {
     // Not a guest (or not logged in) — nothing to set up here.
     if (user && !user.isGuest) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC] px-4 pt-32 pb-24 text-center">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC] px-4 pt-8 pb-24 text-center">
                 <FaCircleCheck className="text-blue-500 text-5xl mb-6" />
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">Your account is already set up</h1>
                 <p className="text-slate-500 font-medium mb-8">There's nothing to complete here.</p>
@@ -59,7 +59,7 @@ const CompleteAccount = () => {
     }
 
     return (
-        <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-32 pb-24 px-4">
+        <div className="min-h-screen flex justify-center bg-[#F8FAFC] relative overflow-hidden pt-8 pb-24 px-4">
             <SEOHelmet title="Complete Your Account" noIndex={true} />
 
             <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-400 rounded-full blur-[140px] opacity-10 animate-pulse"></div>

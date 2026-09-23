@@ -80,7 +80,7 @@ const CourseEnrollment = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-[var(--bg-main)] pt-24">
+        <div className="min-h-screen bg-[var(--bg-main)] pt-8">
             {/* Hero Section */}
             <div className="bg-white border-b border-gray-200">
                 <div className="container py-16">
