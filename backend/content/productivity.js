@@ -1,9 +1,11 @@
 // Content update data for: Prompt-Based AI for Personal Productivity and Knowledge Work
 // Matched to production by exact course/module/lesson TITLE — see scripts/updateCourseContent.js
-// NOTE: this course already has a course.quizId set in production. The update script
-// only creates+links a quiz when course.quizId is missing, so the `quiz` block below
-// is included for completeness/reference but will be SKIPPED by the script for this
-// course — the existing quiz is left untouched.
+// NOTE: every course already has a course.quizId set in production, so
+// updateCourseContent.js will skip quiz creation for all 6 (it never creates or
+// overwrites a quiz). The `quiz` block below — and the equivalent block in every
+// other content file — is instead applied by scripts/upgradeQuizzes.js, which
+// replaces an existing quiz's questions/title/passingScore IN PLACE (same quiz
+// _id, same course link) rather than creating a new quiz document.
 
 export default {
   courseTitle: 'Prompt-Based AI for Personal Productivity and Knowledge Work',
