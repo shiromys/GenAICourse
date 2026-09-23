@@ -258,7 +258,10 @@ export const getInstructorAssessments = asyncHandler(async (req, res) => {
       courseId: quiz.courseId?._id,
       courseTitle: quiz.courseId?.title,
       createdAt: quiz.createdAt,
-      isActive: quiz.isActive
+      // Quiz's actual schema field is isPublished — isActive was never a real field on
+      // this model, so it was always undefined here and the admin panel showed every
+      // assessment as "Draft" regardless of its real published state.
+      isActive: quiz.isPublished
     }))
   });
 });

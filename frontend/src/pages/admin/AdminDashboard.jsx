@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useAuth } from '@/context/AuthContext.jsx';
 import adminService from '../../services/adminService.js';
 import Loader from '../../components/common/Loader.jsx';
 import AdminAssessmentManager from './AdminAssessmentManager.jsx';
@@ -39,6 +40,7 @@ const TAB_TITLES = Object.fromEntries(
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
+    const { user: currentAdmin, logout } = useAuth();
     const [stats, setStats] = useState(null);
     const [courses, setCourses] = useState([]);
     const [users, setUsers] = useState([]);
@@ -55,6 +57,13 @@ const AdminDashboard = () => {
     const [cmdOpen, setCmdOpen] = useState(false);
     const [cmdQuery, setCmdQuery] = useState('');
 
+    // ---- Topbar: notifications + profile dropdowns ----
+    const [notifOpen, setNotifOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
+    const [seenActivityCount, setSeenActivityCount] = useState(0);
+    const notifRef = useRef(null);
+    const profileRef = useRef(null);
+
     // ---- Operations: maintenance mode ----
     const [maintenance, setMaintenance] = useState(null);
     const [maintenanceMsgDraft, setMaintenanceMsgDraft] = useState('');
@@ -70,7 +79,6 @@ const AdminDashboard = () => {
     const [supportTickets, setSupportTickets] = useState([]);
     const [ticketFilter, setTicketFilter] = useState('open');
     const [selectedTicket, setSelectedTicket] = useState(null);
-    const [ticketNoteDraft, setTicketNoteDraft] = useState('');
 
     // ---- Access override modal (support cases) ----
     const [accessModalUser, setAccessModalUser] = useState(null);
@@ -155,6 +163,22 @@ const AdminDashboard = () => {
         try { localStorage.setItem('admin-theme', dark ? 'dark' : 'light'); } catch { /* ignore */ }
     }, [dark]);
 
+    // Close the notifications / profile dropdowns when clicking outside them
+    useEffect(() => {
+        const onClickOutside = (e) => {
+            if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
+            if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
+        };
+        document.addEventListener('mousedown', onClickOutside);
+        return () => document.removeEventListener('mousedown', onClickOutside);
+    }, []);
+
+    const handleLogout = () => {
+        logout();
+        setProfileOpen(false);
+        navigate('/login');
+    };
+
     useEffect(() => {
         const onKey = (e) => {
             if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -167,17 +191,24 @@ const AdminDashboard = () => {
         return () => window.removeEventListener('keydown', onKey);
     }, []);
 
-    // Load the wipe-test-data preview counts lazily, the first time the System tab is opened
+    // Load the wipe-test-data preview counts every time the System tab is opened.
+    // IMPORTANT: this only depends on activeTab. Depending on resetPreviewLoading too (as an
+    // earlier version did) caused the effect to re-run the instant setResetPreviewLoading(true)
+    // fired, which ran this effect's own cleanup (cancelled = true) against the in-flight
+    // request — so its .finally() was skipped and the "Loading preview..." state could never
+    // clear. Re-fetching on every visit is also simply correct here: it's a cheap count query
+    // and the counts should be fresh (e.g. right after a wipe run).
     useEffect(() => {
-        if (activeTab !== 'system' || resetPreview || resetPreviewLoading) return;
+        if (activeTab !== 'system') return;
         let cancelled = false;
         setResetPreviewLoading(true);
+        setResetPreview(null);
         adminService.previewDataReset()
             .then(res => { if (!cancelled) setResetPreview(res.data); })
-            .catch(() => {})
+            .catch(() => { if (!cancelled) setResetPreview(null); })
             .finally(() => { if (!cancelled) setResetPreviewLoading(false); });
         return () => { cancelled = true; };
-    }, [activeTab, resetPreview, resetPreviewLoading]);
+    }, [activeTab]);
 
     const handleDeleteCourse = async (id) => {
         if (window.confirm('Are you sure you want to delete this course?')) {
@@ -288,17 +319,6 @@ const AdminDashboard = () => {
             toast.success('Ticket reopened');
         } catch (error) {
             toast.error('Failed to update ticket');
-        }
-    };
-
-    const handleSaveTicketNote = async (id) => {
-        try {
-            const res = await adminService.updateSupportTicket(id, { adminNotes: ticketNoteDraft });
-            setSupportTickets(prev => prev.map(t => t._id === id ? res.data : t));
-            setSelectedTicket(res.data);
-            toast.success('Note saved');
-        } catch (error) {
-            toast.error('Failed to save note');
         }
     };
 
@@ -432,10 +452,10 @@ const AdminDashboard = () => {
                         </Link>
                         <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/[0.03]">
                             <div className="w-9 h-9 rounded-[11px] bg-gradient-to-br from-amber-500 to-red-500 flex items-center justify-center text-white font-black text-xs flex-shrink-0">
-                                {(users.find(u => u.role === 'admin')?.name || 'A').charAt(0).toUpperCase()}
+                                {(currentAdmin?.name || 'A').charAt(0).toUpperCase()}
                             </div>
                             <div className="min-w-0">
-                                <div className="text-white text-xs font-black truncate">Admin</div>
+                                <div className="text-white text-xs font-black truncate">{currentAdmin?.name || 'Admin'}</div>
                                 <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Full access</div>
                             </div>
                         </div>
@@ -468,12 +488,63 @@ const AdminDashboard = () => {
                             >
                                 {dark ? <FaSun size={14} /> : <FaMoon size={14} />}
                             </button>
-                            <button className="relative w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-300">
-                                <FaBell size={14} />
-                                {recentActivity.length > 0 && <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-red-500" />}
-                            </button>
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-black text-xs">
-                                {(users.find(u => u.role === 'admin')?.name || 'A').charAt(0).toUpperCase()}
+                            <div className="relative" ref={notifRef}>
+                                <button
+                                    onClick={() => { setNotifOpen(o => !o); setProfileOpen(false); setSeenActivityCount(recentActivity.length); }}
+                                    title="Notifications"
+                                    className="relative w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:border-blue-400 hover:text-blue-500 transition-colors"
+                                >
+                                    <FaBell size={14} />
+                                    {recentActivity.length > seenActivityCount && <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-red-500" />}
+                                </button>
+                                {notifOpen && (
+                                    <div className="absolute right-0 top-12 w-80 bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden z-50">
+                                        <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-wider text-slate-400">Recent Activity</div>
+                                        <div className="max-h-80 overflow-y-auto">
+                                            {recentActivity.length === 0 && (
+                                                <div className="px-4 py-6 text-center text-xs font-semibold text-slate-400">No activity recorded yet.</div>
+                                            )}
+                                            {recentActivity.slice(0, 8).map((e, idx) => (
+                                                <div key={idx} className="px-4 py-3 border-b border-slate-50 dark:border-slate-800/50 last:border-none">
+                                                    <div className="text-[12.5px] font-bold text-slate-700 dark:text-slate-200 leading-snug">
+                                                        {e.text}{e.meta ? <span className="text-slate-400"> · {e.meta}</span> : null}
+                                                    </div>
+                                                    <div className="text-[10.5px] text-slate-400 font-bold mt-0.5">{e.date ? format(new Date(e.date), 'MMM d, h:mm a') : ''}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="relative" ref={profileRef}>
+                                <button
+                                    onClick={() => { setProfileOpen(o => !o); setNotifOpen(false); }}
+                                    className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-black text-xs"
+                                >
+                                    {(currentAdmin?.name || 'A').charAt(0).toUpperCase()}
+                                </button>
+                                {profileOpen && (
+                                    <div className="absolute right-0 top-12 w-56 bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden z-50 py-2">
+                                        <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 mb-1">
+                                            <div className="text-xs font-black text-slate-900 dark:text-white truncate">{currentAdmin?.name || 'Admin'}</div>
+                                            <div className="text-[10.5px] text-slate-400 font-bold truncate">{currentAdmin?.email || ''}</div>
+                                        </div>
+                                        <Link
+                                            to="/dashboard"
+                                            onClick={() => setProfileOpen(false)}
+                                            className="block px-4 py-2 text-[13px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+                                        >
+                                            My Dashboard
+                                        </Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-4 py-2 text-[13px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -803,7 +874,7 @@ const AdminDashboard = () => {
                                                 {filteredTickets.map(t => (
                                                     <button
                                                         key={t._id}
-                                                        onClick={() => { setSelectedTicket(t); setTicketNoteDraft(t.adminNotes || ''); }}
+                                                        onClick={() => setSelectedTicket(t)}
                                                         className={`w-full text-left px-4 py-3.5 transition-colors ${selectedTicket?._id === t._id ? 'bg-blue-50 dark:bg-blue-500/10' : 'hover:bg-slate-50 dark:hover:bg-white/[0.03]'}`}
                                                     >
                                                         <div className="flex items-center justify-between gap-2 mb-1">
@@ -830,25 +901,17 @@ const AdminDashboard = () => {
                                                         </p>
                                                         <p className="text-[10.5px] text-slate-400 font-bold mt-0.5">{selectedTicket.createdAt ? format(new Date(selectedTicket.createdAt), 'MMM d, yyyy · h:mm a') : ''}</p>
                                                     </div>
-                                                    {selectedTicket.status === 'open' ? (
-                                                        <button onClick={() => handleCloseTicket(selectedTicket._id)} className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 flex-shrink-0"><FaCheck size={11} /> Mark closed</button>
-                                                    ) : (
-                                                        <button onClick={() => handleReopenTicket(selectedTicket._id)} className="btn bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 flex-shrink-0"><FaUndo size={11} /> Reopen</button>
-                                                    )}
+                                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                                        {selectedTicket.status === 'open' ? (
+                                                            <button onClick={() => handleCloseTicket(selectedTicket._id)} className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2"><FaCheck size={11} /> Mark closed</button>
+                                                        ) : (
+                                                            <button onClick={() => handleReopenTicket(selectedTicket._id)} className="btn bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2"><FaUndo size={11} /> Reopen</button>
+                                                        )}
+                                                        <IconBtn icon={FaTimes} tone="blue" title="Close" onClick={() => setSelectedTicket(null)} />
+                                                    </div>
                                                 </div>
-                                                <div className="rounded-xl bg-slate-50 dark:bg-white/5 p-4 text-[13px] font-semibold text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap mb-5">
+                                                <div className="rounded-xl bg-slate-50 dark:bg-white/5 p-4 text-[13px] font-semibold text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">
                                                     {selectedTicket.message}
-                                                </div>
-                                                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Internal note</label>
-                                                <div className="flex gap-2">
-                                                    <textarea
-                                                        value={ticketNoteDraft}
-                                                        onChange={e => setTicketNoteDraft(e.target.value)}
-                                                        rows={2}
-                                                        placeholder="Not visible to the user — for your own tracking"
-                                                        className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-white/5 px-3.5 py-2.5 text-sm font-semibold text-slate-800 dark:text-white outline-none focus:border-blue-400"
-                                                    />
-                                                    <button onClick={() => handleSaveTicketNote(selectedTicket._id)} className="btn bg-slate-900 dark:bg-white/10 hover:bg-slate-800 text-white px-4 rounded-xl font-bold text-xs self-start mt-0.5">Save</button>
                                                 </div>
                                             </Panel>
                                         ) : (
