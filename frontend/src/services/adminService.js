@@ -106,6 +106,56 @@ const adminService = {
     getQuiz: async (id) => {
         const response = await api.get(`/quizzes/${id}`);
         return response.data;
+    },
+
+    // ---- Global operations ----
+
+    // Public maintenance status (also used inside the admin console for the System tab)
+    getSettingsStatus: async () => {
+        const response = await api.get('/settings/status');
+        return response.data;
+    },
+
+    // Toggle maintenance mode / update its message
+    updateMaintenanceMode: async ({ maintenanceMode, maintenanceMessage }) => {
+        const response = await api.put('/admin/settings/maintenance', { maintenanceMode, maintenanceMessage });
+        return response.data;
+    },
+
+    // Preview what a test-data reset would delete, without deleting anything
+    previewDataReset: async () => {
+        const response = await api.get('/admin/data-reset/preview');
+        return response.data;
+    },
+
+    // Actually wipe test data — requires the exact confirmation phrase from the preview
+    resetTestData: async (confirm) => {
+        const response = await api.post('/admin/data-reset', { confirm });
+        return response.data;
+    },
+
+    // ---- Support tickets ----
+
+    getSupportTickets: async (status) => {
+        const response = await api.get('/admin/support-tickets', { params: status ? { status } : {} });
+        return response.data;
+    },
+
+    updateSupportTicket: async (id, updates) => {
+        const response = await api.put(`/admin/support-tickets/${id}`, updates);
+        return response.data;
+    },
+
+    // ---- Access overrides (support cases) ----
+
+    grantCourseAccess: async (userId, courseId) => {
+        const response = await api.post(`/admin/users/${userId}/grant-course`, { courseId });
+        return response.data;
+    },
+
+    setAllCoursesAccess: async (userId, hasAllCoursesAccess) => {
+        const response = await api.put(`/admin/users/${userId}/all-access`, { hasAllCoursesAccess });
+        return response.data;
     }
 };
 

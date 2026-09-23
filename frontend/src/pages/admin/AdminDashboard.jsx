@@ -8,7 +8,8 @@ import {
     FaUser, FaBook, FaPlus, FaTrash, FaEdit, FaChartLine, FaGraduationCap,
     FaClipboardList, FaUsers, FaEye, FaCalendarAlt, FaSearch, FaMoon, FaSun,
     FaBolt, FaHistory, FaThLarge, FaListUl, FaTimes, FaBell, FaLayerGroup,
-    FaShieldAlt, FaDollarSign, FaClock, FaFileDownload
+    FaShieldAlt, FaDollarSign, FaClock, FaFileDownload, FaLifeRing, FaTools,
+    FaExclamationTriangle, FaKey, FaCheck, FaUndo
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -25,6 +26,10 @@ const NAV_ITEMS = [
     { group: 'People', items: [
         { id: 'users', label: 'Users', icon: FaUsers },
         { id: 'audit', label: 'Audit Log', icon: FaHistory },
+    ]},
+    { group: 'Operations', items: [
+        { id: 'support', label: 'Support Tickets', icon: FaLifeRing },
+        { id: 'system', label: 'System', icon: FaTools },
     ]},
 ];
 
@@ -49,6 +54,26 @@ const AdminDashboard = () => {
     });
     const [cmdOpen, setCmdOpen] = useState(false);
     const [cmdQuery, setCmdQuery] = useState('');
+
+    // ---- Operations: maintenance mode ----
+    const [maintenance, setMaintenance] = useState(null);
+    const [maintenanceMsgDraft, setMaintenanceMsgDraft] = useState('');
+    const [maintenanceSaving, setMaintenanceSaving] = useState(false);
+
+    // ---- Operations: wipe test data ----
+    const [resetPreview, setResetPreview] = useState(null);
+    const [resetPreviewLoading, setResetPreviewLoading] = useState(false);
+    const [resetConfirmText, setResetConfirmText] = useState('');
+    const [resetRunning, setResetRunning] = useState(false);
+
+    // ---- Support tickets ----
+    const [supportTickets, setSupportTickets] = useState([]);
+    const [ticketFilter, setTicketFilter] = useState('open');
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    const [ticketNoteDraft, setTicketNoteDraft] = useState('');
+
+    // ---- Access override modal (support cases) ----
+    const [accessModalUser, setAccessModalUser] = useState(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -81,6 +106,14 @@ const AdminDashboard = () => {
 
                 const quizPerfData = await adminService.getQuizPerformance().catch(() => ({ data: [] }));
                 if (!isMounted) return;
+                await new Promise(r => setTimeout(r, 250));
+
+                const maintenanceData = await adminService.getSettingsStatus().catch(() => null);
+                if (!isMounted) return;
+                await new Promise(r => setTimeout(r, 250));
+
+                const ticketsData = await adminService.getSupportTickets().catch(() => ({ data: [] }));
+                if (!isMounted) return;
 
                 setStats(statsData?.data || null);
                 setCourses(coursesData.data || []);
@@ -89,6 +122,9 @@ const AdminDashboard = () => {
                 setDeletedUsers(deletedData.data || []);
                 setRecentActivity(activityData.data || []);
                 setQuizPerformance(quizPerfData.data || []);
+                setMaintenance(maintenanceData?.data || null);
+                setMaintenanceMsgDraft(maintenanceData?.data?.maintenanceMessage || '');
+                setSupportTickets(ticketsData.data || []);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
                 if (error.response?.status === 429) {
@@ -131,6 +167,18 @@ const AdminDashboard = () => {
         return () => window.removeEventListener('keydown', onKey);
     }, []);
 
+    // Load the wipe-test-data preview counts lazily, the first time the System tab is opened
+    useEffect(() => {
+        if (activeTab !== 'system' || resetPreview || resetPreviewLoading) return;
+        let cancelled = false;
+        setResetPreviewLoading(true);
+        adminService.previewDataReset()
+            .then(res => { if (!cancelled) setResetPreview(res.data); })
+            .catch(() => {})
+            .finally(() => { if (!cancelled) setResetPreviewLoading(false); });
+        return () => { cancelled = true; };
+    }, [activeTab, resetPreview, resetPreviewLoading]);
+
     const handleDeleteCourse = async (id) => {
         if (window.confirm('Are you sure you want to delete this course?')) {
             try {
@@ -170,6 +218,113 @@ const AdminDashboard = () => {
         }
     };
 
+    // ---- Maintenance mode handlers ----
+    const handleToggleMaintenance = async () => {
+        setMaintenanceSaving(true);
+        try {
+            const next = !maintenance?.maintenanceMode;
+            const res = await adminService.updateMaintenanceMode({ maintenanceMode: next, maintenanceMessage: maintenanceMsgDraft });
+            setMaintenance(res.data);
+            toast.success(next ? 'Maintenance mode is ON — visitors now see the maintenance page.' : 'Maintenance mode is OFF — the site is live again.');
+        } catch (error) {
+            toast.error('Failed to update maintenance mode');
+        } finally {
+            setMaintenanceSaving(false);
+        }
+    };
+
+    const handleSaveMaintenanceMessage = async () => {
+        setMaintenanceSaving(true);
+        try {
+            const res = await adminService.updateMaintenanceMode({ maintenanceMode: !!maintenance?.maintenanceMode, maintenanceMessage: maintenanceMsgDraft });
+            setMaintenance(res.data);
+            toast.success('Maintenance message saved');
+        } catch (error) {
+            toast.error('Failed to save message');
+        } finally {
+            setMaintenanceSaving(false);
+        }
+    };
+
+    // ---- Wipe test data handlers ----
+    const handleResetTestData = async () => {
+        if (!resetPreview || resetConfirmText !== resetPreview.confirmPhrase) return;
+        if (!window.confirm('This permanently deletes all non-admin users and everything derived from them. This cannot be undone. Continue?')) return;
+        setResetRunning(true);
+        try {
+            const res = await adminService.resetTestData(resetConfirmText);
+            toast.success(`Test data cleared: ${res.data.users} users, ${res.data.payments} payments, ${res.data.progress} progress records, ${res.data.quizAttempts} quiz attempts, ${res.data.certificates} certificates.`);
+            setResetConfirmText('');
+            const [previewRes, usersData] = await Promise.all([
+                adminService.previewDataReset().catch(() => null),
+                adminService.getAllUsers().catch(() => null),
+            ]);
+            if (previewRes) setResetPreview(previewRes.data);
+            if (usersData) setUsers(usersData.data || []);
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to reset test data');
+        } finally {
+            setResetRunning(false);
+        }
+    };
+
+    // ---- Support ticket handlers ----
+    const handleCloseTicket = async (id) => {
+        try {
+            const res = await adminService.updateSupportTicket(id, { status: 'closed' });
+            setSupportTickets(prev => prev.map(t => t._id === id ? res.data : t));
+            setSelectedTicket(prev => (prev?._id === id ? res.data : prev));
+            toast.success('Ticket marked closed');
+        } catch (error) {
+            toast.error('Failed to update ticket');
+        }
+    };
+
+    const handleReopenTicket = async (id) => {
+        try {
+            const res = await adminService.updateSupportTicket(id, { status: 'open' });
+            setSupportTickets(prev => prev.map(t => t._id === id ? res.data : t));
+            setSelectedTicket(prev => (prev?._id === id ? res.data : prev));
+            toast.success('Ticket reopened');
+        } catch (error) {
+            toast.error('Failed to update ticket');
+        }
+    };
+
+    const handleSaveTicketNote = async (id) => {
+        try {
+            const res = await adminService.updateSupportTicket(id, { adminNotes: ticketNoteDraft });
+            setSupportTickets(prev => prev.map(t => t._id === id ? res.data : t));
+            setSelectedTicket(res.data);
+            toast.success('Note saved');
+        } catch (error) {
+            toast.error('Failed to save note');
+        }
+    };
+
+    // ---- Access override handlers (support cases) ----
+    const handleGrantCourse = async (userId, courseId) => {
+        try {
+            const res = await adminService.grantCourseAccess(userId, courseId);
+            toast.success(res.message);
+            setAccessModalUser(null);
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to grant access');
+        }
+    };
+
+    const handleSetAllAccess = async (userId, value) => {
+        try {
+            const res = await adminService.setAllCoursesAccess(userId, value);
+            toast.success(res.message);
+            setAccessModalUser(null);
+            const usersData = await adminService.getAllUsers().catch(() => null);
+            if (usersData) setUsers(usersData.data || []);
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to update access');
+        }
+    };
+
     // ---- derived data ----
     const contentStats = useMemo(() => courses.map(c => {
         const modules = c.modules || [];
@@ -185,6 +340,12 @@ const AdminDashboard = () => {
 
     const attemptedQuizzes = useMemo(() => quizPerformance.filter(q => q.attempts > 0), [quizPerformance]);
     const lowestPassQuiz = attemptedQuizzes.length > 0 ? attemptedQuizzes[0] : null;
+
+    const openTicketCount = useMemo(() => supportTickets.filter(t => t.status === 'open').length, [supportTickets]);
+    const filteredTickets = useMemo(
+        () => supportTickets.filter(t => (ticketFilter === 'all' ? true : t.status === ticketFilter)),
+        [supportTickets, ticketFilter]
+    );
 
     const revenueDelta = useMemo(() => {
         const daily = paymentAnalytics?.dailyRevenue;
@@ -241,6 +402,9 @@ const AdminDashboard = () => {
                                 {group.items.map(item => {
                                     const Icon = item.icon;
                                     const active = activeTab === item.id;
+                                    const badge = item.id === 'support'
+                                        ? (openTicketCount > 0 ? openTicketCount : null)
+                                        : item.badge;
                                     return (
                                         <button
                                             key={item.id}
@@ -252,8 +416,8 @@ const AdminDashboard = () => {
                                             {active && <span className="absolute -left-4 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded bg-blue-500 shadow-[0_0_10px_#2563EB]" />}
                                             <Icon size={15} className="flex-shrink-0" />
                                             <span className="truncate">{item.label}</span>
-                                            {item.badge && (
-                                                <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 text-white">{item.badge}</span>
+                                            {badge && (
+                                                <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 text-white">{badge}</span>
                                             )}
                                         </button>
                                     );
@@ -558,7 +722,8 @@ const AdminDashboard = () => {
                                                     <Td className="text-slate-500 dark:text-slate-400 font-bold text-xs">{u.createdAt ? format(new Date(u.createdAt), 'MMM dd, yyyy') : '-'}</Td>
                                                     <Td right>
                                                         {u.role !== 'admin' && (
-                                                            <div className="flex justify-end">
+                                                            <div className="flex justify-end gap-2">
+                                                                <IconBtn icon={FaKey} tone="blue" title="Grant course access" onClick={() => setAccessModalUser(u)} />
                                                                 <IconBtn icon={FaTrash} tone="red" title="Delete" onClick={() => handleDeleteUser(u._id || u.id)} />
                                                             </div>
                                                         )}
@@ -609,6 +774,171 @@ const AdminDashboard = () => {
                                 </Panel>
                             </div>
                         )}
+
+                        {/* ============ SUPPORT TICKETS ============ */}
+                        {activeTab === 'support' && (
+                            <div className="space-y-5 animate-in fade-in duration-300">
+                                <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                                    <div>
+                                        <h1 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2"><FaLifeRing className="text-slate-400" size={20} /> Support Tickets</h1>
+                                        <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold mt-0.5">Queries submitted through the contact form</p>
+                                    </div>
+                                    <div className="flex bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-700 rounded-xl p-1 gap-1">
+                                        {['open', 'closed', 'all'].map(f => (
+                                            <button
+                                                key={f}
+                                                onClick={() => setTicketFilter(f)}
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-black capitalize ${ticketFilter === f ? 'bg-blue-600 text-white' : 'text-slate-500 dark:text-slate-400'}`}
+                                            >
+                                                {f}{f === 'open' && openTicketCount > 0 ? ` (${openTicketCount})` : ''}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 items-start">
+                                    <div className="lg:col-span-2">
+                                        <Panel noPad>
+                                            <div className="max-h-[560px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                                                {filteredTickets.map(t => (
+                                                    <button
+                                                        key={t._id}
+                                                        onClick={() => { setSelectedTicket(t); setTicketNoteDraft(t.adminNotes || ''); }}
+                                                        className={`w-full text-left px-4 py-3.5 transition-colors ${selectedTicket?._id === t._id ? 'bg-blue-50 dark:bg-blue-500/10' : 'hover:bg-slate-50 dark:hover:bg-white/[0.03]'}`}
+                                                    >
+                                                        <div className="flex items-center justify-between gap-2 mb-1">
+                                                            <span className="text-[13px] font-black text-slate-900 dark:text-white truncate">{t.subject}</span>
+                                                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide flex-shrink-0 ${t.status === 'open' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'}`}>{t.status}</span>
+                                                        </div>
+                                                        <div className="text-[11.5px] font-bold text-slate-500 dark:text-slate-400 truncate">{t.name} · {t.email}</div>
+                                                        <div className="text-[10.5px] text-slate-400 font-bold mt-1">{t.createdAt ? format(new Date(t.createdAt), 'MMM d, h:mm a') : ''}</div>
+                                                    </button>
+                                                ))}
+                                                {filteredTickets.length === 0 && <div className="px-4 py-6"><EmptyRow text="No tickets here." /></div>}
+                                            </div>
+                                        </Panel>
+                                    </div>
+
+                                    <div className="lg:col-span-3">
+                                        {selectedTicket ? (
+                                            <Panel>
+                                                <div className="flex items-start justify-between gap-4 mb-4">
+                                                    <div className="min-w-0">
+                                                        <h2 className="text-lg font-black text-slate-900 dark:text-white truncate">{selectedTicket.subject}</h2>
+                                                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">
+                                                            {selectedTicket.name} · <a href={`mailto:${selectedTicket.email}`} className="text-blue-500 hover:underline">{selectedTicket.email}</a>
+                                                        </p>
+                                                        <p className="text-[10.5px] text-slate-400 font-bold mt-0.5">{selectedTicket.createdAt ? format(new Date(selectedTicket.createdAt), 'MMM d, yyyy · h:mm a') : ''}</p>
+                                                    </div>
+                                                    {selectedTicket.status === 'open' ? (
+                                                        <button onClick={() => handleCloseTicket(selectedTicket._id)} className="btn bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 flex-shrink-0"><FaCheck size={11} /> Mark closed</button>
+                                                    ) : (
+                                                        <button onClick={() => handleReopenTicket(selectedTicket._id)} className="btn bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 flex-shrink-0"><FaUndo size={11} /> Reopen</button>
+                                                    )}
+                                                </div>
+                                                <div className="rounded-xl bg-slate-50 dark:bg-white/5 p-4 text-[13px] font-semibold text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap mb-5">
+                                                    {selectedTicket.message}
+                                                </div>
+                                                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Internal note</label>
+                                                <div className="flex gap-2">
+                                                    <textarea
+                                                        value={ticketNoteDraft}
+                                                        onChange={e => setTicketNoteDraft(e.target.value)}
+                                                        rows={2}
+                                                        placeholder="Not visible to the user — for your own tracking"
+                                                        className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-white/5 px-3.5 py-2.5 text-sm font-semibold text-slate-800 dark:text-white outline-none focus:border-blue-400"
+                                                    />
+                                                    <button onClick={() => handleSaveTicketNote(selectedTicket._id)} className="btn bg-slate-900 dark:bg-white/10 hover:bg-slate-800 text-white px-4 rounded-xl font-bold text-xs self-start mt-0.5">Save</button>
+                                                </div>
+                                            </Panel>
+                                        ) : (
+                                            <Panel>
+                                                <EmptyState icon={FaLifeRing} text="Select a ticket to view it." />
+                                            </Panel>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ============ SYSTEM ============ */}
+                        {activeTab === 'system' && (
+                            <div className="space-y-6 animate-in fade-in duration-300">
+                                <div>
+                                    <h1 className="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2"><FaTools className="text-slate-400" size={20} /> System</h1>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold mt-0.5">Global operations for the live application</p>
+                                </div>
+
+                                <Panel title="Maintenance Mode" icon={FaBolt}>
+                                    <div className="flex items-start justify-between gap-6 flex-wrap">
+                                        <div className="max-w-md">
+                                            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">
+                                                {maintenance?.maintenanceMode ? 'The site is currently in maintenance mode.' : 'The site is currently live.'}
+                                            </p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
+                                                When on, every visitor except a logged-in admin sees the message below instead of the app. Admins always keep full access — including here — so this can be switched back off at any time.
+                                            </p>
+                                        </div>
+                                        <ToggleSwitch checked={!!maintenance?.maintenanceMode} onChange={handleToggleMaintenance} disabled={maintenanceSaving} />
+                                    </div>
+                                    <div className="mt-5">
+                                        <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Message shown to visitors</label>
+                                        <div className="flex flex-col sm:flex-row gap-2">
+                                            <textarea
+                                                value={maintenanceMsgDraft}
+                                                onChange={e => setMaintenanceMsgDraft(e.target.value)}
+                                                rows={2}
+                                                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-white/5 px-3.5 py-2.5 text-sm font-semibold text-slate-800 dark:text-white outline-none focus:border-blue-400"
+                                            />
+                                            <button onClick={handleSaveMaintenanceMessage} disabled={maintenanceSaving} className="btn bg-slate-900 dark:bg-white/10 hover:bg-slate-800 text-white px-4 rounded-xl font-bold text-xs self-start disabled:opacity-50">Save</button>
+                                        </div>
+                                    </div>
+                                </Panel>
+
+                                <Panel title="Danger Zone — Wipe Test Data" icon={FaExclamationTriangle}>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold leading-relaxed mb-4">
+                                        Permanently deletes every non-admin user account and everything derived from them (payments, progress, quiz attempts, certificates). Course and quiz content is never touched. Use this once, right before going live, to clear out test accounts.
+                                    </p>
+                                    {resetPreviewLoading ? (
+                                        <p className="text-xs font-bold text-slate-400">Loading preview…</p>
+                                    ) : resetPreview ? (
+                                        <>
+                                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5">
+                                                {[
+                                                    ['Users', resetPreview.users],
+                                                    ['Payments', resetPreview.payments],
+                                                    ['Progress', resetPreview.progress],
+                                                    ['Quiz attempts', resetPreview.quizAttempts],
+                                                    ['Certificates', resetPreview.certificates],
+                                                ].map(([label, val]) => (
+                                                    <div key={label} className="rounded-xl border border-red-100 dark:border-red-500/20 bg-red-50/50 dark:bg-red-500/5 p-3 text-center">
+                                                        <div className="text-lg font-black text-red-600 dark:text-red-400">{val}</div>
+                                                        <div className="text-[10px] font-black uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                                                <input
+                                                    value={resetConfirmText}
+                                                    onChange={e => setResetConfirmText(e.target.value)}
+                                                    placeholder={`Type "${resetPreview.confirmPhrase}" to confirm`}
+                                                    className="flex-1 rounded-xl border border-red-200 dark:border-red-500/30 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-red-400"
+                                                />
+                                                <button
+                                                    onClick={handleResetTestData}
+                                                    disabled={resetConfirmText !== resetPreview.confirmPhrase || resetRunning}
+                                                    className="btn bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-xl font-black text-sm flex items-center gap-2 justify-center"
+                                                >
+                                                    <FaTrash size={12} /> {resetRunning ? 'Deleting…' : 'Delete all test data'}
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <p className="text-xs font-bold text-red-400">Could not load preview counts.</p>
+                                    )}
+                                </Panel>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -647,6 +977,17 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             )}
+
+            {/* ---------------- ACCESS GRANT MODAL ---------------- */}
+            {accessModalUser && (
+                <AccessGrantModal
+                    user={accessModalUser}
+                    courses={courses}
+                    onClose={() => setAccessModalUser(null)}
+                    onGrantCourse={(courseId) => handleGrantCourse(accessModalUser._id || accessModalUser.id, courseId)}
+                    onSetAllAccess={(value) => handleSetAllAccess(accessModalUser._id || accessModalUser.id, value)}
+                />
+            )}
         </div>
     );
 };
@@ -680,6 +1021,64 @@ const InsightBanner = ({ title, body }) => (
         </div>
     </div>
 );
+
+const ToggleSwitch = ({ checked, onChange, disabled }) => (
+    <button
+        onClick={onChange}
+        disabled={disabled}
+        className={`relative w-14 h-8 rounded-full transition-colors flex-shrink-0 ${checked ? 'bg-red-500' : 'bg-slate-300 dark:bg-slate-700'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+        <span className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-md transition-transform ${checked ? 'translate-x-6' : ''}`} />
+    </button>
+);
+
+const AccessGrantModal = ({ user, courses, onClose, onGrantCourse, onSetAllAccess }) => {
+    const [courseId, setCourseId] = useState('');
+    return (
+        <div className="fixed inset-0 z-[100] bg-slate-900/55 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
+            <div className="w-full max-w-md bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl p-6" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-1">
+                    <h3 className="text-base font-black text-slate-900 dark:text-white">Grant Access</h3>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><FaTimes size={14} /></button>
+                </div>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-5">{user.name} · {user.email}</p>
+
+                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Grant a specific course</label>
+                <div className="flex gap-2 mb-5">
+                    <select
+                        value={courseId}
+                        onChange={e => setCourseId(e.target.value)}
+                        className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-white/5 px-3 py-2.5 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-blue-400"
+                    >
+                        <option value="">Select a course…</option>
+                        {courses.map(c => <option key={c._id || c.id} value={c._id || c.id}>{c.title}</option>)}
+                    </select>
+                    <button
+                        disabled={!courseId}
+                        onClick={() => onGrantCourse(courseId)}
+                        className="btn bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-4 rounded-xl font-bold text-xs"
+                    >
+                        Grant
+                    </button>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">All-course bundle access</label>
+                    <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 max-w-[220px]">
+                            {user.hasAllCoursesAccess ? 'This user currently has access to every course.' : 'Grant access to every published course, as if they bought the bundle.'}
+                        </p>
+                        {user.hasAllCoursesAccess ? (
+                            <button onClick={() => onSetAllAccess(false)} className="btn bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-3.5 py-2 rounded-xl font-bold text-xs flex-shrink-0">Revoke</button>
+                        ) : (
+                            <button onClick={() => onSetAllAccess(true)} className="btn bg-violet-600 hover:bg-violet-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs flex-shrink-0">Grant all</button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const Sparkline = ({ points }) => {
     if (!points || points.length === 0) return null;

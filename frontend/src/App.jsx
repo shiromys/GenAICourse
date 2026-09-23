@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -36,6 +36,8 @@ import Profile from './pages/Profile';
 import CompleteAccount from './pages/CompleteAccount';
 import PaymentPage from './pages/PaymentPage';
 import PaymentSuccess from './pages/PaymentSuccess';
+import MaintenancePage from './pages/MaintenancePage';
+import api from './services/api';
 
 
 // Legal Page Imports
@@ -83,15 +85,36 @@ const App = () => {
 
 const AppContent = () => {
     const location = useLocation();
+    const { user } = useAuth();
 
     // Pages that should not show the standard navbar
     const hideNavbarPaths = [
         '/learn',
         '/lessons/',
-        '/assessment'
+        '/assessment',
+        '/admin'
     ];
 
     const shouldHideNavbar = hideNavbarPaths.some(path => location.pathname.includes(path));
+
+    // Maintenance mode: poll the public status endpoint. Admins, and the /login and /admin
+    // routes, always bypass this so the toggle can be switched back off from the console.
+    const [maintenance, setMaintenance] = useState(null);
+    useEffect(() => {
+        let mounted = true;
+        const check = () => api.get('/settings/status')
+            .then(res => { if (mounted) setMaintenance(res.data?.data || null); })
+            .catch(() => { if (mounted) setMaintenance(null); });
+        check();
+        const interval = setInterval(check, 60000);
+        return () => { mounted = false; clearInterval(interval); };
+    }, []);
+
+    const isAdmin = user?.role === 'admin';
+    const bypassesMaintenance = location.pathname.startsWith('/login') || location.pathname.startsWith('/admin');
+    if (maintenance?.maintenanceMode && !isAdmin && !bypassesMaintenance) {
+        return <MaintenancePage message={maintenance.maintenanceMessage} />;
+    }
 
     return (
         <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] font-sans selection:bg-blue-600 selection:text-white transition-colors duration-500">

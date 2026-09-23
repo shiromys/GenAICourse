@@ -4,6 +4,7 @@ import UserProgress from '../models/UserProgress.js';
 import Payment from '../models/Payment.js';
 import Quiz from '../models/Quiz.js';
 import UserQuizAttempt from '../models/UserQuizAttempt.js';
+import Certificate from '../models/Certificate.js';
 
 /**
  * Admin Controller
@@ -314,10 +315,20 @@ export const deleteCourse = async (req, res, next) => {
             });
         }
 
+        // Find this course's quiz(zes) before deleting the course, so attempts can be cleaned up too
+        const courseQuizIds = await Quiz.find({ courseId: req.params.id }).distinct('_id');
+
         await course.deleteOne();
 
-        // Also delete all user progress for this course
+        // Cascade cleanup — without this, progress/quiz-attempt/certificate records outlive
+        // the course they belong to and later surface as confusing orphaned data (e.g. an
+        // admin report showing an attempt against a quiz that no longer resolves to anything).
         await UserProgress.deleteMany({ courseId: req.params.id });
+        if (courseQuizIds.length > 0) {
+            await UserQuizAttempt.deleteMany({ quizId: { $in: courseQuizIds } });
+            await Quiz.deleteMany({ _id: { $in: courseQuizIds } });
+        }
+        await Certificate.deleteMany({ courseId: req.params.id });
 
         res.status(200).json({
             success: true,
@@ -587,18 +598,26 @@ export const getQuizPerformance = async (req, res, next) => {
         const courseMap = {};
         courses.forEach(c => { courseMap[c._id.toString()] = c.title; });
 
-        const data = agg.map(a => {
-            const quiz = quizzes.find(q => q._id.toString() === a._id.toString());
-            const courseTitle = quiz?.courseId ? (courseMap[quiz.courseId.toString()] || 'Unknown Course') : 'Unknown Course';
-            return {
-                quizId: a._id,
-                quizTitle: quiz?.title || 'Unknown Quiz',
-                courseTitle,
-                attempts: a.attempts,
-                avgScore: Math.round(a.avgScore || 0),
-                passRate: a.attempts > 0 ? Math.round((a.passedCount / a.attempts) * 100) : 0
-            };
-        }).sort((a, b) => a.passRate - b.passRate); // lowest pass rate first — most actionable
+        // Attempts can point at a quiz (or a quiz's course) that no longer exists — e.g. a
+        // test course that was deleted before Quiz/UserQuizAttempt cleanup was in place
+        // (see deleteCourse, which now cascades). Those attempts are orphaned data, not a
+        // real course to flag, so they're dropped here rather than shown as "Unknown".
+        const data = agg
+            .map(a => {
+                const quiz = quizzes.find(q => q._id.toString() === a._id.toString());
+                const courseTitle = quiz?.courseId ? courseMap[quiz.courseId.toString()] : null;
+                if (!quiz || !courseTitle) return null;
+                return {
+                    quizId: a._id,
+                    quizTitle: quiz.title,
+                    courseTitle,
+                    attempts: a.attempts,
+                    avgScore: Math.round(a.avgScore || 0),
+                    passRate: a.attempts > 0 ? Math.round((a.passedCount / a.attempts) * 100) : 0
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => a.passRate - b.passRate); // lowest pass rate first — most actionable
 
         res.status(200).json({
             success: true,

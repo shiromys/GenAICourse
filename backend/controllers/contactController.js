@@ -1,5 +1,6 @@
 import { sendEmail } from '../services/emailService.js';
 import { contactTemplate } from '../utils/email/templates/contactTemplate.js';
+import SupportTicket from '../models/SupportTicket.js';
 
 /**
  * Handle Contact Form Submission
@@ -20,6 +21,15 @@ export const handleContactForm = async (req, res, next) => {
         const recipientEmail = 'info@genaicourse.io';
 
         console.log(`📡 Sending inquiry from ${name} to ${recipientEmail}`);
+
+        // Log the inquiry as a support ticket so it shows up in the admin panel, in addition
+        // to the email notification below. This is additive and best-effort — a DB hiccup
+        // here should never stop the actual email from going out to the user.
+        try {
+            await SupportTicket.create({ name, email, subject, message, source: 'contact-form' });
+        } catch (ticketError) {
+            console.error('⚠️ Failed to create support ticket record:', ticketError.message);
+        }
 
         try {
             // 3. Trigger the send

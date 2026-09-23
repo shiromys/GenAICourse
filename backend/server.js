@@ -32,10 +32,12 @@ import assessmentUploadRoutes from './routes/assessmentUpload.js';
 import courseAssessmentRoutes from './routes/courseAssessment.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
 import passport from 'passport';
 import configurePassport from './config/passport.js';
 import { stripeWebhook } from './controllers/paymentController.js';
 import { generateSitemap } from './controllers/seoController.js';
+import maintenanceGate from './middleware/maintenanceGate.js';
 
 const app = express();
 
@@ -84,10 +86,19 @@ const startServer = async () => {
             });
         });
 
-        // API Routes
+        // Settings status must be reachable even during maintenance (the frontend polls it
+        // to decide whether to show the maintenance page). /api/auth stays open so an admin
+        // can still log in, and /api/admin stays open (it already self-protects via
+        // protect+authorize('admin') inside adminRoutes.js) so a logged-in admin can reach
+        // the toggle that turns maintenance mode back off. Everything else mounted below
+        // this point is subject to the gate.
+        app.use('/api/settings', settingsRoutes);
         app.use('/api/auth', authRoutes);
-        app.use('/api/courses', courseRoutes);
         app.use('/api/admin', adminRoutes);
+        app.use(maintenanceGate);
+
+        // API Routes
+        app.use('/api/courses', courseRoutes);
         app.use('/api/quizzes', quizRoutes);
         app.use('/api/certificates', certificateRoutes);
         app.use('/api/learning-paths', learningPathRoutes);
