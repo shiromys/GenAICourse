@@ -26,12 +26,12 @@ const Navbar = () => {
 
     return (
         <nav
-            className={`sticky top-0 z-40 w-full py-3 bg-white/95 backdrop-blur-xl border-b transition-shadow duration-300 ${scrolled ? 'border-slate-100 shadow-md' : 'border-slate-100/60 shadow-sm'
+            className={`sticky top-0 z-40 w-full py-3.5 bg-white/95 backdrop-blur-xl border-b transition-shadow duration-300 ${scrolled ? 'border-slate-100 shadow-md' : 'border-slate-100/60 shadow-sm'
                 }`}
         >
             <div className="container mx-auto px-6 flex justify-between items-center text-[var(--brand)]">
                 <Link to="/" className="flex items-center group">
-                    <img src="/logo.png" alt="GenAI" className="h-11 w-auto object-contain" />
+                    <img src="/logo-nav.png" alt="GenAICourse.IO" className="h-14 w-auto object-contain" />
                 </Link>
 
                 {/* Desktop Menu */}
