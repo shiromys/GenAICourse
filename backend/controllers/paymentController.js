@@ -80,7 +80,8 @@ const buildPaymentEmail = (userName, courseTitle, amount, frontendUrl) => `
           <td style="background:#F9FAFB;border-top:1px solid #E2E8F0;padding:24px 40px;text-align:center;">
             <p style="margin:0;color:#94A3B8;font-size:11px;font-weight:600;line-height:1.6;">
               This payment is <strong>non-refundable</strong>.<br>
-              For support, reply to this email.
+              For support, reply to this email.<br>
+              Can't log back in later? Use "Forgot password" on the login page with this same email address.
             </p>
           </td>
         </tr>

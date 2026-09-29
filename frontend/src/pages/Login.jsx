@@ -134,6 +134,13 @@ const Login = () => {
                             Sign Up
                         </Link>
                     </p>
+                    <p className="mt-3 text-center text-[13px] text-slate-400 font-medium">
+                        Bought a course as a guest and never set a password?{' '}
+                        <Link to="/forgot-password" className="font-semibold text-blue-500 hover:text-blue-600 underline underline-offset-4">
+                            Use "Forgot your password?" with the email you paid with
+                        </Link>
+                        .
+                    </p>
                 </div>
             </motion.div>
         </div>

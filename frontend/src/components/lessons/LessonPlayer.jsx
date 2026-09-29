@@ -13,6 +13,7 @@ const LessonPlayer = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
     const [showAssessment, setShowAssessment] = useState(false);
+    const [completedLessons, setCompletedLessons] = useState(new Set());
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -86,12 +87,33 @@ const LessonPlayer = () => {
         );
     };
 
-    const navigateToLesson = (direction) => {
+    // Saves progress on the server for the lesson currently open — mirrors the
+    // same call CourseViewer.jsx makes on "Next Lesson". Without this, reading
+    // a lesson through this screen (reached by clicking a lesson directly from
+    // the course's curriculum list) never counted toward course completion.
+    const markCurrentLessonComplete = async () => {
+        if (!currentLesson || !course) return;
+        const lessonId = currentLesson._id || currentLesson.id;
+        if (completedLessons.has(String(lessonId))) return;
+        try {
+            const module = course.modules[currentModuleIndex];
+            const moduleId = module?._id || module?.id;
+            await courseService.markLessonComplete(courseId, moduleId, lessonId);
+            setCompletedLessons(prev => new Set([...prev, String(lessonId)]));
+        } catch (error) {
+            console.error('Failed to mark lesson complete:', error);
+        }
+    };
+
+    const navigateToLesson = async (direction) => {
         const allLessons = getAllLessons();
         const currentIndex = getCurrentLessonIndex();
 
         let nextIndex;
         if (direction === 'next') {
+            // Advancing past the current lesson is the same "done reading this one"
+            // signal CourseViewer uses, so record it before moving on.
+            await markCurrentLessonComplete();
             nextIndex = currentIndex + 1;
         } else {
             nextIndex = currentIndex - 1;
@@ -375,7 +397,12 @@ const LessonPlayer = () => {
                                         </button>
                                     ) : (
                                         <button
-                                            onClick={() => setShowAssessment(true)}
+                                            onClick={async () => {
+                                                // This is the final lesson — moving on to the assessment is
+                                                // "done reading this one" the same way "Next Lesson" is.
+                                                await markCurrentLessonComplete();
+                                                setShowAssessment(true);
+                                            }}
                                             className="flex items-center px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20"
                                         >
                                             Take Assessment

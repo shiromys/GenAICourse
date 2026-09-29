@@ -444,11 +444,30 @@ export const resetPassword = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
         }
 
+        // A guest account (created automatically during guest checkout, with a
+        // random password the buyer never chose) can land here too — it's the
+        // only way back in for a guest who never clicked "Set Up Account" and
+        // is now on a new device or past the login session's expiry. Setting a
+        // real password this way is just as valid a "completed setup" as the
+        // dedicated flow, so it needs to fully graduate the account the same
+        // way: clear isGuest (or certificates and full profile access stay
+        // withheld even though they can now log in) and issue anything earned
+        // while still a guest.
+        const wasGuest = user.isGuest;
         user.password = password;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
+        if (wasGuest) {
+            user.isGuest = false;
+            user.isVerified = true;
+        }
 
         await user.save();
+
+        let certificatesIssued = 0;
+        if (wasGuest) {
+            certificatesIssued = await issuePendingCertificates(user);
+        }
 
         try {
             await sendEmail(
@@ -464,7 +483,9 @@ export const resetPassword = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            message: 'Password reset successful',
+            message: certificatesIssued > 0
+                ? `Password reset successful — ${certificatesIssued} certificate${certificatesIssued > 1 ? 's' : ''} now ready to download.`
+                : 'Password reset successful',
             data: { user: user.getPublicProfile(), token }
         });
 
@@ -536,6 +557,46 @@ export const resendVerification = async (req, res, next) => {
 };
 
 /**
+ * Retroactively issues certificates for any course a (formerly-guest) user
+ * finished before their account was fully set up — course completion is
+ * never blocked, only the certificate itself was withheld, since it carries
+ * the account's name. Shared by completeAccountSetup and resetPassword, since
+ * both are valid ways for a guest to become a full account.
+ */
+const issuePendingCertificates = async (user) => {
+    let certificatesIssued = 0;
+    try {
+        const pendingProgress = await UserProgress.find({
+            userId: user._id,
+            completedAt: { $ne: null },
+            certificate: null,
+        });
+
+        for (const progress of pendingProgress) {
+            const lastQuiz = progress.completedQuizzes?.[progress.completedQuizzes.length - 1];
+            const score = lastQuiz?.score ?? 0;
+            const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C+' : score >= 60 ? 'C' : 'Pass';
+
+            const certificate = await issueCertificate({
+                userId: user._id,
+                courseId: progress.courseId,
+                score,
+                grade,
+            });
+            if (certificate) {
+                progress.certificate = certificate._id;
+                await progress.save();
+                certificatesIssued += 1;
+            }
+        }
+    } catch (certError) {
+        // Never fail the caller over a certificate hiccup — log and move on.
+        console.error('❌ Retroactive certificate issuance failed:', certError.message);
+    }
+    return certificatesIssued;
+};
+
+/**
  * @desc    Complete account setup for a guest account created during checkout —
  *          sets a real name and password, converting it into a fully login-capable
  *          account. Certificates are withheld until this runs (see certificateController).
@@ -561,38 +622,7 @@ export const completeAccountSetup = async (req, res, next) => {
         user.isVerified = true;
         await user.save();
 
-        // Retroactively issue certificates for any course they finished while
-        // still a guest (course completion isn't blocked, only the certificate
-        // itself was, since it carries the account's name).
-        let certificatesIssued = 0;
-        try {
-            const pendingProgress = await UserProgress.find({
-                userId: user._id,
-                completedAt: { $ne: null },
-                certificate: null,
-            });
-
-            for (const progress of pendingProgress) {
-                const lastQuiz = progress.completedQuizzes?.[progress.completedQuizzes.length - 1];
-                const score = lastQuiz?.score ?? 0;
-                const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C+' : score >= 60 ? 'C' : 'Pass';
-
-                const certificate = await issueCertificate({
-                    userId: user._id,
-                    courseId: progress.courseId,
-                    score,
-                    grade,
-                });
-                if (certificate) {
-                    progress.certificate = certificate._id;
-                    await progress.save();
-                    certificatesIssued += 1;
-                }
-            }
-        } catch (certError) {
-            // Never fail account setup over a certificate hiccup — log and move on.
-            console.error('❌ Retroactive certificate issuance failed:', certError.message);
-        }
+        const certificatesIssued = await issuePendingCertificates(user);
 
         res.status(200).json({
             success: true,

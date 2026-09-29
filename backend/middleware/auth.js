@@ -117,9 +117,16 @@ export const authorize = (...roles) => {
 
 /**
  * Generate JWT Token
+ *
+ * Default session length is 30 days (was 7). This matters most for guest
+ * checkout accounts: a guest is issued one of these tokens at payment time
+ * with no password of their own, so once it expires their only way back in
+ * is the "forgot password" email flow. A longer default gives a guest a
+ * realistic window to come back and finish a course without hitting that.
+ * If JWT_EXPIRE is set in the environment, that value always wins.
  */
 export const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE || '7d'
+        expiresIn: process.env.JWT_EXPIRE || '30d'
     });
 };

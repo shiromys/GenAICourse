@@ -118,8 +118,9 @@ export const takeAssessment = asyncHandler(async (req, res) => {
     quizId: quiz._id
   }).sort({ createdAt: -1 });
 
-  // Use a very high limit for development/testing or use the quiz.maxAttempts
-  const effectiveMaxAttempts = 99; // Explicitly increased to allow progression
+  // Enforce the attempt limit configured for this course's quiz in the admin
+  // panel (falls back to 3 only if a quiz somehow has no value set).
+  const effectiveMaxAttempts = quiz.maxAttempts || 3;
 
   if (previousAttempts.length >= effectiveMaxAttempts) {
     return res.status(400).json({
@@ -173,8 +174,10 @@ export const takeAssessment = asyncHandler(async (req, res) => {
     percentageScore = Math.round((score / totalPoints) * 100);
   }
 
-  // Determine pass/fail (50% required)
-  const passed = percentageScore >= 50;
+  // Determine pass/fail against this course's configured passing score
+  // (falls back to 70 only if a quiz somehow has no value set).
+  const passingScore = quiz.passingScore || 70;
+  const passed = percentageScore >= passingScore;
   const grade = passed ? getGrade(percentageScore) : 'Fail';
 
   // Prepare answers in the correct format for UserQuizAttempt model
@@ -274,8 +277,8 @@ export const takeAssessment = asyncHandler(async (req, res) => {
       id: certificateIssued._id,
       downloadUrl: `/api/certificates/${certificateIssued._id}/download`
     } : (certificatePendingSetup ? { pending: true, reason: 'ACCOUNT_SETUP_REQUIRED' } : null),
-    nextAttemptAvailable: previousAttempts.length < quiz.maxAttempts - 1,
-    attemptsRemaining: quiz.maxAttempts - (previousAttempts.length + 1)
+    nextAttemptAvailable: previousAttempts.length < effectiveMaxAttempts - 1,
+    attemptsRemaining: effectiveMaxAttempts - (previousAttempts.length + 1)
   });
 });
 
@@ -345,7 +348,9 @@ export const getAssessmentHistory = asyncHandler(async (req, res) => {
   });
 });
 
-// Helper function to determine grade (50% passing threshold)
+// Helper function to determine a letter grade for a passing score. The actual
+// pass/fail decision is made above against the course's configured
+// passingScore — this only picks a label once we already know they passed.
 function getGrade(score) {
   if (score >= 95) return 'A+';
   if (score >= 90) return 'A';
