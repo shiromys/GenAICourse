@@ -470,6 +470,14 @@ export const verifyPaymentSession = async (req, res, next) => {
                 alreadyProcessed: true,
                 courseId: existingPayment.courseId,
                 user: user ? user.getPublicProfile() : null,
+                // Always hand back a fresh token for whoever this payment belongs to.
+                // A guest checkout logs the browser in client-side *before* the Stripe
+                // redirect; if that write didn't survive the round trip for any reason
+                // (closed tab, private-browsing storage limits, etc.), the sessionId
+                // Stripe just confirmed is itself proof of who this is — so this page
+                // can silently re-establish the session instead of leaving the guest
+                // looking logged-out.
+                token: userId ? generateToken(userId) : undefined,
             });
         }
 
@@ -493,7 +501,12 @@ export const verifyPaymentSession = async (req, res, next) => {
         const paymentExists = await Payment.findOne({ stripeSessionId: sessionId });
         if (paymentExists) {
             const user = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
-            return res.status(200).json({ success: true, courseId: paymentExists.courseId, user: user ? user.getPublicProfile() : null });
+            return res.status(200).json({
+                success: true,
+                courseId: paymentExists.courseId,
+                user: user ? user.getPublicProfile() : null,
+                token: generateToken(userId),
+            });
         }
 
         const user = await User.findById(userId);
@@ -559,7 +572,12 @@ export const verifyPaymentSession = async (req, res, next) => {
         }
 
         const updatedUser = await User.findById(userId).populate('enrolledCourses.courseId', 'title thumbnail description');
-        return res.status(200).json({ success: true, courseId, user: updatedUser.getPublicProfile() });
+        return res.status(200).json({
+            success: true,
+            courseId,
+            user: updatedUser.getPublicProfile(),
+            token: generateToken(userId),
+        });
 
     } catch (error) {
         // 🔴 LOG the full error so we can debug it properly — previously this was swallowing critical errors

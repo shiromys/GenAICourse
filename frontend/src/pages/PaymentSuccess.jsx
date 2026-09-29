@@ -18,7 +18,7 @@ import { motion } from 'framer-motion';
 const PaymentSuccess = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { refreshUser } = useAuth();
+    const { refreshUser, handleOAuthSuccess } = useAuth();
 
     const sessionId = searchParams.get('session_id');
 
@@ -41,8 +41,19 @@ const PaymentSuccess = () => {
 
                 const result = await paymentService.verifySession(sessionId);
 
-                // Always refresh user regardless of result — webhook may have already enrolled them
-                await refreshUser();
+                // This is a safety net, not the primary login path: a guest is normally
+                // already signed in client-side before Stripe ever redirects them here
+                // (see PaymentPage's handleOAuthSuccess call). But if that earlier write
+                // didn't survive the round trip for any reason, verifySession's response
+                // always carries a fresh token for whoever this confirmed payment
+                // belongs to — use it to (re-)establish the session so "Go to Dashboard"
+                // never lands a paying guest on the login page.
+                if (result.token) {
+                    await handleOAuthSuccess(result.token);
+                } else {
+                    // Always refresh user regardless of result — webhook may have already enrolled them
+                    await refreshUser();
+                }
 
                 setStatus('success');
                 setMessage('Payment confirmed! Your course access is now active.');
