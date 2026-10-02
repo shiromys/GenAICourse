@@ -96,7 +96,12 @@ const PaymentPage = () => {
             const errorCode = error?.response?.data?.code;
 
             if (errorCode === 'ACCOUNT_EXISTS') {
-                toast.info('An account already exists with that email — please log in to continue.');
+                // Covers two cases from the backend, both of which mean "log in
+                // instead of checking out anonymously again": a real registered
+                // account with this email, or a guest account that already has
+                // a completed purchase on it. The server message is specific
+                // about which one applies, so show it rather than a generic line.
+                toast.info(serverMessage || 'An account already exists with that email — please log in to continue.');
                 navigate(`/login?redirect=${encodeURIComponent(`checkout/${id}?type=${purchaseType}`)}`);
                 return;
             }

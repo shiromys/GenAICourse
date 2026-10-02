@@ -155,7 +155,23 @@ const findOrCreateGuestUser = async (rawEmail) => {
                 'An account already exists with this email. Please log in to continue your purchase.'
             );
         }
-        return existing; // Reuse the same unclaimed guest account for repeat guest purchases
+
+        // A guest account with no completed purchase yet is just an abandoned
+        // cart — the same person coming back to finish checking out, so reuse
+        // it silently. But once a purchase HAS gone through on this email,
+        // that's no longer "the same guest checkout in progress" — it's a
+        // returning customer trying to buy a second thing anonymously. Treat
+        // that exactly like the real-account case above: block it and send
+        // them to log in first (they can use "Forgot password" from there,
+        // which also fully graduates the account out of guest status).
+        const hasCompletedPurchase = await Payment.findOne({ userId: existing._id, status: 'completed' });
+        if (hasCompletedPurchase) {
+            throw new GuestAccountConflictError(
+                "You've already purchased a course with this email. Please log in to continue — use \"Forgot password\" if you haven't set one yet."
+            );
+        }
+
+        return existing; // Reuse the same unclaimed, never-purchased guest account
     }
 
     return User.create({
