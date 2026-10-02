@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
-import { FaPlay, FaCheckCircle, FaLock, FaList, FaArrowLeft } from 'react-icons/fa';
+import { FaPlay, FaCheckCircle, FaLock, FaList, FaArrowLeft, FaStar, FaRegStar, FaUserCircle } from 'react-icons/fa';
 import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
 import { Helmet } from 'react-helmet-async';
 
@@ -16,6 +16,10 @@ const CourseDetail = () => {
     const [loading, setLoading] = useState(true);
     const [isEnrolled, setIsEnrolled] = useState(false);
     const [enrolling, setEnrolling] = useState(false);
+    const [reviewRating, setReviewRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [reviewComment, setReviewComment] = useState('');
+    const [submittingReview, setSubmittingReview] = useState(false);
 
     useEffect(() => {
         const fetchCourseData = async () => {
@@ -40,6 +44,36 @@ const CourseDetail = () => {
 
         fetchCourseData();
     }, [id, isAuthenticated, user, navigate]);
+
+    // If this user already left a review, pre-fill the form so re-submitting
+    // reads as "update" rather than silently overwriting their old review.
+    const myReview = course?.reviews?.find(
+        (r) => user?._id && (r.userId?._id || r.userId)?.toString() === user._id.toString()
+    );
+    useEffect(() => {
+        if (myReview) {
+            setReviewRating(myReview.rating);
+            setReviewComment(myReview.comment || '');
+        }
+    }, [myReview?._id]);
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        if (!reviewRating) {
+            toast.warn('Please select a star rating.');
+            return;
+        }
+        setSubmittingReview(true);
+        try {
+            const result = await courseService.addReview(id, reviewRating, reviewComment.trim());
+            setCourse(result.data);
+            toast.success(myReview ? 'Your review was updated!' : 'Thanks for your review!');
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to submit review');
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
 
     const handleEnroll = async () => {
         if (!isAuthenticated) {
@@ -110,11 +144,16 @@ const CourseDetail = () => {
             "name": "GenAI Course",
             "sameAs": "https://genaicourse.io"
         },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": course.enrollmentCount > 0 ? course.enrollmentCount + 15 : 24
-        },
+        // Real rating data only — omit the aggregateRating block entirely when
+        // there are no reviews yet rather than fabricate one, per Google's
+        // structured-data guidelines (and basic honesty to customers).
+        ...(course.ratingCount > 0 ? {
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": course.averageRating.toFixed(1),
+                "reviewCount": course.ratingCount
+            }
+        } : {}),
         "offers": {
             "@type": "Offer",
             "price": course.isFree ? "0.00" : (course.price || "99.00"),
@@ -165,6 +204,17 @@ const CourseDetail = () => {
                                 <div className="flex items-center">
                                     <span className="font-bold text-brand mr-2">Enrolled:</span> {course.enrollmentCount} User
                                 </div>
+                                {course.ratingCount > 0 && (
+                                    <div className="flex items-center gap-1.5" data-testid="course-rating-summary">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            star <= Math.round(course.averageRating)
+                                                ? <FaStar key={star} className="text-amber-400" size={14} />
+                                                : <FaRegStar key={star} className="text-gray-300" size={14} />
+                                        ))}
+                                        <span className="font-bold text-brand ml-1">{course.averageRating.toFixed(1)}</span>
+                                        <span>({course.ratingCount} review{course.ratingCount === 1 ? '' : 's'})</span>
+                                    </div>
+                                )}
                             </div>
 
                             <button
@@ -275,6 +325,92 @@ const CourseDetail = () => {
                                 </Link>
                             </div>
                         </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Reviews */}
+            <div className="container py-16 border-t border-gray-100">
+                <div className="max-w-4xl">
+                    <h2 className="section-title text-left mb-8 flex items-center text-brand font-black text-3xl">
+                        <FaStar className="mr-3 text-amber-400" /> Learner Reviews
+                    </h2>
+
+                    {isEnrolled && (
+                        <form
+                            onSubmit={handleReviewSubmit}
+                            className="mb-10 p-6 rounded-xl border border-gray-200 bg-gray-50/50"
+                        >
+                            <h3 className="font-bold text-brand mb-3">
+                                {myReview ? 'Update your review' : 'Leave a review'}
+                            </h3>
+                            <div className="flex items-center gap-1 mb-4">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                        key={star}
+                                        type="button"
+                                        onClick={() => setReviewRating(star)}
+                                        onMouseEnter={() => setHoverRating(star)}
+                                        onMouseLeave={() => setHoverRating(0)}
+                                        className="text-2xl focus:outline-none"
+                                        aria-label={`${star} star${star > 1 ? 's' : ''}`}
+                                    >
+                                        {star <= (hoverRating || reviewRating)
+                                            ? <FaStar className="text-amber-400" />
+                                            : <FaRegStar className="text-gray-300" />}
+                                    </button>
+                                ))}
+                            </div>
+                            <textarea
+                                value={reviewComment}
+                                onChange={(e) => setReviewComment(e.target.value)}
+                                maxLength={1000}
+                                rows={3}
+                                placeholder="What did you think of this course? (optional)"
+                                className="w-full border border-gray-200 rounded-lg p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent/30 mb-4"
+                            />
+                            <button
+                                type="submit"
+                                disabled={submittingReview}
+                                className="btn-premium btn-primary px-6 py-2.5 disabled:opacity-60"
+                            >
+                                {submittingReview ? 'Submitting...' : myReview ? 'Update Review' : 'Submit Review'}
+                            </button>
+                        </form>
+                    )}
+
+                    {course.reviews?.length > 0 ? (
+                        <div className="space-y-6">
+                            {[...course.reviews]
+                                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                                .map((review) => (
+                                    <div key={review._id} className="flex gap-4 pb-6 border-b border-gray-100 last:border-0">
+                                        <FaUserCircle className="text-gray-300 flex-shrink-0 mt-1" size={32} />
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-1">
+                                                <span className="font-bold text-brand text-sm">{review.userId?.name || 'Learner'}</span>
+                                                <div className="flex items-center">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        star <= review.rating
+                                                            ? <FaStar key={star} className="text-amber-400" size={11} />
+                                                            : <FaRegStar key={star} className="text-gray-300" size={11} />
+                                                    ))}
+                                                </div>
+                                                <span className="text-xs text-gray-400 font-medium">
+                                                    {new Date(review.createdAt).toLocaleDateString()}
+                                                </span>
+                                            </div>
+                                            {review.comment && (
+                                                <p className="text-sm text-gray-600 font-medium leading-relaxed">{review.comment}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-gray-400 font-medium">
+                            No reviews yet — be the first to share what you thought of this course.
+                        </p>
                     )}
                 </div>
             </div>

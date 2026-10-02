@@ -35,6 +35,10 @@ const courseService = {
   checkCourseCompletion: async (courseId) => {
     const response = await api.get(`/courses/${courseId}/completion-status`);
     return response.data;
+  },
+  addReview: async (courseId, rating, comment) => {
+    const response = await api.post(`/courses/${courseId}/reviews`, { rating, comment });
+    return response.data;
   }
 };
 

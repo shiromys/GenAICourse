@@ -440,6 +440,11 @@ export const addReview = async (req, res, next) => {
         // Add review
         await course.addReview(req.user._id, rating, comment);
 
+        // Populate reviewer names/avatars so the response matches what
+        // getCourse returns — otherwise every review would show as
+        // "Learner" in the UI until the page is reloaded.
+        await course.populate('reviews.userId', 'name profile.avatar');
+
         res.status(201).json({
             success: true,
             message: 'Review added successfully',
