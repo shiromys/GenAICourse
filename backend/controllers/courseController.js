@@ -1,6 +1,7 @@
 import Course from '../models/Course.js';
 import UserProgress from '../models/UserProgress.js';
 import User from '../models/User.js';
+import { containsProfanity } from '../utils/profanityFilter.js';
 
 /**
  * Course Controller
@@ -415,6 +416,13 @@ export const addReview = async (req, res, next) => {
         const { rating, comment } = req.body;
         const courseId = req.params.id;
 
+        if (comment && containsProfanity(comment)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please remove inappropriate language from your review and try again.'
+            });
+        }
+
         const course = await Course.findById(courseId);
 
         if (!course) {
@@ -448,6 +456,45 @@ export const addReview = async (req, res, next) => {
         res.status(201).json({
             success: true,
             message: 'Review added successfully',
+            data: course
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Remove a review (moderation escape hatch for anything the
+ *          profanity filter in addReview() doesn't catch — e.g. harassment
+ *          or abuse that isn't a "bad word" but should still come down)
+ * @route   DELETE /api/courses/:id/reviews/:reviewId
+ * @access  Private/Admin
+ */
+export const deleteReview = async (req, res, next) => {
+    try {
+        const { id: courseId, reviewId } = req.params;
+        const course = await Course.findById(courseId);
+
+        if (!course) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+
+        const existing = course.reviews.find((r) => r._id.toString() === reviewId);
+        if (!existing) {
+            return res.status(404).json({ success: false, message: 'Review not found' });
+        }
+
+        course.reviews = course.reviews.filter((r) => r._id.toString() !== reviewId);
+        course.ratingCount = course.reviews.length;
+        course.averageRating = course.ratingCount > 0
+            ? course.reviews.reduce((sum, r) => sum + r.rating, 0) / course.ratingCount
+            : 0;
+        await course.save();
+        await course.populate('reviews.userId', 'name profile.avatar');
+
+        res.status(200).json({
+            success: true,
+            message: 'Review removed',
             data: course
         });
     } catch (error) {
@@ -787,6 +834,7 @@ export default {
     getCourseCompletionStatus,
     updateCourseProgress,
     addReview,
+    deleteReview,
     getEnrolledCourses,
     addBookmark,
     getBookmarks,

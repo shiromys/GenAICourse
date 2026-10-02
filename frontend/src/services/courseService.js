@@ -39,6 +39,10 @@ const courseService = {
   addReview: async (courseId, rating, comment) => {
     const response = await api.post(`/courses/${courseId}/reviews`, { rating, comment });
     return response.data;
+  },
+  deleteReview: async (courseId, reviewId) => {
+    const response = await api.delete(`/courses/${courseId}/reviews/${reviewId}`);
+    return response.data;
   }
 };
 

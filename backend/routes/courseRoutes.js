@@ -10,6 +10,7 @@ import {
     getCourseCompletionStatus,
     updateCourseProgress,
     addReview,
+    deleteReview,
     getEnrolledCourses,
     addBookmark,
     getBookmarks,
@@ -40,6 +41,7 @@ router.put('/:id/progress', protect, updateCourseProgress);
 
 // Protected routes (User)
 router.post('/:id/reviews', protect, addReview);
+router.delete('/:id/reviews/:reviewId', protect, authorize('admin'), deleteReview);
 router.post('/:id/bookmarks', protect, addBookmark);
 router.get('/:id/bookmarks', protect, getBookmarks);
 router.post('/:id/notes', protect, addNote);

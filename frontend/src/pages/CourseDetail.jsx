@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
-import { FaPlay, FaCheckCircle, FaLock, FaList, FaArrowLeft, FaStar, FaRegStar, FaUserCircle } from 'react-icons/fa';
+import { FaPlay, FaCheckCircle, FaLock, FaList, FaArrowLeft, FaStar, FaRegStar, FaUserCircle, FaTrash } from 'react-icons/fa';
 import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
 import { Helmet } from 'react-helmet-async';
 
@@ -72,6 +72,20 @@ const CourseDetail = () => {
             toast.error(error.response?.data?.message || 'Failed to submit review');
         } finally {
             setSubmittingReview(false);
+        }
+    };
+
+    // Admin-only moderation escape hatch — catches anything the backend's
+    // profanity filter doesn't (harassment, spam, etc. that isn't a "bad
+    // word"). Not shown to regular users at all.
+    const handleDeleteReview = async (reviewId) => {
+        if (!window.confirm('Remove this review? This cannot be undone.')) return;
+        try {
+            const result = await courseService.deleteReview(id, reviewId);
+            setCourse(result.data);
+            toast.success('Review removed');
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to remove review');
         }
     };
 
@@ -399,6 +413,16 @@ const CourseDetail = () => {
                                                 <span className="text-xs text-gray-400 font-medium">
                                                     {new Date(review.createdAt).toLocaleDateString()}
                                                 </span>
+                                                {user?.role === 'admin' && (
+                                                    <button
+                                                        onClick={() => handleDeleteReview(review._id)}
+                                                        className="ml-auto text-gray-300 hover:text-red-500 transition-colors"
+                                                        title="Remove this review (admin)"
+                                                        aria-label="Remove review"
+                                                    >
+                                                        <FaTrash size={12} />
+                                                    </button>
+                                                )}
                                             </div>
                                             {review.comment && (
                                                 <p className="text-sm text-gray-600 font-medium leading-relaxed">{review.comment}</p>

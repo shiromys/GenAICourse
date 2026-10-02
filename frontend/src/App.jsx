@@ -33,6 +33,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import OAuthCallback from './pages/OAuthCallback';
 import Profile from './pages/Profile';
+import LearningPaths from './pages/LearningPaths';
+import LearningPathDetail from './pages/LearningPathDetail';
 import CompleteAccount from './pages/CompleteAccount';
 import PaymentPage from './pages/PaymentPage';
 import PaymentSuccess from './pages/PaymentSuccess';
@@ -155,6 +157,8 @@ const AppContent = () => {
                             <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />
                             <Route path="/profile" element={<PageContainer><Profile /></PageContainer>} />
                             <Route path="/complete-account" element={<PageContainer><CompleteAccount /></PageContainer>} />
+                            <Route path="/learning-paths" element={<PageContainer><LearningPaths /></PageContainer>} />
+                            <Route path="/learning-paths/:id" element={<PageContainer><LearningPathDetail /></PageContainer>} />
                         </Route>
 
                         {/* Admin Routes */}
