@@ -32,7 +32,12 @@ api.interceptors.response.use(
             const path = window.location.pathname;
             // ✅ Do NOT force-logout on any payment-related or session-resuming page.
             // These pages call /auth/me to re-hydrate the user after a Stripe redirect.
-            const exemptPaths = ['/payment-success', '/dashboard', '/profile'];
+            // /login (and /register) are also exempt: a 401 there is just "wrong
+            // credentials" from the login attempt itself, not an expired session —
+            // forcing a hard window.location reload wiped out the error toast
+            // before anyone could read it, making a bad-password attempt look like
+            // the button silently did nothing.
+            const exemptPaths = ['/payment-success', '/dashboard', '/profile', '/login', '/register'];
             const isExempt = exemptPaths.some(p => path.startsWith(p));
 
             if (!isExempt) {
