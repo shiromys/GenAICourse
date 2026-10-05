@@ -318,8 +318,12 @@ const calculateRecommendationScore = (goal, currentSkills, courses, acquiredSkil
             score += 0.3;
         }
 
-        // Boost score if course builds on current skills
-        if (course.learningObjectives) {
+        // Boost score if course builds on current skills. Guarded against
+        // courses with an empty (but present) learningObjectives array —
+        // dividing by its .length was producing NaN, which then poisoned
+        // the whole score (NaN propagates through every += and Math.min
+        // after it) and failed LearningPath's Number validator on save.
+        if (course.learningObjectives?.length > 0) {
             const matchingSkills = course.learningObjectives.filter(obj =>
                 currentSkills.some(skill => obj.toLowerCase().includes(skill.toLowerCase()))
             ).length;
@@ -327,7 +331,7 @@ const calculateRecommendationScore = (goal, currentSkills, courses, acquiredSkil
         }
 
         // Boost score if course teaches new skills
-        if (acquiredSkills.length > 0) {
+        if (acquiredSkills.length > 0 && course.learningObjectives?.length > 0) {
             const newSkills = course.learningObjectives.filter(obj =>
                 !acquiredSkills.some(skill => obj.toLowerCase().includes(skill.toLowerCase()))
             ).length;
