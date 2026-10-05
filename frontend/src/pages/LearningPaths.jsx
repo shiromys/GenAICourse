@@ -7,10 +7,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaRoute, FaPlus, FaXmark, FaArrowRight, FaCircleCheck } from 'react-icons/fa6';
 import SEOHelmet from '../components/common/SEOHelmet';
 
-// These mirror the LearningPath model's own enums — picking anything outside
-// this list fails validation server-side, so the form can't offer it.
+// Mirrors the LearningPath model's own category enum — picking anything
+// outside this list fails validation server-side, so the form can't offer it.
+// No "Starting level" selector here on purpose: the catalogue today is 6
+// parallel intro-level prompting courses (one per department), not a
+// beginner→advanced ladder, so every course is tagged Beginner and an
+// Intermediate/Advanced pick would always come back empty. Revisit if the
+// catalogue grows real tiered content.
 const CATEGORIES = ['AI/ML', 'Web Development', 'Data Science', 'Cloud Computing', 'Other'];
-const DIFFICULTIES = ['Beginner', 'Intermediate', 'Advanced'];
 const TIME_COMMITMENTS = [
     { value: 'low', label: 'Light — a few hours a week' },
     { value: 'medium', label: 'Steady — ~10 hrs/week' },
@@ -25,7 +29,6 @@ const LearningPaths = () => {
 
     const [goal, setGoal] = useState('');
     const [category, setCategory] = useState(CATEGORIES[0]);
-    const [difficulty, setDifficulty] = useState(DIFFICULTIES[0]);
     const [timeCommitment, setTimeCommitment] = useState('medium');
     const [currentSkills, setCurrentSkills] = useState('');
 
@@ -60,7 +63,6 @@ const LearningPaths = () => {
             const result = await learningPathService.generate({
                 goal: goal.trim(),
                 category,
-                difficulty,
                 timeCommitment,
                 currentSkills: skills,
             });
@@ -214,27 +216,15 @@ const LearningPaths = () => {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-sm font-bold text-slate-700 block mb-1.5">Category</label>
-                                        <select
-                                            value={category}
-                                            onChange={(e) => setCategory(e.target.value)}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                                        >
-                                            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-bold text-slate-700 block mb-1.5">Starting level</label>
-                                        <select
-                                            value={difficulty}
-                                            onChange={(e) => setDifficulty(e.target.value)}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                                        >
-                                            {DIFFICULTIES.map((d) => <option key={d} value={d}>{d}</option>)}
-                                        </select>
-                                    </div>
+                                <div>
+                                    <label className="text-sm font-bold text-slate-700 block mb-1.5">Category</label>
+                                    <select
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                    >
+                                        {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                                    </select>
                                 </div>
 
                                 <div>

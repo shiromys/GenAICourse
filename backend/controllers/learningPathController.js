@@ -286,17 +286,31 @@ export const getCourseRecommendations = async (req, res, next) => {
 // Helper functions for AI-powered recommendations
 
 const findRecommendedCourses = async (category, difficulty, currentSkills, acquiredSkills, completedCourseIds, goal) => {
-    const query = {
+    const baseQuery = {
         isPublished: true,
         _id: { $nin: completedCourseIds }
     };
 
-    if (category) query.category = category;
-    if (difficulty) query.level = difficulty;
+    // Try the most specific match first (category + level), then
+    // progressively relax instead of dead-ending into "no courses found".
+    // A small catalogue that doesn't (yet) vary much along category or
+    // level — ours doesn't: every course is tagged Beginner, and the
+    // handful that exist may share one category — would otherwise return
+    // zero results for a perfectly reasonable goal just because the exact
+    // facet combination isn't represented.
+    const attempts = [
+        { ...baseQuery, ...(category && { category }), ...(difficulty && { level: difficulty }) },
+        { ...baseQuery, ...(category && { category }) },
+        baseQuery,
+    ];
 
-    const courses = await Course.find(query)
-        .sort({ averageRating: -1, enrollmentCount: -1 })
-        .limit(8);
+    let courses = [];
+    for (const query of attempts) {
+        courses = await Course.find(query)
+            .sort({ averageRating: -1, enrollmentCount: -1 })
+            .limit(8);
+        if (courses.length > 0) break;
+    }
 
     // Filter and rank courses based on AI scoring
     return courses
