@@ -26,7 +26,6 @@ import courseRoutes from './routes/courseRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js';
-import learningPathRoutes from './routes/learningPathRoutes.js';
 import assessmentRoutes from './routes/assessment.js';
 import assessmentUploadRoutes from './routes/assessmentUpload.js';
 import courseAssessmentRoutes from './routes/courseAssessment.js';
@@ -101,7 +100,6 @@ const startServer = async () => {
         app.use('/api/courses', courseRoutes);
         app.use('/api/quizzes', quizRoutes);
         app.use('/api/certificates', certificateRoutes);
-        app.use('/api/learning-paths', learningPathRoutes);
         app.use('/api/payments', paymentRoutes);
         app.use('/api/courses', courseAssessmentRoutes);
         app.use('/api/contact', contactRoutes);

@@ -78,13 +78,6 @@ const Navbar = () => {
                                             >
                                                 My Profile
                                             </Link>
-                                            <Link
-                                                to="/learning-paths"
-                                                onClick={() => setUserMenuOpen(false)}
-                                                className="block px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all"
-                                            >
-                                                Learning Paths
-                                            </Link>
                                             {user?.role === 'admin' && (
                                                 <Link
                                                     to="/admin/dashboard"
@@ -148,7 +141,6 @@ const Navbar = () => {
                             {isAuthenticated ? (
                                 <>
                                     <Link to="/dashboard" onClick={() => setIsOpen(false)} className="text-lg font-bold text-brand">My Learning</Link>
-                                    <Link to="/learning-paths" onClick={() => setIsOpen(false)} className="text-lg font-bold text-brand">Learning Paths</Link>
                                     {user?.role === 'admin' && (
                                         <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="text-lg font-bold text-accent">Admin Area</Link>
                                     )}
