@@ -19,7 +19,7 @@ import {
     getQuizPerformance
 } from '../controllers/adminController.js';
 import { updateMaintenanceMode } from '../controllers/settingsController.js';
-import { previewTestDataReset, resetTestData } from '../controllers/dataResetController.js';
+import { previewTestDataReset, verifyResetKey, exportResetBackup, resetTestData } from '../controllers/dataResetController.js';
 import { grantCourseAccess, setAllCoursesAccess } from '../controllers/accessController.js';
 import { getSupportTickets, updateSupportTicket } from '../controllers/supportTicketController.js';
 
@@ -50,6 +50,8 @@ router.get('/quiz-performance', getQuizPerformance);
 // Global operations
 router.put('/settings/maintenance', updateMaintenanceMode);
 router.get('/data-reset/preview', previewTestDataReset);
+router.post('/data-reset/verify-key', verifyResetKey);
+router.post('/data-reset/backup', exportResetBackup);
 router.post('/data-reset', resetTestData);
 
 // Support tickets

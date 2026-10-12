@@ -128,9 +128,25 @@ const adminService = {
         return response.data;
     },
 
-    // Actually wipe test data — requires the exact confirmation phrase from the preview
-    resetTestData: async (confirm) => {
-        const response = await api.post('/admin/data-reset', { confirm });
+    // Step 1 of the wipe flow: check the Railway-only secret key alone, before showing the
+    // confirm-phrase step. Does not touch any data.
+    verifyResetKey: async (resetKey) => {
+        const response = await api.post('/admin/data-reset/verify-key', { resetKey });
+        return response.data;
+    },
+
+    // Step 2: pull a full JSON backup of everything about to be deleted, as a file download.
+    // Requires the same resetKey + confirm phrase the real delete requires. responseType:
+    // 'blob' so axios hands back raw file bytes instead of trying to parse them as JSON.
+    exportResetBackup: async (resetKey, confirm) => {
+        const response = await api.post('/admin/data-reset/backup', { resetKey, confirm }, { responseType: 'blob' });
+        return response;
+    },
+
+    // Step 3: actually wipe test data — requires the exact confirmation phrase AND the
+    // Railway-only secret key.
+    resetTestData: async (resetKey, confirm) => {
+        const response = await api.post('/admin/data-reset', { resetKey, confirm });
         return response.data;
     },
 

@@ -74,6 +74,12 @@ const AdminDashboard = () => {
     const [resetPreviewLoading, setResetPreviewLoading] = useState(false);
     const [resetConfirmText, setResetConfirmText] = useState('');
     const [resetRunning, setResetRunning] = useState(false);
+    // Second factor: a secret only set in Railway's env (ADMIN_RESET_KEY), never in the app
+    // or the database. Verified as its own step before the confirm-phrase box is even shown,
+    // and cleared again after every run (success or failure) so it never lingers in memory.
+    const [resetKeyInput, setResetKeyInput] = useState('');
+    const [resetKeyVerified, setResetKeyVerified] = useState(false);
+    const [resetKeyVerifying, setResetKeyVerifying] = useState(false);
 
     // ---- Support tickets ----
     const [supportTickets, setSupportTickets] = useState([]);
@@ -203,6 +209,10 @@ const AdminDashboard = () => {
         let cancelled = false;
         setResetPreviewLoading(true);
         setResetPreview(null);
+        // Never carry a verified key or typed phrase across a tab switch/revisit.
+        setResetKeyInput('');
+        setResetKeyVerified(false);
+        setResetConfirmText('');
         adminService.previewDataReset()
             .then(res => { if (!cancelled) setResetPreview(res.data); })
             .catch(() => { if (!cancelled) setResetPreview(null); })
@@ -278,14 +288,67 @@ const AdminDashboard = () => {
     };
 
     // ---- Wipe test data handlers ----
+
+    // The backup export uses responseType: 'blob', so on a non-2xx response axios hands back
+    // the error body as a Blob too — it never auto-parses it as JSON for us. This reads the
+    // real { message } out of it so a failed backup shows the same clear error a normal
+    // JSON call would.
+    const extractBlobErrorMessage = async (error, fallback) => {
+        const blob = error?.response?.data;
+        if (blob instanceof Blob) {
+            try {
+                const parsed = JSON.parse(await blob.text());
+                return parsed?.message || fallback;
+            } catch {
+                return fallback;
+            }
+        }
+        return error?.response?.data?.message || fallback;
+    };
+
+    // Step 1 of 2FA: check the Railway-only secret key by itself. Reveals the confirm-phrase
+    // box only once this succeeds — a wrong key never gets far enough to see that box at all.
+    const handleVerifyResetKey = async () => {
+        if (!resetKeyInput) return;
+        setResetKeyVerifying(true);
+        try {
+            await adminService.verifyResetKey(resetKeyInput);
+            setResetKeyVerified(true);
+            toast.success('Reset key accepted.');
+        } catch (error) {
+            setResetKeyVerified(false);
+            toast.error(error.response?.data?.message || 'Incorrect reset key.');
+        } finally {
+            setResetKeyVerifying(false);
+        }
+    };
+
+    // Step 2: backup-then-delete, both gated by the same verified key + typed phrase. The
+    // backup download MUST succeed before the delete call is ever made — if it fails, the
+    // catch block stops here and resetTestData is never called.
     const handleResetTestData = async () => {
-        if (!resetPreview || resetConfirmText !== resetPreview.confirmPhrase) return;
-        if (!window.confirm('This permanently deletes all non-admin users and everything derived from them. This cannot be undone. Continue?')) return;
+        if (!resetPreview || !resetKeyVerified || resetConfirmText !== resetPreview.confirmPhrase) return;
+        if (!window.confirm('A backup of everything about to be deleted will download to this computer first, then all non-admin users and everything derived from them will be permanently deleted. This cannot be undone. Continue?')) return;
         setResetRunning(true);
         try {
-            const res = await adminService.resetTestData(resetConfirmText);
+            // Pull the backup and save it to this computer BEFORE anything is deleted.
+            const backupRes = await adminService.exportResetBackup(resetKeyInput, resetConfirmText);
+            const disposition = backupRes.headers?.['content-disposition'] || '';
+            const match = disposition.match(/filename="([^"]+)"/);
+            const filename = match ? match[1] : `genaicourse-data-reset-backup-${Date.now()}.json`;
+            const blobUrl = window.URL.createObjectURL(backupRes.data);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+            toast.success(`Backup saved as ${filename}. Deleting test data…`);
+
+            // Only now run the actual delete — same two factors, re-checked server-side.
+            const res = await adminService.resetTestData(resetKeyInput, resetConfirmText);
             toast.success(`Test data cleared: ${res.data.users} users, ${res.data.payments} payments, ${res.data.progress} progress records, ${res.data.quizAttempts} quiz attempts, ${res.data.certificates} certificates.`);
-            setResetConfirmText('');
             const [previewRes, usersData] = await Promise.all([
                 adminService.previewDataReset().catch(() => null),
                 adminService.getAllUsers().catch(() => null),
@@ -293,9 +356,14 @@ const AdminDashboard = () => {
             if (previewRes) setResetPreview(previewRes.data);
             if (usersData) setUsers(usersData.data || []);
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to reset test data');
+            toast.error(await extractBlobErrorMessage(error, 'Failed to reset test data'));
         } finally {
             setResetRunning(false);
+            // Never let a verified key or typed phrase linger — the next attempt (even a
+            // retry right after a failure) has to prove both factors again.
+            setResetKeyInput('');
+            setResetKeyVerified(false);
+            setResetConfirmText('');
         }
     };
 
@@ -959,8 +1027,11 @@ const AdminDashboard = () => {
                                 </Panel>
 
                                 <Panel title="Danger Zone — Wipe Test Data" icon={FaExclamationTriangle}>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold leading-relaxed mb-4">
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold leading-relaxed mb-2">
                                         Permanently deletes every non-admin user account and everything derived from them (payments, progress, quiz attempts, certificates). Course and quiz content is never touched. Use this once, right before going live, to clear out test accounts.
+                                    </p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold leading-relaxed mb-4">
+                                        Two-factor protected: this needs a secret key that only exists in Railway's environment settings (never in this app or database) plus a typed confirmation phrase. A full JSON backup of everything below downloads to this computer automatically, before anything is deleted.
                                     </p>
                                     {resetPreviewLoading ? (
                                         <p className="text-xs font-bold text-slate-400">Loading preview…</p>
@@ -980,20 +1051,58 @@ const AdminDashboard = () => {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-                                                <input
-                                                    value={resetConfirmText}
-                                                    onChange={e => setResetConfirmText(e.target.value)}
-                                                    placeholder={`Type "${resetPreview.confirmPhrase}" to confirm`}
-                                                    className="flex-1 rounded-xl border border-red-200 dark:border-red-500/30 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-red-400"
-                                                />
-                                                <button
-                                                    onClick={handleResetTestData}
-                                                    disabled={resetConfirmText !== resetPreview.confirmPhrase || resetRunning}
-                                                    className="btn bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-xl font-black text-sm flex items-center gap-2 justify-center"
-                                                >
-                                                    <FaTrash size={12} /> {resetRunning ? 'Deleting…' : 'Delete all test data'}
-                                                </button>
+
+                                            {/* Step 1: secret reset key (ADMIN_RESET_KEY, Railway-only) */}
+                                            <div className="mb-4">
+                                                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block flex items-center gap-1.5">
+                                                    Step 1 — Admin Reset Key
+                                                    {resetKeyVerified && (
+                                                        <span className="text-emerald-500 normal-case tracking-normal font-bold flex items-center gap-1">
+                                                            <FaCheck size={9} /> Verified
+                                                        </span>
+                                                    )}
+                                                </label>
+                                                <div className="flex flex-col sm:flex-row gap-2">
+                                                    <input
+                                                        type="password"
+                                                        value={resetKeyInput}
+                                                        onChange={e => { setResetKeyInput(e.target.value); setResetKeyVerified(false); }}
+                                                        placeholder="Secret key from Railway (ADMIN_RESET_KEY)"
+                                                        disabled={resetKeyVerified || resetKeyVerifying || resetRunning}
+                                                        autoComplete="off"
+                                                        className="flex-1 rounded-xl border border-red-200 dark:border-red-500/30 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-red-400 disabled:opacity-60"
+                                                    />
+                                                    <button
+                                                        onClick={handleVerifyResetKey}
+                                                        disabled={!resetKeyInput || resetKeyVerified || resetKeyVerifying}
+                                                        className="btn bg-slate-900 dark:bg-white/10 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-xl font-black text-sm flex items-center gap-2 justify-center"
+                                                    >
+                                                        <FaKey size={12} /> {resetKeyVerifying ? 'Checking…' : resetKeyVerified ? 'Key verified' : 'Verify key'}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Step 2: typed confirm phrase, then backup-download + delete. Locked out until Step 1 passes. */}
+                                            <div className={resetKeyVerified ? '' : 'opacity-40 pointer-events-none'}>
+                                                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">
+                                                    Step 2 — Type to confirm{!resetKeyVerified && ' (verify the key first)'}
+                                                </label>
+                                                <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                                                    <input
+                                                        value={resetConfirmText}
+                                                        onChange={e => setResetConfirmText(e.target.value)}
+                                                        placeholder={`Type "${resetPreview.confirmPhrase}" to confirm`}
+                                                        disabled={!resetKeyVerified}
+                                                        className="flex-1 rounded-xl border border-red-200 dark:border-red-500/30 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-red-400"
+                                                    />
+                                                    <button
+                                                        onClick={handleResetTestData}
+                                                        disabled={!resetKeyVerified || resetConfirmText !== resetPreview.confirmPhrase || resetRunning}
+                                                        className="btn bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-xl font-black text-sm flex items-center gap-2 justify-center"
+                                                    >
+                                                        <FaFileDownload size={12} /> {resetRunning ? 'Backing up & deleting…' : 'Backup & delete all test data'}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </>
                                     ) : (
