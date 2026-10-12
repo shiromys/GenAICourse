@@ -366,15 +366,28 @@ export const stripeWebhook = async (req, res) => {
     const sig = req.headers['stripe-signature'];
     const webhookSecret = process.env.STRIPE_WEBHOOK_KEY;
 
+    // Fail CLOSED, not open: if the real signing secret isn't configured, refuse
+    // to process anything rather than falling back to trusting the raw request
+    // body as if it were already-verified Stripe data. The previous fallback
+    // meant anyone could POST a forged "checkout.session.completed" body here
+    // (naming their own userId) and be granted free course/bundle access,
+    // with zero signature check, whenever this env var happened to be unset or
+    // left at its placeholder value — which is exactly the state a fresh
+    // environment is in until someone explicitly sets it. A misconfigured
+    // secret should break payments loudly (and get noticed/fixed immediately),
+    // not silently open an exploitable gap.
+    if (!webhookSecret || webhookSecret === 'whsec_...') {
+        console.error('❌ Webhook rejected: STRIPE_WEBHOOK_KEY is not configured. Refusing to process unsigned webhook payload.');
+        return res.status(503).json({
+            success: false,
+            message: 'Webhook endpoint is not configured.'
+        });
+    }
+
     let event;
 
     try {
-        if (!webhookSecret || webhookSecret === 'whsec_...') {
-            const bodyStr = req.body instanceof Buffer ? req.body.toString('utf8') : req.body;
-            event = typeof bodyStr === 'string' ? JSON.parse(bodyStr) : bodyStr;
-        } else {
-            event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-        }
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
     } catch (err) {
         console.error(`Webhook signature verification failed: ${err.message}`);
         return res.status(400).send(`Webhook Error: ${err.message}`);

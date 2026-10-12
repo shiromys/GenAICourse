@@ -18,7 +18,7 @@ import {
     getNotes,
     getCourseAnalytics
 } from '../controllers/courseController.js';
-import { protect, authorize } from '../middleware/auth.js';
+import { protect, authorize, optionalAuth } from '../middleware/auth.js';
 import { courseValidation, validate } from '../middleware/validation.js';
 
 const router = express.Router();
@@ -31,7 +31,10 @@ const router = express.Router();
 router.get('/', getCourses);
 // /enrolled must be before /:id so "enrolled" is not matched as course id
 router.get('/enrolled', protect, getEnrolledCourses);
-router.get('/:id', getCourse);
+// optionalAuth (not protect): this page is meant to be publicly browsable so
+// anyone can decide whether to buy, but getCourse uses req.user (when present)
+// to decide whether to include full lesson content or just the public outline.
+router.get('/:id', optionalAuth, getCourse);
 
 // Protected routes (User)
 router.post('/:id/enroll', protect, enrollCourse);

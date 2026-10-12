@@ -45,7 +45,16 @@ export const getCourses = async (req, res, next) => {
             title: 1
         };
 
+        // The catalogue/listing view only ever needs enough per course to render
+        // a card (title, description, price, lesson count/titles, etc.) — never
+        // the actual paid lesson content. Previously this had no field
+        // restriction at all, so browsing the catalogue as anyone, logged in or
+        // not, returned every lesson's full body text and downloadable resources
+        // for all courses in one response. Excluded here regardless of who's
+        // asking; a specific course's full content is still available to an
+        // enrolled user/admin via getCourse below.
         const courses = await Course.find(query)
+            .select('-modules.lessons.content -modules.lessons.resources -modules.lessons.keyPoints -modules.lessons.learningObjectives -modules.lessons.videoUrl -modules.lessons.quizId')
             .populate('createdBy', 'name')
             .sort({ [sortBy]: sortOptions[sortBy] })
             .limit(limit * 1)
@@ -101,9 +110,36 @@ export const getCourse = async (req, res, next) => {
             });
         }
 
+        // Full lesson content (body text, downloadable resources, key points,
+        // etc.) is the paid product. This route is intentionally public so
+        // anyone can browse a course's description/price/curriculum outline
+        // before buying — but it was previously returning every lesson's full
+        // content to that same anonymous/non-buying visitor, with nothing
+        // checking enrollment at all. An enrolled user or an admin still gets
+        // everything, exactly as before; everyone else gets the course's public
+        // info (title, description, price, reviews) plus each lesson's title
+        // and duration (enough to render the curriculum list and advertise
+        // course length), with the actual teaching content stripped out.
+        const hasFullAccess = !!(
+            req.user &&
+            (req.user.role === 'admin' || req.user.isEnrolledInCourse(course._id))
+        );
+
+        const responseData = course.toObject();
+
+        if (!hasFullAccess) {
+            responseData.modules = (responseData.modules || []).map((module) => ({
+                ...module,
+                lessons: (module.lessons || []).map((lesson) => {
+                    const { content, resources, keyPoints, learningObjectives, videoUrl, quizId, ...publicLessonFields } = lesson;
+                    return publicLessonFields;
+                })
+            }));
+        }
+
         res.status(200).json({
             success: true,
-            data: course
+            data: responseData
         });
     } catch (error) {
         next(error);
