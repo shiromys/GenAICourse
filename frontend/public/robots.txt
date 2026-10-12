@@ -1,0 +1,26 @@
+User-agent: *
+Allow: /
+
+# Account-specific / functional pages — nothing here is content worth
+# crawling, and most require a login anyway.
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /complete-account
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /payment-success
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password/
+Disallow: /oauth-callback
+Disallow: /courses/*/learn
+Disallow: /courses/*/enroll
+Disallow: /courses/*/access
+Disallow: /courses/*/assessment
+Disallow: /courses/*/lessons/*
+
+# Backend API — not a page, nothing to index.
+Disallow: /api/
+
+Sitemap: https://genaicourse.io/sitemap.xml

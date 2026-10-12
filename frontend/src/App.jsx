@@ -11,7 +11,6 @@ import Loader from './components/common/Loader';
 import AdminRoute from './components/routing/AdminRoute';
 import ScrollToTop from './components/common/ScrollToTop';
 import CookieConsent from './components/common/CookieConsent';
-import SEOHelmet from '@/components/common/SEOHelmet';
 
 // Page Imports
 import Home from './pages/Home';
@@ -46,6 +45,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import RefundPolicy from './pages/RefundPolicy';
 import VerifyCertificate from './pages/VerifyCertificate';
 import PrivacyPolicycookie from './pages/PrivacyPolicycookie';
+import NotFound from './pages/NotFound';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -166,6 +166,10 @@ const AppContent = () => {
                             <Route path="/admin/courses/:id/enrollments" element={<PageContainer><AdminCourseEnrollments /></PageContainer>} />
                             <Route path="/privacy-cookie" element={<PageContainer><PrivacyPolicycookie /></PageContainer>} />
                         </Route>
+
+                        {/* Catch-all: any URL that doesn't match a route above. Must stay
+                            last so it never shadows a real route. */}
+                        <Route path="*" element={<PageContainer><NotFound /></PageContainer>} />
                     </Routes>
                 </AnimatePresence>
             </main>
@@ -191,6 +195,5 @@ const PageContainer = ({ children }) => (
         {children}
     </motion.div>
 );
-<SEOHelmet title="..." description="..." canonical="/..." noIndex={true} />
 
 export default App;
