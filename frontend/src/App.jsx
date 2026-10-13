@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -19,15 +19,12 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import CourseCatalogue from './pages/CourseCatalogue';
 import CourseDetail from './pages/CourseDetail';
-import CourseViewer from './pages/CourseViewer';
 import CourseEnrollment from './pages/CourseEnrollment';
 import CourseAccess from './pages/CourseAccess';
 import CourseReadingProgress from './components/courses/CourseReadingProgress';
-import LessonPlayer from './components/lessons/LessonPlayer';
 import HowItWorks from './pages/HowItWorks';
 import Pricing from './pages/Pricing';
 import Contact from './pages/Contact';
-import AssessmentCenter from './components/assessment/AssessmentCenter';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import OAuthCallback from './pages/OAuthCallback';
@@ -47,11 +44,19 @@ import VerifyCertificate from './pages/VerifyCertificate';
 import PrivacyPolicycookie from './pages/PrivacyPolicycookie';
 import NotFound from './pages/NotFound';
 
-// Admin Imports
-import AdminDashboard from './pages/admin/AdminDashboard';
-import CourseForm from './pages/admin/CourseForm';
-import AdminJSONUpload from './pages/admin/AdminJSONUpload';
-import AdminCourseEnrollments from './pages/admin/AdminCourseEnrollments';
+// Admin Imports — lazy-loaded: admin-only, no reason to ship this code to
+// every learner's first page load (see course-player group below for why).
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const CourseForm = lazy(() => import('./pages/admin/CourseForm'));
+const AdminJSONUpload = lazy(() => import('./pages/admin/AdminJSONUpload'));
+const AdminCourseEnrollments = lazy(() => import('./pages/admin/AdminCourseEnrollments'));
+
+// Course-player group — lazy-loaded together: these are only needed once a
+// learner is actually inside a course, not on first paint of the site, and
+// they're consistently among the largest route modules in the app.
+const CourseViewer = lazy(() => import('./pages/CourseViewer'));
+const LessonPlayer = lazy(() => import('./components/lessons/LessonPlayer'));
+const AssessmentCenter = lazy(() => import('./components/assessment/AssessmentCenter'));
 
 const PrivateRoute = () => {
     const { isAuthenticated, loading } = useAuth();
@@ -121,6 +126,7 @@ const AppContent = () => {
             <ScrollToTop />
             {!shouldHideNavbar && <Navbar />}
             <main className="relative">
+                <Suspense fallback={<Loader />}>
                 <AnimatePresence mode="wait">
                     <Routes location={location} key={location.pathname}>
                         <Route path="/" element={<PageContainer><Home /></PageContainer>} />
@@ -172,6 +178,7 @@ const AppContent = () => {
                         <Route path="*" element={<PageContainer><NotFound /></PageContainer>} />
                     </Routes>
                 </AnimatePresence>
+                </Suspense>
             </main>
             <Footer />
             <CookieConsent />

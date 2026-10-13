@@ -6,7 +6,7 @@ import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
 import { FaPlay, FaCheckCircle, FaLock, FaList, FaArrowLeft, FaStar, FaRegStar, FaUserCircle, FaTrash } from 'react-icons/fa';
 import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
-import { Helmet } from 'react-helmet-async';
+import SEOHelmet from '../components/common/SEOHelmet.jsx';
 
 const CourseDetail = () => {
     const { id } = useParams();
@@ -178,13 +178,19 @@ const CourseDetail = () => {
 
     return (
         <div className="bg-[var(--bg-main)] min-h-screen pt-8">
-            <Helmet>
-                <title>{course.title ? `${course.title} | GenAI Course` : 'Course Details'}</title>
-                <meta name="description" content={course.description || "Enroll in our top-rated AI course today."} />
-                <script type="application/ld+json">
-                    {JSON.stringify(schemaData)}
-                </script>
-            </Helmet>
+            <SEOHelmet
+                title={course.title || 'Course Details'}
+                description={(course.description || 'Enroll in our top-rated AI course today.').slice(0, 300)}
+                canonical={`/courses/${id}`}
+                ogImage={course.thumbnail ? getSafeThumbnailUrl(course.thumbnail) : undefined}
+                ogType="product"
+                schema={schemaData}
+                breadcrumb={[
+                    { name: 'Home', url: '/' },
+                    { name: 'Courses', url: '/courses' },
+                    { name: course.title || 'Course Details', url: `/courses/${id}` },
+                ]}
+            />
             {/* Header */}
             <div className="bg-white py-16 border-b border-gray-200 shadow-sm">
                 <div className="container">

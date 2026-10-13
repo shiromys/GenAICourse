@@ -128,6 +128,83 @@ const grantAllAccess = async (userId, user) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SHARED HELPER: Does this user still have valid, non-refunded access to
+// whatever this specific payment granted, through a DIFFERENT completed
+// payment? This is what keeps a refund/chargeback from ever revoking access
+// that the customer still legitimately holds — most importantly the
+// documented double-payment process (an extra charge for the same course is
+// manually refunded via the Stripe dashboard, and the customer's access must
+// stay intact because their other payment for that course was never touched).
+// ─────────────────────────────────────────────────────────────────────────────
+const hasAlternateCoverage = async (payment) => {
+    const otherPayments = await Payment.find({
+        userId: payment.userId,
+        _id: { $ne: payment._id },
+        status: 'completed',
+    });
+
+    // Any other valid all-access payment covers every course, including this one.
+    if (otherPayments.some((p) => p.purchaseType === 'all')) return true;
+
+    // This payment's own bundle is the thing being revoked — nothing else
+    // (short of another bundle payment, already checked above) substitutes
+    // for all-access.
+    if (payment.purchaseType === 'all') return false;
+
+    // Single-course payment: covered if another completed single payment
+    // for the SAME course exists (the double-payment scenario).
+    return otherPayments.some(
+        (p) => p.purchaseType === 'single' && p.courseId && payment.courseId &&
+            p.courseId.toString() === payment.courseId.toString()
+    );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARED HELPER: Revoke exactly the access a specific payment granted — used
+// for both a refund and a chargeback. Scoped to that one payment's course (or
+// the bundle), and skipped entirely when hasAlternateCoverage says the user
+// still legitimately holds that access through a different payment.
+// ─────────────────────────────────────────────────────────────────────────────
+const revokeAccessForPayment = async (payment) => {
+    if (await hasAlternateCoverage(payment)) {
+        console.log(`ℹ️ [Revocation] Payment ${payment._id} refunded/disputed, but user ${payment.userId} has alternate coverage for this course/bundle — access left intact.`);
+        return { revoked: false, reason: 'alternate-coverage' };
+    }
+
+    const user = await User.findById(payment.userId);
+    if (!user) return { revoked: false, reason: 'user-not-found' };
+
+    if (payment.purchaseType === 'all') {
+        user.hasAllCoursesAccess = false;
+        await user.save();
+    } else if (payment.courseId) {
+        user.enrolledCourses = user.enrolledCourses.filter(
+            (e) => !(e.courseId && e.courseId.toString() === payment.courseId.toString())
+        );
+        await user.save();
+    }
+    console.log(`🚫 [Revocation] Access revoked for user ${user._id} (payment ${payment._id}, type ${payment.purchaseType}).`);
+    return { revoked: true };
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARED HELPER: Re-grant access that was revoked by a dispute later resolved
+// in the merchant's favor ("won") — exact mirror of revokeAccessForPayment.
+// ─────────────────────────────────────────────────────────────────────────────
+const restoreAccessForPayment = async (payment) => {
+    const user = await User.findById(payment.userId);
+    if (!user) return;
+
+    if (payment.purchaseType === 'all') {
+        await grantAllAccess(payment.userId, user);
+    } else if (payment.courseId) {
+        user.enrollInCourse(payment.courseId);
+        await user.save();
+    }
+    console.log(`✅ [Revocation] Access restored for user ${user._id} (payment ${payment._id}) — dispute resolved in merchant's favor.`);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // SHARED HELPER: Guest checkout — find-or-create a lightweight account by email
 // so an unauthenticated buyer can pay without registering first. Throws a
 // tagged error if the email already belongs to a real (non-guest) account,
@@ -472,6 +549,67 @@ export const stripeWebhook = async (req, res) => {
 
         } catch (error) {
             console.error('Webhook processing error:', error);
+        }
+
+    } else if (event.type === 'charge.refunded') {
+        // A full or partial refund — issued manually from the Stripe dashboard
+        // (e.g. the documented double-payment process) or any other way.
+        const charge = event.data.object;
+        try {
+            const payment = await Payment.findOne({ stripePaymentIntentId: charge.payment_intent });
+            if (!payment) {
+                console.warn(`⚠️ [Webhook] charge.refunded for payment_intent ${charge.payment_intent} has no matching Payment record — nothing to revoke.`);
+            } else if (payment.status === 'refunded') {
+                // Already processed — Stripe may redeliver the same event.
+            } else {
+                payment.status = 'refunded';
+                await payment.save();
+                await revokeAccessForPayment(payment);
+            }
+        } catch (error) {
+            console.error('Webhook charge.refunded processing error:', error);
+        }
+
+    } else if (event.type === 'charge.dispute.created') {
+        // A chargeback was opened by the customer's card issuer — independent
+        // of our no-refunds policy, and funds are provisionally frozen
+        // immediately, so access is revoked immediately too.
+        const dispute = event.data.object;
+        try {
+            const payment = await Payment.findOne({ stripePaymentIntentId: dispute.payment_intent });
+            if (!payment) {
+                console.warn(`⚠️ [Webhook] charge.dispute.created for payment_intent ${dispute.payment_intent} has no matching Payment record — nothing to revoke.`);
+            } else if (payment.status === 'refunded' || payment.status === 'disputed') {
+                // Already revoked.
+            } else {
+                payment.status = 'disputed';
+                await payment.save();
+                await revokeAccessForPayment(payment);
+            }
+        } catch (error) {
+            console.error('Webhook charge.dispute.created processing error:', error);
+        }
+
+    } else if (event.type === 'charge.dispute.closed') {
+        // The dispute's final outcome. 'won' means we kept the funds — restore
+        // whatever access was revoked. 'lost' means the funds are gone for
+        // good — same effect as a refund, in case dispute.created was missed.
+        const dispute = event.data.object;
+        try {
+            const payment = await Payment.findOne({ stripePaymentIntentId: dispute.payment_intent });
+            if (!payment) {
+                console.warn(`⚠️ [Webhook] charge.dispute.closed for payment_intent ${dispute.payment_intent} has no matching Payment record.`);
+            } else if (dispute.status === 'won' && payment.status === 'disputed') {
+                payment.status = 'completed';
+                await payment.save();
+                await restoreAccessForPayment(payment);
+            } else if (dispute.status === 'lost' && payment.status !== 'refunded') {
+                payment.status = 'refunded';
+                await payment.save();
+                await revokeAccessForPayment(payment);
+            }
+        } catch (error) {
+            console.error('Webhook charge.dispute.closed processing error:', error);
         }
     }
 

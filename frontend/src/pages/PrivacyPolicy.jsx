@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaShieldAlt, FaUserSecret, FaServer, FaHandshake } from 'react-icons/fa';
+import SEOHelmet from '../components/common/SEOHelmet';
 
 /**
  * PrivacyPolicy Page
@@ -9,6 +10,12 @@ import { FaShieldAlt, FaUserSecret, FaServer, FaHandshake } from 'react-icons/fa
 const PrivacyPolicy = () => {
     return (
         <div className="min-h-screen bg-[var(--bg-secondary)] pt-8 pb-20 selection:bg-blue-100 selection:text-blue-600">
+            <SEOHelmet
+                title="Privacy Policy"
+                description="How GenAICourse.IO collects, uses, and protects your personal data, including payment, learning, and certificate information."
+                canonical="/privacy"
+                noIndex={false}
+            />
             <div className="container max-w-4xl mx-auto px-6">
 
                 {/* Header Section */}

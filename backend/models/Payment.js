@@ -50,7 +50,9 @@ const paymentSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'completed', 'failed', 'refunded'],
+        // 'disputed' = a chargeback was opened and funds are provisionally frozen;
+        // it resolves to either 'completed' (dispute won) or 'refunded' (dispute lost).
+        enum: ['pending', 'completed', 'failed', 'refunded', 'disputed'],
         default: 'completed'
     },
     emailSent: {

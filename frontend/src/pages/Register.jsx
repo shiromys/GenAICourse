@@ -76,8 +76,9 @@ const Register = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-slate-700 ml-1">Full Name</label>
+                            <label htmlFor="register-name" className="text-sm font-semibold text-slate-700 ml-1">Full Name</label>
                             <input
+                                id="register-name"
                                 type="text"
                                 name="name"
                                 value={formData.name}
@@ -89,8 +90,9 @@ const Register = () => {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-slate-700 ml-1">Email Address</label>
+                            <label htmlFor="register-email" className="text-sm font-semibold text-slate-700 ml-1">Email Address</label>
                             <input
+                                id="register-email"
                                 type="email"
                                 name="email"
                                 value={formData.email}
@@ -103,9 +105,10 @@ const Register = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
+                                <label htmlFor="register-password" className="text-sm font-semibold text-slate-700 ml-1">Password</label>
                                 <div className="relative">
                                     <input
+                                        id="register-password"
                                         type={showPassword ? "text" : "password"}
                                         name="password"
                                         value={formData.password}
@@ -124,9 +127,10 @@ const Register = () => {
                                 </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-slate-700 ml-1">Confirm</label>
+                                <label htmlFor="register-confirm-password" className="text-sm font-semibold text-slate-700 ml-1">Confirm</label>
                                 <div className="relative">
                                     <input
+                                        id="register-confirm-password"
                                         type={showConfirmPassword ? "text" : "password"}
                                         name="confirmPassword"
                                         value={formData.confirmPassword}

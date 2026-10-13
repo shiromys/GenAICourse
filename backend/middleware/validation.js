@@ -105,9 +105,17 @@ export const completeSetupValidation = [
 ];
 
 // Email verification validation
+// Tokens are always a 40-char hex string (crypto.randomBytes(20).toString('hex')).
+// Rejecting anything else up front stops a non-string payload (e.g. { "$ne": null })
+// from ever reaching the Mongoose query in verifyEmail.
 export const emailVerificationValidation = [
     body('token')
-        .notEmpty().withMessage('Verification token is required')
+        .exists({ checkFalsy: true }).withMessage('Verification token is required')
+        .bail()
+        .isString().withMessage('Verification token must be a string')
+        .bail()
+        .isHexadecimal().withMessage('Invalid verification token format')
+        .isLength({ min: 40, max: 40 }).withMessage('Invalid verification token format')
 ];
 
 // Change password validation

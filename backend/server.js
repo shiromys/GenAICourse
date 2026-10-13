@@ -40,6 +40,14 @@ import maintenanceGate from './middleware/maintenanceGate.js';
 
 const app = express();
 
+// Railway (and most PaaS hosts) put the app behind a reverse proxy, so the
+// real client IP arrives via X-Forwarded-For. Without this, req.ip resolves
+// to the proxy's address for every request — which would make the auth rate
+// limiters below bucket ALL users together as "one IP" (one abusive client
+// could lock out everyone) and is also required by express-rate-limit v7,
+// which throws when it sees X-Forwarded-For without trust proxy configured.
+app.set('trust proxy', 1);
+
 const startServer = async () => {
     try {
         await connectDB();
@@ -56,8 +64,35 @@ const startServer = async () => {
         };
         app.use(cors(corsOptions));
 
+        // A real Content-Security-Policy, scoped to exactly what this app actually
+        // loads: same-origin bundle + API, Stripe (Elements iframe + API + redirect
+        // success page), Google Fonts, the optional post-consent GA4 tag, and the
+        // Google Maps embed on the Contact page. img-src is intentionally left broad
+        // (https: + data:) because admins can paste an arbitrary external thumbnail
+        // URL for a course (CourseForm.jsx) — locking that down would silently break
+        // existing course thumbnails.
         app.use(helmet({
-            contentSecurityPolicy: false,
+            contentSecurityPolicy: {
+                directives: {
+                    defaultSrc: ["'self'"],
+                    scriptSrc: ["'self'", 'https://www.googletagmanager.com', 'https://js.stripe.com'],
+                    styleSrc: ["'self'", 'https://fonts.googleapis.com'],
+                    fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+                    imgSrc: ["'self'", 'data:', 'https:'],
+                    connectSrc: [
+                        "'self'",
+                        'https://api.stripe.com',
+                        'https://www.googletagmanager.com',
+                        'https://www.google-analytics.com',
+                        'https://analytics.google.com',
+                    ],
+                    frameSrc: ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com', 'https://www.google.com'],
+                    objectSrc: ["'none'"],
+                    baseUri: ["'self'"],
+                    formAction: ["'self'"],
+                    frameAncestors: ["'self'"],
+                },
+            },
         }));
 
         configurePassport();

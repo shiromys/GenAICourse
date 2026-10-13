@@ -27,6 +27,7 @@ import {
     validate
 } from '../middleware/validation.js';
 import { checkOauthConfig } from '../middleware/oauthCheck.js';
+import { loginLimiter, authActionLimiter } from '../middleware/rateLimiter.js';
 
 import passport from 'passport';
 
@@ -58,12 +59,12 @@ router.get('/linkedin/callback',
 );
 
 // Public routes
-router.post('/register', registerValidation, validate, register);
-router.post('/login', loginValidation, validate, login);
-router.post('/forgot-password', forgotPasswordValidation, validate, forgotPassword);
+router.post('/register', authActionLimiter, registerValidation, validate, register);
+router.post('/login', loginLimiter, loginValidation, validate, login);
+router.post('/forgot-password', authActionLimiter, forgotPasswordValidation, validate, forgotPassword);
 router.put('/reset-password/:resetToken', resetPasswordValidation, validate, resetPassword);
-router.post('/verify-email', verifyEmail);
-router.post('/resend-verification', resendVerification);
+router.post('/verify-email', emailVerificationValidation, validate, verifyEmail);
+router.post('/resend-verification', authActionLimiter, forgotPasswordValidation, validate, resendVerification);
 
 // Protected routes
 router.get('/me', protect, getMe);

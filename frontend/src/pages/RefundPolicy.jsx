@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaUndo, FaExclamationTriangle, FaCheckCircle, FaTimesCircle, FaTools } from 'react-icons/fa';
+import SEOHelmet from '../components/common/SEOHelmet';
 
 /**
  * RefundPolicy Page
@@ -9,6 +10,12 @@ import { FaUndo, FaExclamationTriangle, FaCheckCircle, FaTimesCircle, FaTools } 
 const RefundPolicy = () => {
     return (
         <div className="min-h-screen bg-[var(--bg-secondary)] pt-8 pb-20 selection:bg-red-50 selection:text-red-600">
+            <SEOHelmet
+                title="Refund Policy"
+                description="GenAICourse.IO's refund policy: digital course purchases are final, with limited exceptions such as duplicate billing errors."
+                canonical="/refund"
+                noIndex={false}
+            />
             <div className="container max-w-4xl mx-auto px-6">
 
                 {/* Header Section */}

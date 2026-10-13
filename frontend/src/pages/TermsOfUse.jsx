@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaFileContract, FaCopyright, FaUserShield, FaBan } from 'react-icons/fa';
+import SEOHelmet from '../components/common/SEOHelmet';
 
 /**
  * TermsOfUse Page
@@ -9,6 +10,12 @@ import { FaFileContract, FaCopyright, FaUserShield, FaBan } from 'react-icons/fa
 const TermsOfUse = () => {
     return (
         <div className="min-h-screen bg-[var(--bg-secondary)] pt-8 pb-20 selection:bg-blue-100 selection:text-blue-600">
+            <SEOHelmet
+                title="Terms of Use"
+                description="The terms and conditions governing your use of GenAICourse.IO, including intellectual property, certificates, and account termination policies."
+                canonical="/terms"
+                noIndex={false}
+            />
             <div className="container max-w-4xl mx-auto px-6">
 
                 {/* Header Section */}
