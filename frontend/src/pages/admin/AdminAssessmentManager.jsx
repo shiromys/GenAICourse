@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, FileText, Download, AlertCircle, CheckCircle, Eye, Edit, Trash2, Plus } from 'lucide-react';
+import { Upload, FileText, Download, AlertCircle, CheckCircle, Eye, Edit, Trash2, Plus, X, Loader2, UserPlus } from 'lucide-react';
 import assessmentUploadService from '../../services/assessmentUploadService.js';
 import adminService from '../../services/adminService.js';
 
@@ -15,6 +15,22 @@ const AdminAssessmentManager = () => {
     const [jsonInput, setJsonInput] = useState('');
     const [selectedCourse, setSelectedCourse] = useState('');
     const [courses, setCourses] = useState([]);
+
+    // ── View modal: full quiz detail + per-user attempt-grant control ──────
+    // The Eye/Edit/Delete row actions used to be Eye+Edit with no onClick at
+    // all (Delete was the only one wired up) — clicking them visibly did
+    // nothing. This state backs the two modals that make them real.
+    const [viewingAssessment, setViewingAssessment] = useState(null); // merged summary + full quiz detail
+    const [viewLoading, setViewLoading] = useState(false);
+    const [enrolledUsers, setEnrolledUsers] = useState([]);
+    const [grantUserId, setGrantUserId] = useState('');
+    const [grantReason, setGrantReason] = useState('');
+    const [granting, setGranting] = useState(false);
+
+    // ── Edit modal: quiz settings (title/description/timing/attempts/pass/status) ──
+    const [editingAssessment, setEditingAssessment] = useState(null);
+    const [editForm, setEditForm] = useState({ title: '', description: '', timeLimit: 60, maxAttempts: 3, passingScore: 80, isActive: true });
+    const [savingEdit, setSavingEdit] = useState(false);
 
     useEffect(() => {
         loadAssessments();
@@ -124,6 +140,94 @@ const AdminAssessmentManager = () => {
             loadAssessments();
         } catch (error) {
             setError(error.message);
+        }
+    };
+
+    // ── View ─────────────────────────────────────────────────────────────
+    const handleView = async (assessment) => {
+        setViewingAssessment({ ...assessment, questions: null });
+        setViewLoading(true);
+        setEnrolledUsers([]);
+        setGrantUserId('');
+        setGrantReason('');
+        try {
+            const quizRes = await adminService.getQuiz(assessment.id);
+            setViewingAssessment(prev => (prev ? { ...prev, ...quizRes.data } : prev));
+        } catch (error) {
+            setError(error.response?.data?.message || error.message || 'Failed to load assessment details');
+        } finally {
+            setViewLoading(false);
+        }
+
+        // The grant-attempt control only makes sense once we know who's enrolled —
+        // quizAttemptGrants lives on each learner's UserProgress for this course.
+        if (assessment.courseId) {
+            try {
+                const enrollRes = await adminService.getCourseEnrollments(assessment.courseId);
+                setEnrolledUsers((enrollRes.data || []).filter(e => e.userId));
+            } catch (error) {
+                console.error('Failed to load course enrollments:', error);
+            }
+        }
+    };
+
+    const closeView = () => {
+        setViewingAssessment(null);
+        setEnrolledUsers([]);
+        setGrantUserId('');
+        setGrantReason('');
+    };
+
+    const handleGrantAttempt = async () => {
+        if (!grantUserId || !viewingAssessment?.courseId) return;
+        const courseIdValue = typeof viewingAssessment.courseId === 'object' ? viewingAssessment.courseId._id : viewingAssessment.courseId;
+        try {
+            setGranting(true);
+            const res = await adminService.grantQuizAttempt(grantUserId, courseIdValue, grantReason);
+            setSuccess(res.message);
+            setGrantUserId('');
+            setGrantReason('');
+        } catch (error) {
+            setError(error.response?.data?.message || 'Failed to grant attempt');
+        } finally {
+            setGranting(false);
+        }
+    };
+
+    // ── Edit ─────────────────────────────────────────────────────────────
+    const handleEdit = (assessment) => {
+        setEditingAssessment(assessment);
+        setEditForm({
+            title: assessment.title || '',
+            description: assessment.description || '',
+            timeLimit: assessment.timeLimit || 60,
+            maxAttempts: assessment.maxAttempts || 3,
+            passingScore: assessment.passingScore || 80,
+            isActive: assessment.isActive !== false
+        });
+    };
+
+    const closeEdit = () => setEditingAssessment(null);
+
+    const handleSaveEdit = async () => {
+        if (!editingAssessment) return;
+        try {
+            setSavingEdit(true);
+            await assessmentUploadService.updateAssessment(editingAssessment.id, {
+                title: editForm.title,
+                description: editForm.description,
+                timeLimit: Number(editForm.timeLimit),
+                maxAttempts: Number(editForm.maxAttempts),
+                passingScore: Number(editForm.passingScore),
+                isPublished: editForm.isActive
+            });
+            setSuccess('Assessment updated successfully');
+            closeEdit();
+            loadAssessments();
+        } catch (error) {
+            setError(error.message || 'Failed to update assessment');
+        } finally {
+            setSavingEdit(false);
         }
     };
 
@@ -394,10 +498,18 @@ const AdminAssessmentManager = () => {
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    <button className="p-2 text-slate-400 hover:text-blue-400 hover:bg-slate-700 rounded-lg transition-colors" title="View">
+                                                    <button
+                                                        onClick={() => handleView(assessment)}
+                                                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors"
+                                                        title="View"
+                                                    >
                                                         <Eye className="h-4 w-4" />
                                                     </button>
-                                                    <button className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors" title="Edit">
+                                                    <button
+                                                        onClick={() => handleEdit(assessment)}
+                                                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                                                        title="Edit"
+                                                    >
                                                         <Edit className="h-4 w-4" />
                                                     </button>
                                                     <button
@@ -414,6 +526,219 @@ const AdminAssessmentManager = () => {
                                 )}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            )}
+
+            {/* ── View modal ───────────────────────────────────────────── */}
+            {viewingAssessment && (
+                <div className="fixed inset-0 z-[100] bg-slate-900/55 backdrop-blur-sm flex items-center justify-center px-4" onClick={closeView}>
+                    <div
+                        className="w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-white rounded-2xl border border-slate-200 shadow-2xl p-6"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="flex items-start justify-between mb-1">
+                            <h3 className="text-lg font-black text-slate-900">{viewingAssessment.title}</h3>
+                            <button onClick={closeView} className="text-slate-400 hover:text-slate-600 flex-shrink-0"><X size={18} /></button>
+                        </div>
+                        <p className="text-sm text-slate-500 font-medium mb-5">{viewingAssessment.description || 'No description'}</p>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                            <div className="bg-slate-50 rounded-xl p-3 text-center">
+                                <div className="text-lg font-black text-slate-900">{viewingAssessment.questionCount ?? viewingAssessment.questions?.length ?? '—'}</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Questions</div>
+                            </div>
+                            <div className="bg-slate-50 rounded-xl p-3 text-center">
+                                <div className="text-lg font-black text-slate-900">{viewingAssessment.timeLimit}m</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Time Limit</div>
+                            </div>
+                            <div className="bg-slate-50 rounded-xl p-3 text-center">
+                                <div className="text-lg font-black text-slate-900">{viewingAssessment.passingScore}%</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">To Pass</div>
+                            </div>
+                            <div className="bg-slate-50 rounded-xl p-3 text-center">
+                                <div className="text-lg font-black text-slate-900">{viewingAssessment.maxAttempts}</div>
+                                <div className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Max Attempts</div>
+                            </div>
+                        </div>
+
+                        {/* Questions */}
+                        <div className="mb-6">
+                            <h4 className="text-xs font-black uppercase tracking-wide text-slate-400 mb-3">Questions</h4>
+                            {viewLoading ? (
+                                <div className="flex items-center gap-2 text-slate-400 text-sm py-4"><Loader2 className="h-4 w-4 animate-spin" /> Loading questions…</div>
+                            ) : viewingAssessment.questions?.length ? (
+                                <div className="space-y-3">
+                                    {viewingAssessment.questions.map((q, i) => (
+                                        <div key={q._id || i} className="border border-slate-100 rounded-xl p-3">
+                                            <p className="text-sm font-bold text-slate-800 mb-2">{i + 1}. {q.question}</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {q.options?.map((opt, oi) => {
+                                                    const text = typeof opt === 'string' ? opt : opt.text;
+                                                    const isCorrect = typeof opt === 'object'
+                                                        ? opt.isCorrect
+                                                        : text === q.correctAnswer;
+                                                    return (
+                                                        <span
+                                                            key={oi}
+                                                            className={`text-xs px-2.5 py-1 rounded-lg font-semibold ${isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}
+                                                        >
+                                                            {text}
+                                                        </span>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-slate-400">No question detail available.</p>
+                            )}
+                        </div>
+
+                        {/* Grant an extra attempt — same action as the Users panel's access-grant
+                            modal, surfaced here too since this is where an admin naturally looks
+                            when a specific assessment's attempt limit comes up. */}
+                        <div className="pt-5 border-t border-slate-100">
+                            <h4 className="text-xs font-black uppercase tracking-wide text-slate-400 mb-1.5 flex items-center gap-1.5">
+                                <UserPlus className="h-3.5 w-3.5" /> Grant a learner +1 attempt
+                            </h4>
+                            {!viewingAssessment.courseId ? (
+                                <p className="text-xs font-semibold text-amber-600">This assessment isn't linked to a course yet — link it from Courses first.</p>
+                            ) : (
+                                <>
+                                    <p className="text-xs text-slate-500 font-medium mb-3">
+                                        Once a learner has used all {viewingAssessment.maxAttempts} attempts, they're blocked from starting another — grant one extra here. Each grant is logged with your admin account, today's date, and an optional reason.
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-2 mb-2">
+                                        <select
+                                            value={grantUserId}
+                                            onChange={e => setGrantUserId(e.target.value)}
+                                            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400"
+                                        >
+                                            <option value="">
+                                                {enrolledUsers.length === 0 ? 'No enrolled learners found' : 'Select a learner…'}
+                                            </option>
+                                            {enrolledUsers.map(e => (
+                                                <option key={e.userId?._id || e._id} value={e.userId?._id}>
+                                                    {e.userId?.name} ({e.userId?.email}){e.quizAttemptGrants?.length ? ` — ${e.quizAttemptGrants.length} grant${e.quizAttemptGrants.length === 1 ? '' : 's'} so far` : ''}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            disabled={!grantUserId || granting}
+                                            onClick={handleGrantAttempt}
+                                            className="btn bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white px-4 py-2.5 rounded-xl font-bold text-xs flex-shrink-0 flex items-center justify-center gap-1.5"
+                                        >
+                                            {granting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                                            Grant +1 attempt
+                                        </button>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={grantReason}
+                                        onChange={e => setGrantReason(e.target.value)}
+                                        placeholder="Reason (optional) — e.g. internet dropped mid-quiz"
+                                        maxLength={300}
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-amber-400"
+                                    />
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Edit modal ───────────────────────────────────────────── */}
+            {editingAssessment && (
+                <div className="fixed inset-0 z-[100] bg-slate-900/55 backdrop-blur-sm flex items-center justify-center px-4" onClick={closeEdit}>
+                    <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-5">
+                            <h3 className="text-base font-black text-slate-900">Edit Assessment</h3>
+                            <button onClick={closeEdit} className="text-slate-400 hover:text-slate-600"><X size={16} /></button>
+                        </div>
+
+                        <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Title</label>
+                        <input
+                            type="text"
+                            value={editForm.title}
+                            onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400 mb-4"
+                        />
+
+                        <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Description</label>
+                        <textarea
+                            value={editForm.description}
+                            onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+                            rows={2}
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400 mb-4 resize-none"
+                        />
+
+                        <div className="grid grid-cols-3 gap-3 mb-4">
+                            <div>
+                                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Time (min)</label>
+                                <input
+                                    type="number"
+                                    min={1}
+                                    max={180}
+                                    value={editForm.timeLimit}
+                                    onChange={e => setEditForm(f => ({ ...f, timeLimit: e.target.value }))}
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Max Attempts</label>
+                                <input
+                                    type="number"
+                                    min={1}
+                                    max={10}
+                                    value={editForm.maxAttempts}
+                                    onChange={e => setEditForm(f => ({ ...f, maxAttempts: e.target.value }))}
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Pass %</label>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    value={editForm.passingScore}
+                                    onChange={e => setEditForm(f => ({ ...f, passingScore: e.target.value }))}
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400"
+                                />
+                            </div>
+                        </div>
+                        <p className="text-[11px] text-slate-400 font-medium mb-4">
+                            This is the base attempt limit for every learner on this assessment. To give one specific learner an extra attempt without changing it for everyone, use "Grant a learner +1 attempt" from the View screen instead.
+                        </p>
+
+                        <label className="flex items-center gap-2 mb-5 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={editForm.isActive}
+                                onChange={e => setEditForm(f => ({ ...f, isActive: e.target.checked }))}
+                                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-400"
+                            />
+                            <span className="text-sm font-semibold text-slate-700">Active (visible to learners)</span>
+                        </label>
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={closeEdit}
+                                className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveEdit}
+                                disabled={savingEdit || !editForm.title.trim()}
+                                className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white transition-colors flex items-center justify-center gap-1.5"
+                            >
+                                {savingEdit && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                                Save Changes
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
