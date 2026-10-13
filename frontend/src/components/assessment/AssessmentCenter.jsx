@@ -195,6 +195,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
         results={results}
         courseId={courseId}
         isEmbedded={isEmbedded}
+        passingScore={assessment?.passingScore || 70}
         onRetake={() => {
           setShowResults(false);
           setResults(null);
@@ -353,7 +354,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
   );
 };
 
-const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) => {
+const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false, passingScore = 70 }) => {
   const navigate = useNavigate();
   const [downloadingCert, setDownloadingCert] = useState(false);
   const isPassed = results.attempt?.passed ?? results.passed;
@@ -416,7 +417,7 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
                 ? (certificatePendingSetup
                     ? "You've completed the course! Set up your account name and password to unlock your certificate."
                     : "You have achieved your certificate of completion, congratulations!")
-                : `You didn't reach ${assessment?.passingScore || 70}% this time. Please review the lessons and try the quiz again.`
+                : `You didn't reach ${passingScore}% this time. Please review the lessons and try the quiz again.`
               }
             </p>
           </div>
@@ -424,7 +425,7 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
           {/* Stats Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100 bg-gray-50">
             <ResultStat label="Your Score" value={`${results.attempt?.score ?? results.score ?? 0}`} sub={`of ${results.attempt?.totalPoints ?? results.totalPoints ?? 0} pts`} />
-            <ResultStat label="Achievement Percentage" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub={`${assessment?.passingScore || 70}% required`} highlight={isPassed} />
+            <ResultStat label="Achievement Percentage" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub={`${passingScore}% required`} highlight={isPassed} />
           </div>
 
           {/* Footer Actions */}
