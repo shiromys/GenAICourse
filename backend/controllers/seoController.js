@@ -4,23 +4,20 @@
  * Generates a fully compliant XML sitemap covering:
  *   - All static pages
  *   - All published courses (dynamic)
- *   - All blog articles (static)
  *
- * Route: GET /sitemap.xml
+ * Route: GET /sitemap.xml — registered in server.js BEFORE the static frontend
+ * is served, so this handler always wins over any sitemap.xml file sitting in
+ * frontend/public or frontend/dist. There is no other sitemap in this app.
+ *
+ * NOTE (Oct 13): this previously also listed a /blog index page and six
+ * /blog/<slug> article URLs. No Blog page or /blog route exists anywhere in
+ * the frontend (confirmed: no Blog.jsx, no /blog route in App.jsx) — those
+ * seven URLs were submitting search engines straight into 404s. Removed.
+ * If a blog is ever built, its real URLs belong back here.
  */
 
 import { SitemapStream, streamToPromise } from 'sitemap';
 import Course from '../models/Course.js';
-
-// ── Blog slugs (keep in sync with frontend/src/pages/Blog.jsx BLOG_POSTS) ──
-const BLOG_SLUGS = [
-    'best-generative-ai-course-for-beginners-2026',
-    'ai-course-for-non-programmers',
-    'ai-course-with-certificate-usa',
-    'ai-certification-cost-worth-it',
-    'job-ready-ai-course-what-to-learn',
-    'learn-ai-online-complete-guide',
-];
 
 export const generateSitemap = async (req, res) => {
     try {
@@ -32,7 +29,6 @@ export const generateSitemap = async (req, res) => {
         smStream.write({ url: '/pricing', changefreq: 'monthly', priority: 0.8 });
         smStream.write({ url: '/how-it-works', changefreq: 'monthly', priority: 0.7 });
         smStream.write({ url: '/contact', changefreq: 'monthly', priority: 0.6 });
-        smStream.write({ url: '/blog', changefreq: 'weekly', priority: 0.8 });
 
         // ── 2. Legal pages ────────────────────────────────────────────────
         smStream.write({ url: '/privacy', changefreq: 'yearly', priority: 0.3 });
@@ -53,15 +49,6 @@ export const generateSitemap = async (req, res) => {
                     : new Date().toISOString(),
                 changefreq: 'weekly',
                 priority: 0.85,
-            });
-        });
-
-        // ── 4. Blog articles ──────────────────────────────────────────────
-        BLOG_SLUGS.forEach(slug => {
-            smStream.write({
-                url: `/blog/${slug}`,
-                changefreq: 'monthly',
-                priority: 0.75,
             });
         });
 
