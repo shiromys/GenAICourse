@@ -103,6 +103,26 @@ const userProgressSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Certificate'
     },
+    // Admin-granted extra quiz attempts for this course's assessment, one entry
+    // per grant (so "+1 attempt" can be applied more than once and each grant is
+    // individually auditable). Effective max attempts for the quiz is always
+    // quiz.maxAttempts + quizAttemptGrants.length — see assessmentController.js.
+    quizAttemptGrants: [{
+        grantedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        reason: {
+            type: String,
+            trim: true,
+            maxlength: 300
+        },
+        grantedAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     bookmarks: [{
         moduleId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -193,6 +213,17 @@ userProgressSchema.methods.completeQuiz = function(quizId, attemptId, score, pas
         allScores.push(...this.completedLessons.filter(l => l.score).map(l => l.score));
     }
     this.averageScore = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
+};
+
+// Method to grant one extra quiz attempt (admin-triggered, see accessController.js).
+// Each call pushes a new, individually auditable grant rather than bumping a
+// counter, so "who approved this and why" is never lost.
+userProgressSchema.methods.grantExtraQuizAttempt = function(grantedByUserId, reason = '') {
+    this.quizAttemptGrants.push({
+        grantedBy: grantedByUserId,
+        reason: reason || '',
+        grantedAt: new Date()
+    });
 };
 
 // Method to add bookmark

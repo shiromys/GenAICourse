@@ -20,7 +20,7 @@ import {
 } from '../controllers/adminController.js';
 import { updateMaintenanceMode } from '../controllers/settingsController.js';
 import { previewTestDataReset, verifyResetKey, exportResetBackup, resetTestData } from '../controllers/dataResetController.js';
-import { grantCourseAccess, setAllCoursesAccess } from '../controllers/accessController.js';
+import { grantCourseAccess, setAllCoursesAccess, grantQuizAttempt } from '../controllers/accessController.js';
 import { getSupportTickets, updateSupportTicket } from '../controllers/supportTicketController.js';
 
 import { protect, authorize } from '../middleware/auth.js';
@@ -61,6 +61,7 @@ router.put('/support-tickets/:id', updateSupportTicket);
 // Access overrides (support cases)
 router.post('/users/:id/grant-course', grantCourseAccess);
 router.put('/users/:id/all-access', setAllCoursesAccess);
+router.post('/users/:id/grant-quiz-attempt', grantQuizAttempt);
 
 // User management
 router.get('/users', getAllUsers);

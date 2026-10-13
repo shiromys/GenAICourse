@@ -172,6 +172,11 @@ const adminService = {
     setAllCoursesAccess: async (userId, hasAllCoursesAccess) => {
         const response = await api.put(`/admin/users/${userId}/all-access`, { hasAllCoursesAccess });
         return response.data;
+    },
+
+    grantQuizAttempt: async (userId, courseId, reason) => {
+        const response = await api.post(`/admin/users/${userId}/grant-quiz-attempt`, { courseId, reason });
+        return response.data;
     }
 };
 

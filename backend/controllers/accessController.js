@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import Course from '../models/Course.js';
 import UserProgress from '../models/UserProgress.js';
+import Quiz from '../models/Quiz.js';
+import UserQuizAttempt from '../models/UserQuizAttempt.js';
 
 /**
  * Admin-triggered access overrides — for support cases where a user is locked out of a
@@ -44,6 +46,59 @@ export const grantCourseAccess = async (req, res, next) => {
             message: alreadyEnrolled
                 ? `${user.name} already had access to "${course.title}" — progress record confirmed.`
                 : `Granted ${user.name} access to "${course.title}".`
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Grant a user one additional attempt on a specific course's assessment,
+ *          once they've used up the quiz's normal maxAttempts. Each call adds a
+ *          separate, individually auditable grant (who, when, why) rather than
+ *          bumping a counter — see UserProgress.quizAttemptGrants.
+ * @route   POST /api/admin/users/:id/grant-quiz-attempt
+ * @access  Private/Admin
+ */
+export const grantQuizAttempt = async (req, res, next) => {
+    try {
+        const { courseId, reason } = req.body;
+        if (!courseId) {
+            return res.status(400).json({ success: false, message: 'courseId is required.' });
+        }
+
+        const [user, course] = await Promise.all([
+            User.findById(req.params.id).select('name email'),
+            Course.findById(courseId).select('title quizId')
+        ]);
+
+        if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+        if (!course) return res.status(404).json({ success: false, message: 'Course not found.' });
+        if (!course.quizId) {
+            return res.status(400).json({ success: false, message: `"${course.title}" has no assessment to grant an attempt on.` });
+        }
+
+        let progress = await UserProgress.findOne({ userId: user._id, courseId });
+        if (!progress) {
+            // Shouldn't normally happen (a user would need to be enrolled to have
+            // attempted the quiz at all), but create it rather than fail the grant.
+            progress = await UserProgress.create({ userId: user._id, courseId });
+        }
+
+        progress.grantExtraQuizAttempt(req.user.id, reason);
+        await progress.save();
+
+        const [quiz, attemptsUsed] = await Promise.all([
+            Quiz.findById(course.quizId).select('maxAttempts'),
+            UserQuizAttempt.countDocuments({ userId: user._id, quizId: course.quizId })
+        ]);
+
+        const effectiveMaxAttempts = (quiz?.maxAttempts || 3) + progress.quizAttemptGrants.length;
+        const attemptsRemaining = effectiveMaxAttempts - attemptsUsed;
+
+        res.status(200).json({
+            success: true,
+            message: `Granted ${user.name} one additional attempt on "${course.title}" — ${attemptsRemaining} attempt${attemptsRemaining === 1 ? '' : 's'} now available.`
         });
     } catch (error) {
         next(error);

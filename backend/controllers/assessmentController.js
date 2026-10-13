@@ -33,14 +33,41 @@ export const getAssessmentForCourse = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: 'Assessment is not published yet' });
   }
 
+  // Resolve how many attempts this learner actually has left, including any
+  // admin-granted extras, BEFORE handing back the quiz — this is what lets the
+  // frontend show "Attempt 2 of 3" up front and refuse to even start a 4th
+  // attempt once attempts are exhausted, instead of letting the learner answer
+  // every question only to have the final submit silently fail (see takeAssessment).
+  const [userProgress, previousAttempts] = await Promise.all([
+    UserProgress.findOne({ userId, courseId }),
+    UserQuizAttempt.find({ userId, quizId: quiz._id })
+  ]);
+
+  const grantedExtra = userProgress?.quizAttemptGrants?.length || 0;
+  const effectiveMaxAttempts = (quiz.maxAttempts || 3) + grantedExtra;
+  const attemptsUsed = previousAttempts.length;
+  const attemptsRemaining = effectiveMaxAttempts - attemptsUsed;
+
+  if (attemptsRemaining <= 0) {
+    return res.status(403).json({
+      message: `You've used all ${effectiveMaxAttempts} attempts for this assessment. Contact your instructor or admin if you need another attempt.`,
+      reason: 'ATTEMPTS_EXHAUSTED',
+      attemptsUsed,
+      maxAttempts: effectiveMaxAttempts
+    });
+  }
+
   // Filter out correct answers for students
   const quizForStudent = {
     _id: quiz._id,
     title: quiz.title,
     description: quiz.description,
     timeLimit: quiz.timeLimit,
-    maxAttempts: quiz.maxAttempts,
+    maxAttempts: effectiveMaxAttempts,
     passingScore: quiz.passingScore,
+    attemptsUsed,
+    attemptsRemaining,
+    attemptNumber: attemptsUsed + 1,
     questions: quiz.questions.map(q => ({
       _id: q._id,
       question: q.question,
@@ -119,8 +146,10 @@ export const takeAssessment = asyncHandler(async (req, res) => {
   }).sort({ createdAt: -1 });
 
   // Enforce the attempt limit configured for this course's quiz in the admin
-  // panel (falls back to 3 only if a quiz somehow has no value set).
-  const effectiveMaxAttempts = quiz.maxAttempts || 3;
+  // panel (falls back to 3 only if a quiz somehow has no value set), plus any
+  // extra attempts an admin has individually granted this learner (see
+  // UserProgress.quizAttemptGrants / accessController.grantQuizAttempt).
+  const effectiveMaxAttempts = (quiz.maxAttempts || 3) + (userProgress.quizAttemptGrants?.length || 0);
 
   if (previousAttempts.length >= effectiveMaxAttempts) {
     return res.status(400).json({

@@ -1,5 +1,21 @@
 import api from './api';
 
+// Re-throws with a sensible default .message while preserving the original
+// axios error's `.response` (status, body) on the thrown object. Every method
+// below used to `throw new Error(message)` instead, which silently discarded
+// `.response` entirely — any caller branching on `err.response?.status` or
+// reading a field from `err.response?.data` beyond the flattened message
+// always got `undefined`, no matter what the backend actually sent back. That
+// made several distinct error cases in AssessmentCenter.jsx (not enrolled, no
+// assessment linked, attempts exhausted) collapse into one generic fallback
+// message, and the real "Maximum attempts (3) reached" message from the
+// backend never reached the UI at all.
+const rethrow = (error, fallbackMessage) => {
+  const err = new Error(error.response?.data?.message || fallbackMessage);
+  err.response = error.response;
+  throw err;
+};
+
 const assessmentService = {
   // Get assessment details for a course
   getAssessment: async (courseId) => {
@@ -7,7 +23,7 @@ const assessmentService = {
       const response = await api.get(`/assessments/${courseId}/quiz`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to load assessment');
+      rethrow(error, 'Failed to load assessment');
     }
   },
 
@@ -20,7 +36,7 @@ const assessmentService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to submit assessment');
+      rethrow(error, 'Failed to submit assessment');
     }
   },
 
@@ -32,7 +48,7 @@ const assessmentService = {
       );
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to load results');
+      rethrow(error, 'Failed to load results');
     }
   },
 
@@ -42,7 +58,7 @@ const assessmentService = {
       const response = await api.get(`/assessments/${courseId}/history`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to load assessment history');
+      rethrow(error, 'Failed to load assessment history');
     }
   },
 
@@ -52,7 +68,7 @@ const assessmentService = {
       const response = await api.get(`/assessments/${courseId}/check`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to check assessment availability');
+      rethrow(error, 'Failed to check assessment availability');
     }
   },
 
@@ -62,7 +78,7 @@ const assessmentService = {
       const response = await api.get(`/assessments/${courseId}/progress-check`);
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to check progress');
+      rethrow(error, 'Failed to check progress');
     }
   }
 };

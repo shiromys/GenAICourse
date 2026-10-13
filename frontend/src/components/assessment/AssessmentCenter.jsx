@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle, XCircle, Award, AlertCircle, RefreshCw, ChevronLeft, ChevronRight, HelpCircle, ArrowRight, BookOpen } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, Award, AlertCircle, RefreshCw, ChevronLeft, ChevronRight, HelpCircle, ArrowRight, BookOpen, X, Hash } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import assessmentService from '../../services/assessmentService.js';
 import certificateService from '../../services/certificateService.js';
@@ -67,7 +67,13 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
         data = await assessmentService.getAssessment(courseId);
       } catch (quizErr) {
         const status = quizErr.response?.status;
-        if (status === 404) {
+        const reason = quizErr.response?.data?.reason;
+        if (status === 403 && reason === 'ATTEMPTS_EXHAUSTED') {
+          // Deliberately refused BEFORE the learner invests time answering every
+          // question, which is what used to happen — the old flow let them finish
+          // a 4th attempt and only then silently failed on submit. See takeAssessment.
+          setError(quizErr.response?.data?.message || "You've used all your attempts for this assessment. Contact your instructor or admin if you need another attempt.");
+        } else if (status === 404) {
           setError('No assessment is linked to this course yet. Please contact your instructor.');
         } else if (status === 403) {
           setError('You are not authorized to take this assessment. Please ensure you are enrolled.');
@@ -125,7 +131,16 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
       setShowResults(true);
     } catch (err) {
       console.error('Assessment submission error:', err);
-      setError(err.response?.data?.message || 'Failed to submit assessment');
+      // Surfaced as a toast, not just the `error` state — `error` only renders on
+      // the full-screen "Access Restricted" view (shown when `assessment` isn't
+      // loaded), which isn't the case here, so this used to fail completely
+      // silently from the learner's point of view: the submit button just
+      // appeared to do nothing. This is a backstop for the rare case where
+      // attempts run out mid-session (e.g. two tabs open); the normal case is
+      // now caught before the quiz even starts, see loadAssessment.
+      const msg = err.response?.data?.message || 'Failed to submit assessment';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -140,6 +155,19 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
   const getProgressPercentage = () => {
     if (!assessment?.questions) return 0;
     return ((currentQuestion + 1) / assessment.questions.length) * 100;
+  };
+
+  // Lets a learner leave the assessment without finishing it right now and come
+  // back to it later — nothing is saved/submitted until they click the final
+  // submit button, so leaving mid-quiz costs nothing except the answers picked
+  // so far. Previously there was no way out of this screen at all short of a
+  // raw browser back/forward, which isn't a visible, discoverable affordance.
+  const handleExit = () => {
+    const hasAnyAnswer = answers.some(a => a !== null);
+    if (hasAnyAnswer && !window.confirm("Leave this assessment? Your answers won't be saved, but this won't count as an attempt — you can come back and start fresh anytime.")) {
+      return;
+    }
+    navigate(`/courses/${courseId}`);
   };
 
   if (loading) {
@@ -219,6 +247,21 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           animate={{ opacity: 1, y: 0 }}
           className="glass-card p-8 mb-10 group bg-white border border-gray-200 shadow-sm rounded-2xl"
         >
+          <div className="flex items-center justify-between mb-5">
+            <button
+              onClick={handleExit}
+              className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 font-bold text-xs uppercase tracking-widest transition-colors"
+              title="Exit — your answers won't be saved, but this won't use up an attempt"
+            >
+              <X size={14} /> Exit
+            </button>
+            {assessment?.attemptNumber && (
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest rounded-lg border border-gray-100">
+                <Hash size={11} />Attempt {assessment.attemptNumber} of {assessment.maxAttempts}
+              </span>
+            )}
+          </div>
+
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">

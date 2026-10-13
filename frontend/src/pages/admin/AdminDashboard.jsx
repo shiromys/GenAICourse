@@ -413,6 +413,17 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleGrantQuizAttempt = async (userId, courseId, reason) => {
+        try {
+            const res = await adminService.grantQuizAttempt(userId, courseId, reason);
+            toast.success(res.message);
+            // Intentionally left open — an admin may want to grant attempts for
+            // more than one course/user in a row without the modal closing on them.
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to grant attempt');
+        }
+    };
+
     // ---- derived data ----
     const contentStats = useMemo(() => courses.map(c => {
         const modules = c.modules || [];
@@ -1158,6 +1169,7 @@ const AdminDashboard = () => {
                     onClose={() => setAccessModalUser(null)}
                     onGrantCourse={(courseId) => handleGrantCourse(accessModalUser._id || accessModalUser.id, courseId)}
                     onSetAllAccess={(value) => handleSetAllAccess(accessModalUser._id || accessModalUser.id, value)}
+                    onGrantQuizAttempt={(courseId, reason) => handleGrantQuizAttempt(accessModalUser._id || accessModalUser.id, courseId, reason)}
                 />
             )}
         </div>
@@ -1204,8 +1216,10 @@ const ToggleSwitch = ({ checked, onChange, disabled }) => (
     </button>
 );
 
-const AccessGrantModal = ({ user, courses, onClose, onGrantCourse, onSetAllAccess }) => {
+const AccessGrantModal = ({ user, courses, onClose, onGrantCourse, onSetAllAccess, onGrantQuizAttempt }) => {
     const [courseId, setCourseId] = useState('');
+    const [attemptReason, setAttemptReason] = useState('');
+    const selectedCourse = courses.find(c => (c._id || c.id) === courseId);
     return (
         <div className="fixed inset-0 z-[100] bg-slate-900/55 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
             <div className="w-full max-w-md bg-white dark:bg-[#111A2E] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl p-6" onClick={e => e.stopPropagation()}>
@@ -1246,6 +1260,34 @@ const AccessGrantModal = ({ user, courses, onClose, onGrantCourse, onSetAllAcces
                             <button onClick={() => onSetAllAccess(true)} className="btn bg-violet-600 hover:bg-violet-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs flex-shrink-0">Grant all</button>
                         )}
                     </div>
+                </div>
+
+                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
+                    <label className="text-[11px] font-black uppercase tracking-wide text-slate-400 mb-1.5 block">Quiz attempt unlock</label>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-3">
+                        Uses the course selected above. Grants one extra attempt once this user has used up the quiz's normal limit — each grant is logged with your admin account and today's date.
+                    </p>
+                    {courseId && !selectedCourse?.quizId ? (
+                        <p className="text-xs font-bold text-amber-600 mb-1">This course has no assessment attached — nothing to unlock.</p>
+                    ) : (
+                        <>
+                            <input
+                                type="text"
+                                value={attemptReason}
+                                onChange={e => setAttemptReason(e.target.value)}
+                                placeholder="Reason (optional) — e.g. internet dropped mid-quiz"
+                                maxLength={300}
+                                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-white/5 px-3 py-2.5 text-sm font-semibold text-slate-800 dark:text-white outline-none focus:border-amber-400 mb-2.5"
+                            />
+                            <button
+                                disabled={!courseId}
+                                onClick={() => { onGrantQuizAttempt(courseId, attemptReason); setAttemptReason(''); }}
+                                className="btn bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white px-4 py-2 rounded-xl font-bold text-xs w-full"
+                            >
+                                Grant +1 attempt
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

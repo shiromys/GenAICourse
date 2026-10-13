@@ -2,9 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import courseService from '@/services/courseService.js';
 import paymentService from '@/services/paymentService.js';
+import certificateService from '@/services/certificateService.js';
 import Loader from '../components/common/Loader.jsx';
 import { Link, useSearchParams } from 'react-router-dom';
-import { FaGraduationCap, FaTrophy, FaPlay, FaBookOpen, FaRotateLeft, FaCircleCheck, FaTriangleExclamation, FaUserPlus, FaXmark } from 'react-icons/fa6';
+import { FaGraduationCap, FaTrophy, FaPlay, FaBookOpen, FaRotateLeft, FaCircleCheck, FaTriangleExclamation, FaUserPlus, FaXmark, FaAward, FaDownload } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSafeThumbnailUrl } from '../utils/thumbnailHelper.js';
@@ -18,6 +19,7 @@ const Dashboard = () => {
     const [recovering, setRecovering] = useState(false);
     const [recoveryResult, setRecoveryResult] = useState(null); // { recovered, items }
     const [guestBannerDismissed, setGuestBannerDismissed] = useState(false);
+    const [downloadingCertId, setDownloadingCertId] = useState(null);
 
     // ── On mount: detect payment=success in URL and refresh user ──────────────
     useEffect(() => {
@@ -80,9 +82,30 @@ const Dashboard = () => {
         }
     }, [recovering, updateUser, fetchEnrolledCourses]);
 
+    // ── Certificate: one-click download right from the course card ─────────────
+    // Previously the only path was Dashboard → Profile → Certificates tab → find
+    // the right one → Download, even though a learner lands back on the Dashboard
+    // the moment they finish setting up their account (CompleteAccount.jsx
+    // redirects here, and that's exactly when a just-earned certificate becomes
+    // downloadable). Surfacing the button where the course already is removes
+    // that whole extra hop.
+    const handleDownloadCertificate = useCallback(async (certificateId) => {
+        if (!certificateId || downloadingCertId) return;
+        setDownloadingCertId(certificateId);
+        try {
+            await certificateService.downloadCertificate(certificateId);
+            toast.success('Certificate downloaded!');
+        } catch (error) {
+            toast.error(error.message || 'Could not download certificate');
+        } finally {
+            setDownloadingCertId(null);
+        }
+    }, [downloadingCertId]);
+
     if (loading) return <Loader />;
 
     const hasNoRecentAccess = !user?.hasAllCoursesAccess && enrolledCourses.length === 0;
+    const readyCertificates = enrolledCourses.filter(p => p && p.courseId && p.certificate);
 
     const stats = [
         {
@@ -236,6 +259,45 @@ const Dashboard = () => {
                 </AnimatePresence>
                 {/* ────────────────────────────────────────────────────────────── */}
 
+                {/* ── CERTIFICATES READY TO DOWNLOAD ──────────────────────────── */}
+                {readyCertificates.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-12 rounded-[2rem] bg-amber-50 border border-amber-100 p-8 shadow-xl shadow-amber-500/5"
+                    >
+                        <div className="flex items-center gap-4 mb-5">
+                            <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <FaAward size={26} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-amber-900">
+                                    {readyCertificates.length === 1 ? 'Your certificate is ready' : `${readyCertificates.length} certificates ready`}
+                                </h3>
+                                <p className="text-amber-700/80 font-medium text-sm">Download it below — no need to go to your profile.</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            {readyCertificates.map((progress) => (
+                                <div
+                                    key={progress._id}
+                                    className="flex items-center justify-between gap-4 bg-white rounded-2xl border border-amber-100 px-6 py-4"
+                                >
+                                    <span className="font-bold text-slate-800 truncate">{progress.courseId?.title}</span>
+                                    <button
+                                        onClick={() => handleDownloadCertificate(progress.certificate)}
+                                        disabled={downloadingCertId === progress.certificate}
+                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs uppercase tracking-wide transition-all active:scale-95 disabled:opacity-50 flex-shrink-0"
+                                    >
+                                        <FaDownload size={12} />
+                                        {downloadingCertId === progress.certificate ? 'Downloading…' : 'Download'}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                     {stats.map((stat, idx) => (
@@ -308,6 +370,17 @@ const Dashboard = () => {
                                         <FaPlay size={12} className="mr-1" />
                                         {progress.progressPercentage > 0 ? 'Resume Course' : 'Start Learning'}
                                     </Link>
+
+                                    {progress.certificate && (
+                                        <button
+                                            onClick={() => handleDownloadCertificate(progress.certificate)}
+                                            disabled={downloadingCertId === progress.certificate}
+                                            className="flex items-center justify-center gap-2 w-full py-3 mt-2 rounded-2xl bg-amber-50 text-amber-700 font-black text-xs uppercase tracking-wide hover:bg-amber-100 transition-all active:scale-[0.98] disabled:opacity-50"
+                                        >
+                                            <FaAward size={13} />
+                                            {downloadingCertId === progress.certificate ? 'Downloading…' : 'Download Certificate'}
+                                        </button>
+                                    )}
                                 </div>
                             </motion.div>
                         ))}
