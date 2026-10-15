@@ -5,12 +5,13 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import adminService from '../../services/adminService.js';
 import Loader from '../../components/common/Loader.jsx';
 import AdminAssessmentManager from './AdminAssessmentManager.jsx';
+import AdminBlogManager from './AdminBlogManager.jsx';
 import {
     FaUser, FaBook, FaPlus, FaTrash, FaEdit, FaChartLine, FaGraduationCap,
     FaClipboardList, FaUsers, FaEye, FaCalendarAlt, FaSearch, FaMoon, FaSun,
     FaBolt, FaHistory, FaThLarge, FaListUl, FaTimes, FaBell, FaLayerGroup,
     FaShieldAlt, FaDollarSign, FaClock, FaFileDownload, FaLifeRing, FaTools,
-    FaExclamationTriangle, FaKey, FaCheck, FaUndo
+    FaExclamationTriangle, FaKey, FaCheck, FaUndo, FaNewspaper
 } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
         { id: 'courses', label: 'Courses', icon: FaBook },
         { id: 'content', label: 'Content Health', icon: FaLayerGroup, badge: 'NEW' },
         { id: 'assessments', label: 'Assessments', icon: FaClipboardList },
+        { id: 'blog', label: 'Blog Posts', icon: FaNewspaper },
     ]},
     { group: 'People', items: [
         { id: 'users', label: 'Users', icon: FaUsers },
@@ -837,6 +839,13 @@ const AdminDashboard = () => {
                         {activeTab === 'assessments' && (
                             <div className="animate-in fade-in duration-300">
                                 <AdminAssessmentManager />
+                            </div>
+                        )}
+
+                        {/* ============ BLOG POSTS ============ */}
+                        {activeTab === 'blog' && (
+                            <div className="animate-in fade-in duration-300">
+                                <AdminBlogManager />
                             </div>
                         )}
 

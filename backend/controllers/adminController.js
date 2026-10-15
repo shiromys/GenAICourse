@@ -5,6 +5,7 @@ import Payment from '../models/Payment.js';
 import Quiz from '../models/Quiz.js';
 import UserQuizAttempt from '../models/UserQuizAttempt.js';
 import Certificate from '../models/Certificate.js';
+import BlogPost from '../models/BlogPost.js';
 
 /**
  * Admin Controller
@@ -360,6 +361,144 @@ export const getCourse = async (req, res, next) => {
         res.status(200).json({
             success: true,
             data: course
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Blog post CRUD (Admin only) — mirrors the course CRUD functions above. The post content
+ * itself lives externally (Blogger); these endpoints only manage the card shown on /blog.
+ */
+
+/**
+ * @desc    Get all blog posts, published and draft (Admin only)
+ * @route   GET /api/admin/blog-posts
+ * @access  Private/Admin
+ */
+export const getAllBlogPosts = async (req, res, next) => {
+    try {
+        const posts = await BlogPost.find()
+            .populate('createdBy', 'name email')
+            .sort({ publishedDate: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: posts.length,
+            data: posts
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Get single blog post (Admin only)
+ * @route   GET /api/admin/blog-posts/:id
+ * @access  Private/Admin
+ */
+export const getBlogPost = async (req, res, next) => {
+    try {
+        const post = await BlogPost.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: 'Blog post not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: post
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Create blog post card (Admin only)
+ * @route   POST /api/admin/blog-posts
+ * @access  Private/Admin
+ */
+export const createBlogPost = async (req, res, next) => {
+    try {
+        const { title, postUrl } = req.body;
+
+        if (!title?.trim() || !postUrl?.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Title and the blog post URL are both required'
+            });
+        }
+
+        const post = await BlogPost.create({
+            ...req.body,
+            createdBy: req.user._id
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Blog post added successfully',
+            data: post
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Update blog post card (Admin only)
+ * @route   PUT /api/admin/blog-posts/:id
+ * @access  Private/Admin
+ */
+export const updateBlogPost = async (req, res, next) => {
+    try {
+        const post = await BlogPost.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: 'Blog post not found'
+            });
+        }
+
+        Object.assign(post, req.body);
+        await post.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Blog post updated successfully',
+            data: post
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Delete blog post card (Admin only)
+ * @route   DELETE /api/admin/blog-posts/:id
+ * @access  Private/Admin
+ */
+export const deleteBlogPost = async (req, res, next) => {
+    try {
+        const post = await BlogPost.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: 'Blog post not found'
+            });
+        }
+
+        await post.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: 'Blog post deleted successfully'
         });
     } catch (error) {
         next(error);
@@ -870,6 +1009,11 @@ export default {
     updateCourse,
     deleteCourse,
     uploadCourseFromJSON,
+    getAllBlogPosts,
+    getBlogPost,
+    createBlogPost,
+    updateBlogPost,
+    deleteBlogPost,
     getDashboardStats,
     getCourseEnrollments,
     getPaymentAnalytics,

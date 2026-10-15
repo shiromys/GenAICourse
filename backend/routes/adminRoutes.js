@@ -11,6 +11,11 @@ import {
     updateCourse,
     deleteCourse,
     uploadCourseFromJSON,
+    getAllBlogPosts,
+    getBlogPost,
+    createBlogPost,
+    updateBlogPost,
+    deleteBlogPost,
     getDashboardStats,
     getCourseEnrollments,
     getPaymentAnalytics,
@@ -78,6 +83,13 @@ router.post('/courses', createCourse);
 router.put('/courses/:id', updateCourse);
 router.delete('/courses/:id', deleteCourse);
 router.get('/courses/:id/enrollments', getCourseEnrollments);
+
+// Blog posts (card metadata only — the post itself is written and hosted on Blogger)
+router.get('/blog-posts', getAllBlogPosts);
+router.get('/blog-posts/:id', getBlogPost);
+router.post('/blog-posts', createBlogPost);
+router.put('/blog-posts/:id', updateBlogPost);
+router.delete('/blog-posts/:id', deleteBlogPost);
 
 
 

@@ -32,6 +32,7 @@ import courseAssessmentRoutes from './routes/courseAssessment.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
+import blogRoutes from './routes/blogRoutes.js';
 import passport from 'passport';
 import configurePassport from './config/passport.js';
 import { stripeWebhook } from './controllers/paymentController.js';
@@ -138,6 +139,7 @@ const startServer = async () => {
         app.use('/api/payments', paymentRoutes);
         app.use('/api/courses', courseAssessmentRoutes);
         app.use('/api/contact', contactRoutes);
+        app.use('/api/blog', blogRoutes);
 
         // RECTIFIED: Specific upload routes before general assessment routes
         app.use('/api/assessments', assessmentUploadRoutes);

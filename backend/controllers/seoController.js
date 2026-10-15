@@ -10,10 +10,15 @@
  * frontend/public or frontend/dist. There is no other sitemap in this app.
  *
  * NOTE (Oct 13): this previously also listed a /blog index page and six
- * /blog/<slug> article URLs. No Blog page or /blog route exists anywhere in
- * the frontend (confirmed: no Blog.jsx, no /blog route in App.jsx) — those
- * seven URLs were submitting search engines straight into 404s. Removed.
- * If a blog is ever built, its real URLs belong back here.
+ * /blog/<slug> article URLs that didn't exist anywhere in the frontend,
+ * submitting search engines straight into 404s. Removed at the time.
+ *
+ * UPDATE (Oct 15): a real /blog page now exists (Blog.jsx) and is listed
+ * below. It only ever lists cards that link OUT to posts hosted on Blogger
+ * (blog.genaicourse.io or similar) — the individual posts are not pages in
+ * this app, so there is still no per-post /blog/<slug> URL to generate here.
+ * Blogger's own sitemap (submitted separately to Google Search Console)
+ * covers those.
  */
 
 import { SitemapStream, streamToPromise } from 'sitemap';
@@ -28,6 +33,7 @@ export const generateSitemap = async (req, res) => {
         smStream.write({ url: '/courses', changefreq: 'daily', priority: 0.9 });
         smStream.write({ url: '/pricing', changefreq: 'monthly', priority: 0.8 });
         smStream.write({ url: '/how-it-works', changefreq: 'monthly', priority: 0.7 });
+        smStream.write({ url: '/blog', changefreq: 'weekly', priority: 0.6 });
         smStream.write({ url: '/contact', changefreq: 'monthly', priority: 0.6 });
 
         // ── 2. Legal pages ────────────────────────────────────────────────

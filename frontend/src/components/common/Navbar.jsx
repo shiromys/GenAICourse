@@ -40,6 +40,7 @@ const Navbar = () => {
                     <div className="flex items-center gap-6 bg-white/95 px-8 py-2.5 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-2xl">
                         <NavLink to="/" active={isActive('/')}>Home</NavLink>
                         <NavLink to="/courses" active={isActive('/courses')}>Courses</NavLink>
+                        <NavLink to="/blog" active={isActive('/blog')}>Blog</NavLink>
                         <NavLink to="/pricing" active={isActive('/pricing')}>Pricing</NavLink>
                         <NavLink to="/contact" active={isActive('/contact')}>Contact</NavLink>
                     </div>
@@ -135,6 +136,7 @@ const Navbar = () => {
                         <div className="flex flex-col gap-6">
                             <MobileNavLink to="/" onClick={() => setIsOpen(false)}>Home</MobileNavLink>
                             <MobileNavLink to="/courses" onClick={() => setIsOpen(false)}>Courses</MobileNavLink>
+                            <MobileNavLink to="/blog" onClick={() => setIsOpen(false)}>Blog</MobileNavLink>
                             <MobileNavLink to="/pricing" onClick={() => setIsOpen(false)}>Pricing</MobileNavLink>
                             <MobileNavLink to="/contact" onClick={() => setIsOpen(false)}>Contact</MobileNavLink>
                             <div className="h-px bg-gray-200"></div>

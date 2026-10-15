@@ -108,6 +108,38 @@ const adminService = {
         return response.data;
     },
 
+    // ---- Blog posts (card metadata only — posts are written/hosted on Blogger) ----
+
+    // Get all blog posts, published and draft
+    getAllBlogPosts: async () => {
+        const response = await api.get('/admin/blog-posts');
+        return response.data;
+    },
+
+    // Get single blog post
+    getBlogPost: async (id) => {
+        const response = await api.get(`/admin/blog-posts/${id}`);
+        return response.data;
+    },
+
+    // Create blog post card
+    createBlogPost: async (postData) => {
+        const response = await api.post('/admin/blog-posts', postData);
+        return response.data;
+    },
+
+    // Update blog post card
+    updateBlogPost: async (id, postData) => {
+        const response = await api.put(`/admin/blog-posts/${id}`, postData);
+        return response.data;
+    },
+
+    // Delete blog post card
+    deleteBlogPost: async (id) => {
+        const response = await api.delete(`/admin/blog-posts/${id}`);
+        return response.data;
+    },
+
     // ---- Global operations ----
 
     // Public maintenance status (also used inside the admin console for the System tab)

@@ -25,6 +25,7 @@ import CourseReadingProgress from './components/courses/CourseReadingProgress';
 import HowItWorks from './pages/HowItWorks';
 import Pricing from './pages/Pricing';
 import Contact from './pages/Contact';
+import Blog from './pages/Blog';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import OAuthCallback from './pages/OAuthCallback';
@@ -138,6 +139,7 @@ const AppContent = () => {
                         <Route path="/courses/:id/assessment" element={<PageContainer><AssessmentCenter /></PageContainer>} />
                         <Route path="/courses/:courseId/lessons/:lessonId" element={<PageContainer><LessonPlayer /></PageContainer>} />
                         <Route path="/pricing" element={<PageContainer><Pricing /></PageContainer>} />
+                        <Route path="/blog" element={<PageContainer><Blog /></PageContainer>} />
                         <Route path="/contact" element={<PageContainer><Contact /></PageContainer>} />
                         <Route path="/login" element={<PageContainer><Login /></PageContainer>} />
                         <Route path="/register" element={<PageContainer><Register /></PageContainer>} />
