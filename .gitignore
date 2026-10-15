@@ -3,8 +3,9 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
 yarn.lock
+# package-lock.json is intentionally committed (root, backend/, frontend/) —
+# see "Build fix (Oct 15, 2026, round 3)" in the launch-readiness doc for why.
 
 # Environment variables
 .env
