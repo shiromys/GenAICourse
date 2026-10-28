@@ -13,52 +13,62 @@ import { containsProfanity } from '../utils/profanityFilter.js';
  * @route   GET /api/courses
  * @access  Public
  */
+// Escape user input before it is used inside a $regex (prevents ReDoS / regex injection).
+const escapeRegex = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Only these fields are ever sent to an anonymous visitor by the catalogue listing.
+// WHITELIST (not a blacklist): a field added to the schema later stays private by default.
+const PUBLIC_LISTING_FIELDS =
+    'title slug description thumbnail category level tags language ' +
+    'price currency isFree isPublished enrollmentCount averageRating ratingCount createdAt ' +
+    'modules.lessons._id modules.lessons.duration'; // only so lesson count/duration can be computed
+
 export const getCourses = async (req, res, next) => {
     try {
-        const { category, level, search } = req.query;
+        // Coerce every query-string value to a plain string. Express parses
+        // ?category[$ne]=x into an object, which would otherwise reach Mongo as an operator.
+        const category = typeof req.query.category === 'string' ? req.query.category : undefined;
+        const level = typeof req.query.level === 'string' ? req.query.level : undefined;
+        const search = typeof req.query.search === 'string' ? req.query.search.trim().slice(0, 100) : '';
 
         // Build query
-        let query = { isPublished: true };
-
-        if (category) {
-            query.category = category;
-        }
-
-        if (level) {
-            query.level = level;
-        }
+        const query = { isPublished: true };
+        if (category) query.category = category;
+        if (level) query.level = level;
 
         if (search) {
-            query.$or = [
-                { title: { $regex: search, $options: 'i' } },
-                { description: { $regex: search, $options: 'i' } },
-                { 'modules.lessons.title': { $regex: search, $options: 'i' } },
-                { 'modules.lessons.content': { $regex: search, $options: 'i' } }
-            ];
+            const rx = { $regex: escapeRegex(search), $options: 'i' };
+            // Deliberately NOT searching lesson content: a public search over paid lesson
+            // text lets anyone confirm/extract content one query at a time.
+            query.$or = [{ title: rx }, { description: rx }, { tags: rx }];
         }
 
-        const { page = 1, limit = 10, sortBy = 'createdAt' } = req.query;
-        const sortOptions = {
-            createdAt: -1,
-            enrollmentCount: -1,
-            averageRating: -1,
-            title: 1
-        };
+        const sortOptions = { createdAt: -1, enrollmentCount: -1, averageRating: -1, title: 1 };
+        const sortBy = Object.prototype.hasOwnProperty.call(sortOptions, req.query.sortBy)
+            ? req.query.sortBy
+            : 'createdAt';
 
-        // The catalogue/listing view only ever needs enough per course to render
-        // a card (title, description, price, lesson count/titles, etc.) — never
-        // the actual paid lesson content. Previously this had no field
-        // restriction at all, so browsing the catalogue as anyone, logged in or
-        // not, returned every lesson's full body text and downloadable resources
-        // for all courses in one response. Excluded here regardless of who's
-        // asking; a specific course's full content is still available to an
-        // enrolled user/admin via getCourse below.
-        const courses = await Course.find(query)
-            .select('-modules.lessons.content -modules.lessons.resources -modules.lessons.keyPoints -modules.lessons.learningObjectives -modules.lessons.videoUrl -modules.lessons.quizId')
-            .populate('createdBy', 'name')
+        // Bounded pagination (previously unbounded: ?limit=100000 dumped everything).
+        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+        const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
+
+        const docs = await Course.find(query)
+            .select(PUBLIC_LISTING_FIELDS)
             .sort({ [sortBy]: sortOptions[sortBy] })
-            .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .lean();
+
+        // Collapse modules/lessons to two numbers; the curriculum outline is served by
+        // GET /api/courses/:id, never by the listing.
+        const courses = docs.map(({ modules = [], ...course }) => {
+            const lessons = modules.flatMap((m) => m.lessons || []);
+            return {
+                ...course,
+                totalLessons: lessons.length,
+                totalDuration: lessons.reduce((sum, l) => sum + (l.duration || 0), 0)
+            };
+        });
 
         const total = await Course.countDocuments(query);
 
@@ -66,12 +76,7 @@ export const getCourses = async (req, res, next) => {
             success: true,
             data: {
                 courses,
-                pagination: {
-                    page: parseInt(page),
-                    limit: parseInt(limit),
-                    total,
-                    pages: Math.ceil(total / limit)
-                }
+                pagination: { page, limit, total, pages: Math.ceil(total / limit) }
             }
         });
     } catch (error) {
@@ -91,8 +96,10 @@ export const getCourse = async (req, res, next) => {
         const query = idOrSlug.match(/^[0-9a-fA-F]{24}$/) ? { _id: idOrSlug } : { slug: idOrSlug };
 
         const course = await Course.findOne(query)
-            .populate('createdBy', 'name email')
-            .populate('instructors.userId', 'name email profile')
+            // Never populate `email` on a public route: it exposed the creator's and
+            // every instructor's email address to anonymous visitors.
+            .populate('createdBy', 'name')
+            .populate('instructors.userId', 'name profile.avatar')
             .populate('reviews.userId', 'name profile.avatar');
 
         if (!course) {
